@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard — Oron Union</title>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.15/dist/hls.min.js"></script>
+  <style>
+    :root {
+      --red:      #800020;
+      --red-h:    #5C0015;
+      --maroon:   #2A0008;
+      --beige:    #EDEAE3;
+      --beige-d:  #E3DFD7;
+      --white:    #FFFFFF;
+      --text:     #1A1A1A;
+      --muted:    #6B6B6B;
+      --border:   #DEDAD3;
+      --ok:       #1a7f37;
+      --warn:     #9a6700;
+      --danger:   #CF222E;
+      --sidebar:  240px;
+      --r:        10px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #F0EDE6;
+      color: var(--text);
+      display: flex;
+      min-height: 100vh;
+      font-size: 14px;
+    }
+
+    /* ── SIDEBAR ── */
+    .sb {
+      width: var(--sidebar);
+      background: var(--maroon);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      inset: 0 auto 0 0;
+      z-index: 200;
+    }
+
+    .sb-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 18px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .sb-brand-icon {
+      width: 38px; height: 38px;
+      background: var(--red);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .sb-brand-icon img {
+      width: 38px; height: 38px;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+
+    .sb-brand-text strong { display: block; color: #fff; font-size: 0.9rem; font-weight: 700; }
+    .sb-brand-text span   { color: rgba(255,255,255,0.45); font-size: 0.72rem; }
+
+    .sb-nav { flex: 1; padding: 8px; overflow-y: auto; }
+
+    .sb-group-label {
+      color: rgba(255,255,255,0.3);
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      padding: 14px 10px 5px;
+    }
+
+    .sb-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      padding: 9px 12px;
+      border-radius: 8px;
+      border: none;
+      background: none;
+      color: rgba(255,255,255,0.6);
+      font-size: 0.855rem;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      text-align: left;
+    }
+    .sb-link:hover  { background: rgba(255,255,255,0.07); color: #fff; }
+    .sb-link.on     { background: var(--red); color: #fff; }
+    .sb-link svg    { width: 17px; height: 17px; flex-shrink: 0; }
+
+    .sb-badge {
+      margin-left: auto;
+      background: var(--red);
+      color: #fff;
+      font-size: 0.65rem;
+      font-weight: 700;
+      min-width: 18px;
+      height: 18px;
+      border-radius: 9px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 5px;
+    }
+    .sb-link.on .sb-badge { background: rgba(255,255,255,0.25); }
+
+    .sb-foot {
+      padding: 8px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    /* ── MAIN ── */
+    .main {
+      margin-left: var(--sidebar);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      height: 58px;
+      padding: 0 26px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .topbar-left { display: flex; align-items: center; gap: 12px; }
+    .topbar-title { font-size: 1rem; font-weight: 700; }
+
+    .topbar-right { display: flex; align-items: center; gap: 10px; }
+
+    .pill {
+      background: var(--beige);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    /* ── CONTENT ── */
+    .content { padding: 24px 26px; flex: 1; }
+
+    .panel { display: none; }
+    .panel.on { display: block; }
+
+    /* ── STAT CARDS ── */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .stat {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 18px 20px;
+    }
+
+    .stat-lbl { font-size: 0.72rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+    .stat-val { font-size: 2rem; font-weight: 800; line-height: 1; }
+    .stat-sub { font-size: 0.72rem; color: var(--muted); margin-top: 5px; }
+    .stat.s-pend .stat-val { color: var(--warn); }
+    .stat.s-ok   .stat-val { color: var(--ok); }
+    .stat.s-err  .stat-val { color: var(--danger); }
+
+    /* ── CARD ── */
+    .card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      overflow: hidden;
+    }
+
+    .card-head {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .card-head h3 { font-size: 0.9rem; font-weight: 700; }
+    .card-body { padding: 18px; }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 7px 14px;
+      border-radius: 7px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s;
+      text-decoration: none;
+    }
+    .btn svg { width: 14px; height: 14px; }
+    .btn-primary { background: var(--red); color: #fff; }
+    .btn-primary:hover { background: var(--red-h); }
+    .btn-ok      { background: var(--ok); color: #fff; }
+    .btn-ok:hover { background: #145928; }
+    .btn-danger  { background: var(--danger); color: #fff; }
+    .btn-danger:hover { background: #a81d23; }
+    .btn-ghost   { background: var(--beige); color: var(--text); border: 1px solid var(--border); }
+    .btn-ghost:hover { background: var(--beige-d); }
+    .btn-sm { padding: 5px 10px; font-size: 0.76rem; }
+    .btn-full { width: 100%; justify-content: center; }
+
+    /* ── FILTER TABS ── */
+    .ftabs {
+      display: flex;
+      gap: 3px;
+      background: var(--beige);
+      border-radius: 8px;
+      padding: 3px;
+      margin-bottom: 14px;
+    }
+    .ftab {
+      padding: 6px 13px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: var(--muted);
+      transition: all 0.14s;
+    }
+    .ftab.on { background: #fff; color: var(--text); box-shadow: 0 1px 4px rgba(0,0,0,0.09); }
+
+    /* ── TABLE ── */
+    .tbl { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+    .tbl th {
+      text-align: left;
+      padding: 9px 13px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+      background: var(--beige);
+      white-space: nowrap;
+    }
+    .tbl td {
+      padding: 11px 13px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    .tbl tr:last-child td { border-bottom: none; }
+    .tbl tbody tr:hover { background: #FAFAF6; }
+
+    /* ── STATUS BADGE ── */
+    .badge {
+      display: inline-block;
+      padding: 2px 9px;
+      border-radius: 20px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .badge-pend { background: #FFF3CC; color: #7A5400; }
+    .badge-ok   { background: #DAFBE1; color: #1A5C2A; }
+    .badge-err  { background: #FFEBE9; color: #8C1A1A; }
+
+    /* ── FORM ── */
+    .fg { margin-bottom: 14px; }
+    .fg label { display: block; font-size: 0.78rem; font-weight: 600; margin-bottom: 5px; }
+    .fc {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      font-size: 0.875rem;
+      background: #fff;
+      outline: none;
+      transition: border-color 0.14s, box-shadow 0.14s;
+      font-family: inherit;
+    }
+    .fc:focus { border-color: var(--red); box-shadow: 0 0 0 3px rgba(128,0,32,0.1); }
+    .hint { font-size: 0.72rem; color: var(--muted); margin-top: 4px; }
+
+    /* ── SEARCH BAR ── */
+    .search-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .search-bar .fc { flex: 1; }
+
+    /* ── STREAMING ── */
+    .stream-grid { display: grid; grid-template-columns: 1fr 320px; gap: 20px; }
+
+    .stream-dot { width: 9px; height: 9px; border-radius: 50%; background: #ccc; display: inline-block; margin-right: 6px; }
+    .stream-dot.live  { background: #2da44e; animation: blink 1.4s infinite; }
+    .stream-dot.error { background: var(--danger); }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.35} }
+
+    .video-wrap {
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: #0c0c0c;
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .video-wrap video { width: 100%; height: 100%; }
+    .video-placeholder { color: rgba(255,255,255,0.25); text-align: center; }
+    .video-placeholder svg { width: 48px; height: 48px; margin-bottom: 8px; }
+    .video-placeholder p { font-size: 0.82rem; }
+
+    /* ── MEDIA ── */
+    .media-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 10px;
+    }
+
+    .media-item {
+      border-radius: 8px;
+      overflow: hidden;
+      background: var(--beige);
+      border: 1px solid var(--border);
+      position: relative;
+    }
+    .media-item img, .media-item video { width: 100%; height: 110px; object-fit: cover; display: block; }
+    .media-item-info { padding: 7px 9px; }
+    .media-item-name { font-size: 0.75rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .media-item-meta { font-size: 0.7rem; color: var(--muted); }
+    .media-del {
+      position: absolute; top: 5px; right: 5px;
+      width: 24px; height: 24px; border-radius: 50%;
+      background: rgba(0,0,0,0.55); border: none; color: #fff;
+      cursor: pointer; font-size: 14px; line-height: 1;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.14s;
+    }
+    .media-del:hover { background: var(--danger); }
+
+    /* ── EXCO ── */
+    .exco-block { border: 1px solid var(--border); border-radius: var(--r); margin-bottom: 10px; overflow: hidden; }
+    .exco-head {
+      padding: 13px 16px;
+      font-size: 0.875rem;
+      font-weight: 700;
+      background: var(--beige);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+    }
+    .exco-head .chev { transition: transform 0.2s; }
+    .exco-block.open .exco-head .chev { transform: rotate(180deg); }
+    .exco-body { padding: 16px; display: none; }
+    .exco-block.open .exco-body { display: block; }
+    .exco-pos-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+
+    /* ── MODAL ── */
+    .overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 500;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    .overlay.on { display: flex; }
+
+    .modal {
+      background: #fff;
+      border-radius: 14px;
+      width: 620px;
+      max-width: 96vw;
+      max-height: 88vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.22);
+    }
+
+    .modal-head {
+      padding: 18px 22px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      background: #fff;
+      z-index: 2;
+    }
+    .modal-head h3 { font-size: 0.95rem; font-weight: 700; }
+    .modal-x { background: none; border: none; cursor: pointer; font-size: 20px; color: var(--muted); line-height: 1; padding: 2px 6px; border-radius: 5px; }
+    .modal-x:hover { background: var(--beige); color: var(--text); }
+
+    .modal-body { padding: 22px; }
+
+    .detail-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .ditem .dk { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-bottom: 2px; }
+    .ditem .dv { font-size: 0.9rem; font-weight: 600; }
+
+    .modal-foot {
+      padding: 14px 22px;
+      border-top: 1px solid var(--border);
+      background: var(--beige);
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    /* ── EMPTY ── */
+    .empty {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--muted);
+    }
+    .empty svg { width: 44px; height: 44px; margin-bottom: 10px; opacity: 0.25; }
+
+    /* ── LOGIN ── */
+    #login-gate {
+      position: fixed; inset: 0;
+      background: var(--maroon);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9000;
+    }
+
+    .login-box {
+      background: #fff;
+      border-radius: 16px;
+      padding: 40px 36px;
+      width: 340px;
+      text-align: center;
+    }
+
+    .login-emblem {
+      width: 60px; height: 60px;
+      background: var(--red);
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 16px;
+    }
+    .login-emblem img { width: 60px; height: 60px; border-radius: 14px; object-fit: cover; }
+    .login-emblem svg { color: #fff; }
+
+    .login-box h1 { font-size: 1.15rem; font-weight: 800; margin-bottom: 4px; }
+    .login-box p  { font-size: 0.82rem; color: var(--muted); margin-bottom: 22px; }
+
+    .login-err {
+      background: #FFEBE9;
+      color: var(--danger);
+      font-size: 0.8rem;
+      padding: 8px 12px;
+      border-radius: 7px;
+      margin-bottom: 12px;
+      display: none;
+    }
+
+    /* ── TOAST ── */
+    #toast {
+      position: fixed;
+      bottom: 22px; right: 22px;
+      background: var(--maroon);
+      color: #fff;
+      padding: 11px 18px;
+      border-radius: 9px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      z-index: 9999;
+      transform: translateY(60px);
+      opacity: 0;
+      transition: all 0.28s ease;
+      max-width: 300px;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.22);
+    }
+    #toast.show     { transform: translateY(0); opacity: 1; }
+    #toast.t-ok     { background: var(--ok); }
+    #toast.t-err    { background: var(--danger); }
+    #toast.t-warn   { background: var(--warn); }
+
+    /* ── TWO-COL LAYOUTS ── */
+    .col2 { display: grid; grid-template-columns: 1fr 300px; gap: 20px; align-items: start; }
+    .col2-stream { display: grid; grid-template-columns: 1fr 330px; gap: 20px; align-items: start; }
+    .dash-grid { display: grid; grid-template-columns: 1fr 290px; gap: 20px; }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+    .section-head h2 { font-size: 1.05rem; font-weight: 800; }
+
+    @media (max-width: 860px) {
+      .sb { width: 56px; }
+      .sb-brand-text, .sb-link span, .sb-group-label, .sb-badge { display: none; }
+      .main { margin-left: 56px; }
+      .stats-row { grid-template-columns: repeat(2,1fr); }
+      .col2, .col2-stream, .dash-grid, .stream-grid { grid-template-columns: 1fr; }
+      .exco-pos-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ LOGIN ══ -->
+<div id="login-gate">
+  <div class="login-box">
+    <div class="login-emblem">
+      <img src="pictures/IMG-20260317-WA0011.jpg" alt="Oron" onerror="this.replaceWith(Object.assign(document.createElementNS('http://www.w3.org/2000/svg','svg'),{innerHTML:'<circle cx=\'16\' cy=\'8\' r=\'4\'/><path d=\'M4 28v-2a6 6 0 0 1 12 0v2\'/>',viewBox:'0 0 32 32',style:'width:28px;height:28px;fill:none;stroke:#fff;stroke-width:2'}))">
+    </div>
+    <h1>Admin Dashboard</h1>
+    <p>Oron Union — authorised access only</p>
+    <div class="login-err" id="login-err">Incorrect code. Please try again.</div>
+    <div class="fg">
+      <input type="password" class="fc" id="admin-code" placeholder="Enter admin code" style="text-align:center;letter-spacing:0.18em;font-size:1.05rem" />
+    </div>
+    <button class="btn btn-primary btn-full" onclick="doLogin()" style="padding:11px">Sign In</button>
+  </div>
+</div>
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="sb">
+  <div class="sb-brand">
+    <div class="sb-brand-icon">
+      <img src="pictures/IMG-20260317-WA0011.jpg" alt="Oron" onerror="this.style.display='none'">
+    </div>
+    <div class="sb-brand-text">
+      <strong>Oron Union</strong>
+      <span>Admin Panel</span>
+    </div>
+  </div>
+
+  <nav class="sb-nav">
+    <div class="sb-group-label">Overview</div>
+    <button class="sb-link on" onclick="go('dashboard',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      <span>Dashboard</span>
+    </button>
+
+    <div class="sb-group-label">Members</div>
+    <button class="sb-link" onclick="go('applications',this)" id="nav-applications">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span>Applications</span>
+      <span class="sb-badge" id="sb-pending-count">0</span>
+    </button>
+
+    <div class="sb-group-label">Broadcast</div>
+    <button class="sb-link" onclick="go('streaming',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+      <span>Live Streaming</span>
+    </button>
+
+    <div class="sb-group-label">Content</div>
+    <button class="sb-link" onclick="go('media',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      <span>Media Library</span>
+    </button>
+    <button class="sb-link" onclick="go('exco',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/></svg>
+      <span>Branch Exco</span>
+    </button>
+  </nav>
+
+  <div class="sb-foot">
+    <button class="sb-link" onclick="doLogout()" style="color:rgba(255,255,255,0.45)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      <span>Logout</span>
+    </button>
+  </div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-title" id="topbar-title">Dashboard</div>
+    </div>
+    <div class="topbar-right">
+      <span class="pill" id="topbar-date"></span>
+      <button class="btn btn-ghost btn-sm" onclick="doLogout()">Sign out</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ════════════════ DASHBOARD ════════════════ -->
+    <div class="panel on" id="panel-dashboard">
+      <div class="stats-row">
+        <div class="stat">
+          <div class="stat-lbl">Total Applications</div>
+          <div class="stat-val" id="s-total">0</div>
+          <div class="stat-sub">All time</div>
+        </div>
+        <div class="stat s-pend">
+          <div class="stat-lbl">Pending Review</div>
+          <div class="stat-val" id="s-pend">0</div>
+          <div class="stat-sub">Awaiting decision</div>
+        </div>
+        <div class="stat s-ok">
+          <div class="stat-lbl">Active Members</div>
+          <div class="stat-val" id="s-ok">0</div>
+          <div class="stat-sub">Approved</div>
+        </div>
+        <div class="stat s-err">
+          <div class="stat-lbl">Rejected</div>
+          <div class="stat-val" id="s-err">0</div>
+          <div class="stat-sub">Declined</div>
+        </div>
+      </div>
+
+      <div class="dash-grid">
+        <div class="card">
+          <div class="card-head">
+            <h3>Recent Applications</h3>
+            <button class="btn btn-ghost btn-sm" onclick="go('applications', document.getElementById('nav-applications'))">View all</button>
+          </div>
+          <div style="overflow-x:auto">
+            <table class="tbl">
+              <thead>
+                <tr><th>Name</th><th>LGA</th><th>Endorser</th><th>Status</th><th>Date</th></tr>
+              </thead>
+              <tbody id="dash-recent"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="card">
+            <div class="card-head"><h3>Quick Actions</h3></div>
+            <div class="card-body" style="display:flex;flex-direction:column;gap:8px">
+              <button class="btn btn-primary btn-full" onclick="go('streaming', document.querySelectorAll('.sb-link')[3])">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+                Manage Live Stream
+              </button>
+              <button class="btn btn-ghost btn-full" onclick="go('applications', document.getElementById('nav-applications'))">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                Review Pending Applications
+              </button>
+              <button class="btn btn-ghost btn-full" onclick="go('media', document.querySelectorAll('.sb-link')[4])">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Upload Media
+              </button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h3>System Status</h3></div>
+            <div class="card-body" style="display:flex;flex-direction:column;gap:9px;font-size:0.82rem">
+              <div style="display:flex;align-items:center;gap:8px">
+                <span class="stream-dot" id="dash-stream-dot"></span>
+                <span id="dash-stream-lbl">No stream configured</span>
+              </div>
+              <div style="color:var(--muted)">
+                Media items: <strong id="dash-media-ct">0</strong>
+              </div>
+              <div style="color:var(--muted)">
+                Last updated: <strong id="dash-updated">—</strong>
+              </div>
+              <hr style="border:none;border-top:1px solid var(--border)">
+              <a href="index.html" target="_blank" class="btn btn-ghost btn-sm" style="align-self:flex-start">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                View live site
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════ APPLICATIONS ════════════════ -->
+    <div class="panel" id="panel-applications">
+      <div class="section-head">
+        <h2>Membership Applications</h2>
+        <button class="btn btn-ghost btn-sm" onclick="exportCSV()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export CSV
+        </button>
+      </div>
+
+      <div class="ftabs" id="app-ftabs">
+        <button class="ftab on" onclick="setFilter('all',this)">All</button>
+        <button class="ftab" onclick="setFilter('pending',this)">Pending</button>
+        <button class="ftab" onclick="setFilter('approved',this)">Approved</button>
+        <button class="ftab" onclick="setFilter('rejected',this)">Rejected</button>
+      </div>
+
+      <div class="search-bar">
+        <input type="search" class="fc" id="app-q" placeholder="Search name, LGA, member ID, clan…" oninput="renderApps()" />
+      </div>
+
+      <div class="card">
+        <div style="overflow-x:auto">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>Applicant</th>
+                <th>LGA</th>
+                <th>Clan</th>
+                <th>Endorser</th>
+                <th>Member ID</th>
+                <th>Status</th>
+                <th>Submitted</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="apps-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════ STREAMING ════════════════ -->
+    <div class="panel" id="panel-streaming">
+      <div class="section-head">
+        <h2>Live TV Streaming</h2>
+        <div style="display:flex;align-items:center;font-size:0.85rem;font-weight:600">
+          <span class="stream-dot" id="sv-dot"></span>
+          <span id="sv-label">Idle</span>
+        </div>
+      </div>
+
+      <div class="col2-stream">
+        <!-- Left: Preview -->
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div class="card">
+            <div class="card-head">
+              <h3>Live Preview</h3>
+              <div style="display:flex;gap:6px">
+                <button class="btn btn-ok btn-sm" onclick="streamPlay()">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                  Play
+                </button>
+                <button class="btn btn-ghost btn-sm" onclick="streamStop()">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                  Stop
+                </button>
+              </div>
+            </div>
+            <div class="card-body" style="padding:14px">
+              <div class="video-wrap" id="video-wrap">
+                <div class="video-placeholder" id="video-placeholder">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+                  <p>Enter a stream URL and press Play</p>
+                </div>
+                <video id="stream-video" controls playsinline style="display:none"></video>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Config -->
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="card">
+            <div class="card-head"><h3>Stream Configuration</h3></div>
+            <div class="card-body">
+              <div class="fg">
+                <label>HLS Stream URL (.m3u8)</label>
+                <input type="url" class="fc" id="sv-url" placeholder="https://example.com/live/stream.m3u8" />
+                <div class="hint">This URL is shared with the public Entertainment page and saved in the browser.</div>
+              </div>
+              <div style="display:flex;gap:8px">
+                <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="saveStream()">Save & Apply</button>
+                <button class="btn btn-ghost" onclick="clearStream()">Clear</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h3>Active URL</h3></div>
+            <div class="card-body">
+              <div id="sv-current" style="font-size:0.75rem;font-family:monospace;word-break:break-all;background:var(--beige);padding:10px;border-radius:6px;color:var(--muted)">No stream URL set</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-body" style="font-size:0.8rem;color:var(--muted);line-height:1.65">
+              <strong style="color:var(--text);display:block;margin-bottom:8px">Streaming tips</strong>
+              <ul style="padding-left:16px;display:flex;flex-direction:column;gap:5px">
+                <li>Use an HLS (.m3u8) URL from a streaming server, CDN, or re-stream service.</li>
+                <li>Re-stream services (Restream.io, Castr) can relay a YouTube Live or Facebook Live stream as HLS.</li>
+                <li>Test the URL using the preview player before going public.</li>
+                <li>The same URL auto-loads on the public <a href="entertainment.html" target="_blank" style="color:var(--red)">Entertainment page</a>.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════ MEDIA ════════════════ -->
+    <div class="panel" id="panel-media">
+      <div class="section-head">
+        <h2>Media Library</h2>
+        <span id="media-count-lbl" style="font-size:0.82rem;color:var(--muted)">0 items</span>
+      </div>
+
+      <div class="col2">
+        <div class="card">
+          <div class="card-head"><h3>Uploaded Media</h3></div>
+          <div class="card-body">
+            <div id="media-grid-wrap">
+              <div class="empty">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                <p>No media uploaded yet.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="position:sticky;top:70px">
+          <div class="card-head"><h3>Add Media</h3></div>
+          <div class="card-body">
+            <div class="fg">
+              <label>Title / Caption</label>
+              <input type="text" class="fc" id="m-title" placeholder="Enter a title" />
+            </div>
+            <div class="fg">
+              <label>Type</label>
+              <select class="fc" id="m-type">
+                <option value="photo">Photo</option>
+                <option value="video">Video</option>
+                <option value="audio">Audio</option>
+              </select>
+            </div>
+            <div class="fg">
+              <label>Upload file</label>
+              <input type="file" class="fc" id="m-file" accept="image/*,video/*,audio/*" />
+            </div>
+            <div class="fg">
+              <label>— or paste URL —</label>
+              <input type="url" class="fc" id="m-url" placeholder="https://…" />
+            </div>
+            <button class="btn btn-primary btn-full" onclick="addMedia()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add to Library
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════ EXCO ════════════════ -->
+    <div class="panel" id="panel-exco">
+      <div class="section-head">
+        <h2>Branch Executive Committees</h2>
+        <button class="btn btn-primary" onclick="saveExco()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          Save All
+        </button>
+      </div>
+      <div id="exco-wrap"></div>
+    </div>
+
+  </div>
+</main>
+
+<!-- ══ APP DETAIL MODAL ══ -->
+<div class="overlay" id="app-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="modal-name">Application</h3>
+      <button class="modal-x" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-foot" id="modal-foot"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ══════════════════════════════════════════
+   AUTH
+══════════════════════════════════════════ */
+var CODE = 'b3JvbjE5MjU=';
+
+function doLogin() {
+  var v = document.getElementById('admin-code').value.trim();
+  if (btoa(v) === CODE) {
+    document.getElementById('login-gate').style.display = 'none';
+    boot();
+  } else {
+    var e = document.getElementById('login-err');
+    e.style.display = 'block';
+    document.getElementById('admin-code').value = '';
+    setTimeout(function(){ e.style.display='none'; }, 3000);
+  }
+}
+document.getElementById('admin-code').addEventListener('keydown', function(e){ if(e.key==='Enter') doLogin(); });
+
+function doLogout() {
+  document.getElementById('login-gate').style.display = 'flex';
+  document.getElementById('admin-code').value = '';
+}
+
+/* ══════════════════════════════════════════
+   BOOT
+══════════════════════════════════════════ */
+function boot() {
+  document.getElementById('topbar-date').textContent =
+    new Date().toLocaleDateString('en-NG',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+  document.getElementById('dash-updated').textContent =
+    new Date().toLocaleTimeString('en-NG',{hour:'2-digit',minute:'2-digit'});
+  refreshStats();
+  renderRecent();
+  renderApps();
+  loadStreamPanel();
+  renderMedia();
+  buildExco();
+}
+
+/* ══════════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════════ */
+var TITLES = { dashboard:'Dashboard', applications:'Membership Applications', streaming:'Live TV Streaming', media:'Media Library', exco:'Branch Exco' };
+
+function go(id, btn) {
+  document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('on'); });
+  document.querySelectorAll('.sb-link').forEach(function(l){ l.classList.remove('on'); });
+  document.getElementById('panel-'+id).classList.add('on');
+  if (btn) btn.classList.add('on');
+  document.getElementById('topbar-title').textContent = TITLES[id] || id;
+}
+
+/* ══════════════════════════════════════════
+   DATA
+══════════════════════════════════════════ */
+function getApps() { try { return JSON.parse(localStorage.getItem('oron_applications')||'[]'); } catch(e){ return []; } }
+function putApps(d) { localStorage.setItem('oron_applications', JSON.stringify(d)); }
+
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function fdate(iso) {
+  if (!iso) return '—';
+  return new Date(iso).toLocaleDateString('en-NG',{day:'numeric',month:'short',year:'numeric'});
+}
+
+function endorserStr(a) {
+  if (a.endorserType === 'president-general') return 'President-General';
+  if (a.endorserType === 'branch-president')  return 'Branch President' + (a.endorserLga ? ' ('+a.endorserLga+')' : '');
+  if (a.endorserType === 'clan-rep')           return 'Clan Rep — ' + (a.endorserLga || '—');
+  return a.endorserLga || '—';
+}
+
+function statusBadge(s) {
+  var cls = s==='approved'?'badge-ok':s==='rejected'?'badge-err':'badge-pend';
+  return '<span class="badge '+cls+'">'+(s||'pending')+'</span>';
+}
+
+/* ══════════════════════════════════════════
+   STATS
+══════════════════════════════════════════ */
+function refreshStats() {
+  var apps = getApps();
+  var pend = apps.filter(function(a){return a.status==='pending';}).length;
+  document.getElementById('s-total').textContent = apps.length;
+  document.getElementById('s-pend').textContent  = pend;
+  document.getElementById('s-ok').textContent    = apps.filter(function(a){return a.status==='approved';}).length;
+  document.getElementById('s-err').textContent   = apps.filter(function(a){return a.status==='rejected';}).length;
+  document.getElementById('sb-pending-count').textContent = pend;
+
+  var meta = [];
+  try { meta = JSON.parse(localStorage.getItem('oron_media')||'[]'); } catch(e){}
+  document.getElementById('dash-media-ct').textContent = meta.length;
+
+  var url = localStorage.getItem('oron_tv_stream_url')||'';
+  var dot = document.getElementById('dash-stream-dot');
+  var lbl = document.getElementById('dash-stream-lbl');
+  if (url) { dot.className='stream-dot live'; lbl.textContent='Stream URL configured'; }
+  else { dot.className='stream-dot'; lbl.textContent='No stream configured'; }
+}
+
+/* ══════════════════════════════════════════
+   RECENT (dashboard)
+══════════════════════════════════════════ */
+function renderRecent() {
+  var apps = getApps().slice(-6).reverse();
+  var el   = document.getElementById('dash-recent');
+  if (!apps.length) {
+    el.innerHTML = '<tr><td colspan="5"><div class="empty" style="padding:16px"><p>No applications yet.</p></div></td></tr>';
+    return;
+  }
+  el.innerHTML = apps.map(function(a){
+    return '<tr><td><strong>'+esc((a.firstname||'')+' '+(a.lastname||''))+'</strong></td>'+
+      '<td>'+esc(a.lga||'—')+'</td>'+
+      '<td style="font-size:0.76rem">'+esc(endorserStr(a))+'</td>'+
+      '<td>'+statusBadge(a.status)+'</td>'+
+      '<td style="font-size:0.76rem;color:var(--muted)">'+fdate(a.submittedAt)+'</td></tr>';
+  }).join('');
+}
+
+/* ══════════════════════════════════════════
+   APPLICATIONS TABLE
+══════════════════════════════════════════ */
+var curFilter = 'all';
+
+function setFilter(f, btn) {
+  curFilter = f;
+  document.querySelectorAll('#app-ftabs .ftab').forEach(function(t){t.classList.remove('on');});
+  btn.classList.add('on');
+  renderApps();
+}
+
+function renderApps() {
+  var apps = getApps();
+  var q    = (document.getElementById('app-q').value||'').toLowerCase();
+  var list = apps.filter(function(a){
+    if (curFilter !== 'all' && a.status !== curFilter) return false;
+    if (q) {
+      var hay = [(a.firstname||''),(a.lastname||''),(a.lga||''),(a.clan||''),(a.memberId||''),(a.email||'')].join(' ').toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+
+  var body = document.getElementById('apps-body');
+  if (!list.length) {
+    body.innerHTML = '<tr><td colspan="8"><div class="empty" style="padding:24px"><p>No results.</p></div></td></tr>';
+    return;
+  }
+
+  body.innerHTML = list.map(function(a){
+    var acts = '';
+    if (a.status === 'pending') {
+      acts += '<button class="btn btn-ok btn-sm" style="margin-right:4px" onclick="approveApp(\''+esc(a.ref)+'\')">Approve</button>';
+      acts += '<button class="btn btn-danger btn-sm" style="margin-right:4px" onclick="rejectApp(\''+esc(a.ref)+'\')">Reject</button>';
+    }
+    acts += '<button class="btn btn-ghost btn-sm" onclick="viewApp(\''+esc(a.ref)+'\')">View</button>';
+
+    return '<tr>'+
+      '<td><strong>'+esc((a.firstname||'')+' '+(a.lastname||''))+'</strong>'+
+        '<div style="font-size:0.72rem;color:var(--muted)">'+esc(a.email||'')+'</div></td>'+
+      '<td>'+esc(a.lga||'—')+'</td>'+
+      '<td>'+esc(a.clan||'—')+'</td>'+
+      '<td style="font-size:0.78rem">'+esc(endorserStr(a))+'</td>'+
+      '<td style="font-family:monospace;font-size:0.78rem">'+esc(a.memberId||'—')+'</td>'+
+      '<td>'+statusBadge(a.status)+'</td>'+
+      '<td style="font-size:0.76rem;color:var(--muted)">'+fdate(a.submittedAt)+'</td>'+
+      '<td style="white-space:nowrap">'+acts+'</td>'+
+    '</tr>';
+  }).join('');
+}
+
+function approveApp(ref) {
+  var apps = getApps();
+  var i = apps.findIndex(function(a){return a.ref===ref;});
+  if (i===-1) return;
+  var yr  = new Date().getFullYear();
+  var seq = String(apps.filter(function(a){return a.status==='approved';}).length+1).padStart(4,'0');
+  apps[i].status     = 'approved';
+  apps[i].memberId   = 'ORO-'+yr+'-'+seq;
+  apps[i].approvedAt = new Date().toISOString();
+  putApps(apps);
+  refreshStats(); renderApps(); renderRecent();
+  toast('Approved — '+apps[i].memberId, 'ok');
+}
+
+function rejectApp(ref) {
+  if (!confirm('Reject this application? This cannot be undone easily.')) return;
+  var apps = getApps();
+  var i = apps.findIndex(function(a){return a.ref===ref;});
+  if (i===-1) return;
+  apps[i].status = 'rejected';
+  putApps(apps);
+  refreshStats(); renderApps(); renderRecent();
+  toast('Application rejected.', 'err');
+}
+
+function viewApp(ref) {
+  var app = getApps().find(function(a){return a.ref===ref;});
+  if (!app) return;
+  var name = [(app.title||''),(app.firstname||''),(app.lastname||'')].filter(Boolean).join(' ');
+  document.getElementById('modal-name').textContent = name || 'Application';
+
+  var photoEl = app.photo
+    ? '<img src="'+app.photo+'" style="width:72px;height:72px;border-radius:10px;object-fit:cover;border:1px solid var(--border)" />'
+    : '<div style="width:72px;height:72px;border-radius:10px;background:var(--beige);display:flex;align-items:center;justify-content:center;font-size:28px;border:1px solid var(--border)">👤</div>';
+
+  document.getElementById('modal-body').innerHTML =
+    '<div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:20px">'+photoEl+
+    '<div><div style="font-size:1.05rem;font-weight:800">'+esc(name)+'</div>'+
+    '<div style="font-size:0.8rem;color:var(--muted);margin-top:2px">'+esc(app.email||'—')+' · '+esc(app.phone||'—')+'</div>'+
+    '<div style="margin-top:7px">'+statusBadge(app.status)+'</div>'+
+    (app.memberId?'<div style="font-family:monospace;font-size:0.8rem;margin-top:5px;color:var(--muted)">'+esc(app.memberId)+'</div>':'')+'</div></div>'+
+    '<div class="detail-grid">'+
+      drow('LGA', app.lga)+drow('Clan', app.clan)+drow('State of Origin', app.stateOrigin)+
+      drow('Date of Birth', app.dob)+drow('Gender', app.gender)+drow('Marital Status', app.marital)+
+      drow('Occupation', app.occupation)+drow('Qualification', app.qualification)+
+      drow('Country', app.country)+drow('Phone', app.phone)+
+      drow('Endorser', endorserStr(app))+drow('Oron by Birth', app.byBirth==='yes'?'Yes':'No')+
+      (app.connection?drow('Connection', app.connection):'')+
+      drow('Reference', app.ref)+drow('Submitted', fdate(app.submittedAt))+
+      (app.approvedAt?drow('Approved', fdate(app.approvedAt)):'')+
+    '</div>';
+
+  var foot = '<button class="btn btn-ghost" onclick="closeModal()">Close</button>';
+  if (app.status==='pending') {
+    foot = '<button class="btn btn-danger" onclick="rejectApp(\''+esc(app.ref)+'\');closeModal()">Reject</button>'+
+           '<button class="btn btn-ok" onclick="approveApp(\''+esc(app.ref)+'\');closeModal()">Approve</button>';
+  }
+  document.getElementById('modal-foot').innerHTML = foot;
+  document.getElementById('app-modal').classList.add('on');
+}
+
+function drow(k,v) {
+  return '<div class="ditem"><div class="dk">'+esc(k)+'</div><div class="dv">'+esc(v||'—')+'</div></div>';
+}
+
+function closeModal() { document.getElementById('app-modal').classList.remove('on'); }
+document.getElementById('app-modal').addEventListener('click', function(e){ if(e.target===this) closeModal(); });
+
+/* ══════════════════════════════════════════
+   EXPORT CSV
+══════════════════════════════════════════ */
+function exportCSV() {
+  var apps = getApps();
+  if (!apps.length) { toast('No data to export.','err'); return; }
+  var cols = ['ref','memberId','title','firstname','lastname','email','phone','lga','clan','stateOrigin','gender','dob','marital','occupation','qualification','country','endorserType','endorserLga','status','submittedAt','approvedAt'];
+  var csv = cols.join(',')+'\n'+apps.map(function(a){
+    return cols.map(function(c){ return '"'+String(a[c]||'').replace(/"/g,'""')+'"'; }).join(',');
+  }).join('\n');
+  var a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download = 'oron-members-'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+  toast('CSV exported.','ok');
+}
+
+/* ══════════════════════════════════════════
+   STREAMING
+══════════════════════════════════════════ */
+var hlsInst = null;
+
+function loadStreamPanel() {
+  var url = localStorage.getItem('oron_tv_stream_url')||'';
+  document.getElementById('sv-url').value = url;
+  document.getElementById('sv-current').textContent = url || 'No stream URL set';
+  setStreamStatus(url ? 'idle' : 'off');
+}
+
+function saveStream() {
+  var url = document.getElementById('sv-url').value.trim();
+  if (url) { localStorage.setItem('oron_tv_stream_url', url); }
+  else { localStorage.removeItem('oron_tv_stream_url'); }
+  document.getElementById('sv-current').textContent = url || 'No stream URL set';
+  refreshStats();
+  toast('Stream URL saved.','ok');
+  if (url) streamPlay();
+}
+
+function clearStream() {
+  document.getElementById('sv-url').value = '';
+  localStorage.removeItem('oron_tv_stream_url');
+  document.getElementById('sv-current').textContent = 'No stream URL set';
+  streamStop(); refreshStats();
+  toast('Stream URL cleared.');
+}
+
+function streamPlay() {
+  var url = document.getElementById('sv-url').value.trim() || localStorage.getItem('oron_tv_stream_url')||'';
+  if (!url) { toast('No stream URL set.','err'); return; }
+  streamStop();
+  var video = document.getElementById('stream-video');
+  document.getElementById('video-placeholder').style.display = 'none';
+  video.style.display = 'block';
+
+  if (Hls.isSupported()) {
+    hlsInst = new Hls({ enableWorker: true });
+    hlsInst.loadSource(url);
+    hlsInst.attachMedia(video);
+    hlsInst.on(Hls.Events.MANIFEST_PARSED, function(){ video.play(); setStreamStatus('live'); });
+    hlsInst.on(Hls.Events.ERROR, function(e,d){ if(d.fatal){ setStreamStatus('error'); toast('Stream error: '+d.type,'err'); }});
+  } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+    video.src = url; video.play(); setStreamStatus('live');
+  } else {
+    toast('HLS not supported in this browser.','err');
+  }
+}
+
+function streamStop() {
+  var video = document.getElementById('stream-video');
+  if (hlsInst) { hlsInst.destroy(); hlsInst = null; }
+  video.pause(); video.src = ''; video.style.display = 'none';
+  document.getElementById('video-placeholder').style.display = 'flex';
+  setStreamStatus('off');
+}
+
+function setStreamStatus(s) {
+  var dot = document.getElementById('sv-dot');
+  var lbl = document.getElementById('sv-label');
+  dot.className = 'stream-dot' + (s==='live'?' live':s==='error'?' error':'');
+  lbl.textContent = s==='live'?'Live':s==='error'?'Stream error':s==='idle'?'URL set — press Play to test':'Idle';
+}
+
+/* ══════════════════════════════════════════
+   MEDIA
+══════════════════════════════════════════ */
+function getMeta(){ try{return JSON.parse(localStorage.getItem('oron_media')||'[]');}catch(e){return[];} }
+function putMeta(m){ localStorage.setItem('oron_media',JSON.stringify(m)); }
+
+function renderMedia() {
+  var meta = getMeta();
+  var lbl  = document.getElementById('media-count-lbl');
+  if (lbl) lbl.textContent = meta.length + ' item'+(meta.length!==1?'s':'');
+  var wrap = document.getElementById('media-grid-wrap');
+  if (!meta.length) {
+    wrap.innerHTML = '<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><p>No media uploaded yet.</p></div>';
+    return;
+  }
+  var grid = '<div class="media-grid">' + meta.map(function(m){
+    var preview = m.type==='video'
+      ? '<video src="'+esc(m.url||'')+'" preload="none"></video>'
+      : m.type==='audio'
+      ? '<div style="height:110px;display:flex;align-items:center;justify-content:center;background:#f0ede6"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="1.5"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>'
+      : '<img src="'+esc(m.url||'')+'" alt="'+esc(m.title||'')+'" loading="lazy" onerror="this.style.background=\'var(--beige)\'" />';
+    return '<div class="media-item">'+preview+
+      '<button class="media-del" onclick="delMedia(\''+m.id+'\')" title="Delete">×</button>'+
+      '<div class="media-item-info"><div class="media-item-name">'+esc(m.title||'Untitled')+'</div>'+
+      '<div class="media-item-meta">'+esc(m.type||'photo')+' · '+fdate(m.addedAt)+'</div></div></div>';
+  }).join('')+'</div>';
+  wrap.innerHTML = grid;
+}
+
+function addMedia() {
+  var title = document.getElementById('m-title').value.trim();
+  var type  = document.getElementById('m-type').value;
+  var file  = document.getElementById('m-file').files[0];
+  var url   = document.getElementById('m-url').value.trim();
+  if (!title) { toast('Enter a title.','err'); return; }
+  if (!file && !url) { toast('Select a file or enter a URL.','err'); return; }
+  var meta = getMeta();
+  var id   = 'md_'+Date.now();
+  if (file) {
+    var rd = new FileReader();
+    rd.onload = function(e){
+      meta.push({id:id,title:title,type:type,url:e.target.result,addedAt:new Date().toISOString()});
+      putMeta(meta); clearMediaForm(); renderMedia(); refreshStats();
+      toast('Media added.','ok');
+    };
+    rd.readAsDataURL(file);
+  } else {
+    meta.push({id:id,title:title,type:type,url:url,addedAt:new Date().toISOString()});
+    putMeta(meta); clearMediaForm(); renderMedia(); refreshStats();
+    toast('Media added.','ok');
+  }
+}
+
+function delMedia(id) {
+  if (!confirm('Delete this media item?')) return;
+  putMeta(getMeta().filter(function(m){return m.id!==id;}));
+  renderMedia(); refreshStats();
+  toast('Deleted.');
+}
+
+function clearMediaForm() {
+  document.getElementById('m-title').value='';
+  document.getElementById('m-url').value='';
+  document.getElementById('m-file').value='';
+}
+
+/* ══════════════════════════════════════════
+   BRANCH EXCO
+══════════════════════════════════════════ */
+var BRANCHES = [
+  {id:'oron',         lbl:'Oron LGA'},
+  {id:'urueoffong',   lbl:'Urueoffong / Oruko'},
+  {id:'okobo',        lbl:'Okobo'},
+  {id:'mbo',          lbl:'Mbo'},
+  {id:'udunguko',     lbl:'Udunguko'},
+  {id:'lagos',        lbl:'Lagos (Domestic)'},
+  {id:'abuja',        lbl:'Abuja (Domestic)'},
+  {id:'portharcourt', lbl:'Port Harcourt (Domestic)'},
+  {id:'kano',         lbl:'Kano (Domestic)'},
+  {id:'usa',          lbl:'USA Chapter'},
+  {id:'uk',           lbl:'UK Chapter'},
+  {id:'canada',       lbl:'Canada Chapter'},
+  {id:'germany',      lbl:'Germany Chapter'},
+  {id:'australia',    lbl:'Australia Chapter'}
+];
+
+var POSITIONS = [
+  {key:'president',          lbl:'Branch President'},
+  {key:'vice-president',     lbl:'Vice President'},
+  {key:'secretary',          lbl:'Secretary'},
+  {key:'asst-secretary',     lbl:'Asst. Secretary'},
+  {key:'treasurer',          lbl:'Treasurer'},
+  {key:'financial-secretary',lbl:'Financial Secretary'},
+  {key:'pro',                lbl:'Public Relations Officer'}
+];
+
+function getExcoData(){ try{return JSON.parse(localStorage.getItem('oron_branch_exco')||'{}');}catch(e){return{};} }
+
+function buildExco() {
+  var data = getExcoData();
+  var wrap = document.getElementById('exco-wrap');
+  wrap.innerHTML = BRANCHES.map(function(b){
+    var bd = data[b.id]||{};
+    var fields = POSITIONS.map(function(p){
+      return '<div class="fg"><label>'+esc(p.lbl)+'</label>'+
+        '<input type="text" class="fc" data-branch="'+b.id+'" data-pos="'+p.key+'" value="'+esc(bd[p.key]||'')+'" placeholder="Full name" /></div>';
+    }).join('');
+    return '<div class="exco-block" id="exco-'+b.id+'">'+
+      '<div class="exco-head" onclick="toggleExco(\''+b.id+'\')">'+
+        '<span>'+esc(b.lbl)+'</span>'+
+        '<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="6 9 12 15 18 9"/></svg>'+
+      '</div>'+
+      '<div class="exco-body"><div class="exco-pos-grid">'+fields+'</div></div>'+
+    '</div>';
+  }).join('');
+}
+
+function toggleExco(id){ document.getElementById('exco-'+id).classList.toggle('open'); }
+
+function saveExco() {
+  var data = getExcoData();
+  document.querySelectorAll('.fc[data-branch]').forEach(function(el){
+    var b = el.dataset.branch, p = el.dataset.pos;
+    if (!data[b]) data[b]={};
+    data[b][p] = el.value.trim();
+  });
+  localStorage.setItem('oron_branch_exco', JSON.stringify(data));
+  toast('Exco records saved.','ok');
+}
+
+/* ══════════════════════════════════════════
+   TOAST
+══════════════════════════════════════════ */
+var _tt;
+function toast(msg, type) {
+  var el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'show'+(type?' t-'+type:'');
+  clearTimeout(_tt);
+  _tt = setTimeout(function(){ el.className=''; }, 3000);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Endorser Portal — Oron Union</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    body { background: var(--beige); font-family: 'Inter', sans-serif; padding-top: 80px; }
+
+    /* ── Login gate ── */
+    #portal-gate {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      background: var(--maroon); padding: 20px;
+      background-image: radial-gradient(ellipse at 20% 40%, rgba(128,0,32,0.6) 0%, transparent 55%);
+    }
+    .portal-login-box {
+      background: var(--white); border-radius: 20px; padding: 44px 40px;
+      max-width: 420px; width: 100%;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.4);
+      animation: auth-in 0.5s cubic-bezier(0.22,1,0.36,1) both;
+    }
+    @keyframes auth-in { from { opacity:0; transform: translateY(20px) scale(0.97); } to { opacity:1; transform:none; } }
+    .portal-login-box .pl-logo { width: 60px; height: 60px; margin: 0 auto 18px; display: block; object-fit: contain; filter: drop-shadow(0 4px 10px rgba(128,0,32,0.25)); }
+    .portal-login-box h2 { font-family: 'Playfair Display', Georgia, serif; font-size: 1.4rem; font-weight: 700; text-align: center; color: var(--black); margin-bottom: 6px; }
+    .portal-login-box p { font-size: 0.82rem; color: var(--gray); text-align: center; margin-bottom: 28px; line-height: 1.5; }
+    .pl-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+    .pl-field label { font-size: 0.78rem; font-weight: 600; color: #555; }
+    .pl-field select, .pl-field input {
+      padding: 11px 14px; border: 1.5px solid var(--card-border); border-radius: 10px;
+      font-size: 0.9rem; font-family: inherit; outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .pl-field select:focus, .pl-field input:focus { border-color: var(--red); box-shadow: 0 0 0 3px rgba(128,0,32,0.1); }
+    .pl-btn {
+      width: 100%; padding: 13px; background: var(--red); color: var(--white); border: none;
+      border-radius: 10px; font-size: 0.92rem; font-weight: 600; cursor: pointer;
+      margin-top: 4px; transition: background 0.2s;
+    }
+    .pl-btn:hover { background: var(--red-hover); }
+    .pl-error { font-size: 0.8rem; color: #dc2626; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 8px 12px; margin-top: 10px; display: none; }
+
+    /* ── Portal main ── */
+    #portal-main { display: none; max-width: 1100px; margin: 0 auto; padding: 32px 24px 80px; }
+    .portal-topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--white); border-radius: 14px; padding: 18px 24px;
+      margin-bottom: 28px; box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+      border: 1px solid var(--card-border);
+    }
+    .portal-topbar-left h2 { font-family: 'Playfair Display', Georgia, serif; font-size: 1.2rem; font-weight: 700; color: var(--black); }
+    .portal-topbar-left p { font-size: 0.8rem; color: var(--gray); margin-top: 2px; }
+    .portal-role-badge { background: rgba(128,0,32,0.08); color: var(--red); border: 1px solid rgba(128,0,32,0.2); border-radius: 100px; padding: 5px 14px; font-size: 0.75rem; font-weight: 700; }
+    .portal-logout { background: none; border: 1.5px solid var(--card-border); border-radius: 8px; padding: 7px 14px; font-size: 0.8rem; color: var(--gray); cursor: pointer; }
+    .portal-logout:hover { border-color: var(--red); color: var(--red); }
+
+    /* ── Filter tabs ── */
+    .filter-tabs { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+    .ftab { padding: 8px 18px; border: 1.5px solid var(--card-border); border-radius: 100px; font-size: 0.8rem; font-weight: 600; color: var(--gray); cursor: pointer; background: var(--white); transition: all 0.2s; }
+    .ftab.active { background: var(--red); border-color: var(--red); color: var(--white); }
+
+    /* ── Applications list ── */
+    .apps-list { display: flex; flex-direction: column; gap: 16px; }
+    .app-card {
+      background: var(--white); border: 1px solid var(--card-border); border-radius: 16px;
+      overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      transition: box-shadow 0.2s;
+    }
+    .app-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,0.1); }
+    .app-card-header {
+      display: flex; align-items: center; gap: 16px;
+      padding: 18px 22px; border-bottom: 1px solid var(--card-border);
+      cursor: pointer;
+    }
+    .app-avatar {
+      width: 48px; height: 48px; border-radius: 50%; object-fit: cover;
+      border: 2px solid var(--card-border); flex-shrink: 0; background: var(--beige);
+      display: flex; align-items: center; justify-content: center; overflow: hidden;
+    }
+    .app-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .app-avatar-initials { font-weight: 700; font-size: 1rem; color: var(--red); }
+    .app-info { flex: 1; min-width: 0; }
+    .app-name { font-weight: 700; font-size: 0.95rem; color: var(--black); }
+    .app-meta { font-size: 0.75rem; color: var(--gray); margin-top: 2px; }
+    .app-ref { font-size: 0.72rem; color: var(--gray); font-family: 'Cinzel', serif; }
+    .app-status { padding: 4px 12px; border-radius: 100px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; flex-shrink: 0; }
+    .status-pending  { background: #fef9c3; color: #854d0e; border: 1px solid #fde68a; }
+    .status-approved { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+    .status-rejected { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+
+    /* ── Expanded biodata ── */
+    .app-body { display: none; padding: 22px; border-top: 1px solid var(--card-border); }
+    .app-card.open .app-body { display: block; }
+    .biodata-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px 24px; margin-bottom: 20px; }
+    .bd-item .bd-key { font-size: 0.68rem; font-weight: 600; color: var(--gray); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 2px; }
+    .bd-item .bd-val { font-size: 0.875rem; color: var(--black); font-weight: 500; }
+    .bd-photo-wrap { display: flex; gap: 24px; align-items: flex-start; margin-bottom: 20px; }
+    .bd-photo { width: 80px; height: 80px; border-radius: 10px; object-fit: cover; border: 2px solid var(--card-border); flex-shrink: 0; }
+    .bd-bio-text { font-size: 0.82rem; color: var(--gray); line-height: 1.6; flex: 1; }
+
+    /* ── Action buttons ── */
+    .app-actions { display: flex; gap: 10px; padding-top: 18px; border-top: 1px solid var(--card-border); margin-top: 18px; }
+    .btn-approve {
+      flex: 1; padding: 11px; background: #15803d; color: var(--white); border: none;
+      border-radius: 10px; font-size: 0.875rem; font-weight: 600; cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-approve:hover { background: #166534; }
+    .btn-reject {
+      flex: 1; padding: 11px; background: none; color: #dc2626;
+      border: 1.5px solid #fecaca; border-radius: 10px; font-size: 0.875rem;
+      font-weight: 600; cursor: pointer; transition: background 0.2s;
+    }
+    .btn-reject:hover { background: #fef2f2; }
+    .reject-reason { width: 100%; padding: 10px 14px; border: 1.5px solid #fecaca; border-radius: 10px; font-family: inherit; font-size: 0.875rem; outline: none; resize: none; margin-top: 8px; display: none; }
+    .member-id-issued { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 14px 18px; color: #15803d; font-size: 0.85rem; font-weight: 600; }
+    .member-id-issued span { font-family: 'Cinzel', serif; font-size: 1.1rem; display: block; margin-top: 4px; color: #166534; }
+
+    .empty-state { text-align: center; padding: 60px 24px; color: var(--gray); }
+    .empty-state svg { width: 48px; height: 48px; stroke: var(--card-border); margin: 0 auto 16px; display: block; }
+    .empty-state p { font-size: 0.9rem; }
+
+    @media (max-width: 600px) {
+      .biodata-grid { grid-template-columns: 1fr 1fr; }
+      .app-actions { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Minimal navbar ── -->
+<nav class="navbar scrolled" style="position:fixed;top:0;left:0;right:0;z-index:999;">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">
+      <img src="logo.png" alt="Oron Union" style="width:40px;height:40px;object-fit:contain;" />
+      <div class="nav-logo-text"><strong>Oron Union</strong><span>Endorser Portal</span></div>
+    </a>
+    <a href="index.html" style="font-size:0.82rem;color:var(--gray);text-decoration:none;">&larr; Main Site</a>
+  </div>
+</nav>
+
+<!-- ══ LOGIN GATE ══ -->
+<div id="portal-gate">
+  <div class="portal-login-box">
+    <a href="index.html" class="pl-logo-link"><img src="logo.png" alt="Oron Union" class="pl-logo" /></a>
+    <h2>Endorser Portal</h2>
+    <p>For authorised Oron Union officials only. Enter your role and access code to review pending membership applications.</p>
+    <div class="pl-field">
+      <label>Your Role</label>
+      <select id="portal-role">
+        <option value="">Select your role</option>
+        <optgroup label="Executive">
+          <option value="president-general">President-General</option>
+        </optgroup>
+        <optgroup label="Branch Presidents">
+          <option value="branch-president">Branch President</option>
+        </optgroup>
+        <optgroup label="Clan Representatives">
+          <option value="cr-Afaha Ukwong">Clan Representative — Afaha Ukwong</option>
+          <option value="cr-Afaha Ibighi">Clan Representative — Afaha Ibighi</option>
+          <option value="cr-Afaha Oki-uso">Clan Representative — Afaha Oki-uso</option>
+          <option value="cr-Afaha Idua">Clan Representative — Afaha Idua</option>
+          <option value="cr-Afaha Okpo">Clan Representative — Afaha Okpo</option>
+          <option value="cr-Afaha Ubodung">Clan Representative — Afaha Ubodung</option>
+          <option value="cr-Ebughu">Clan Representative — Ebughu</option>
+          <option value="cr-Effiat">Clan Representative — Effiat</option>
+          <option value="cr-Etta">Clan Representative — Etta</option>
+        </optgroup>
+      </select>
+    </div>
+    <div class="pl-field">
+      <label>Access Code</label>
+      <input type="password" id="portal-pin" placeholder="Enter access code" />
+    </div>
+    <div id="pl-error" class="pl-error">Incorrect role or access code.</div>
+    <button class="pl-btn" onclick="portalLogin()">Access Portal &rarr;</button>
+    <p style="margin-top:16px;font-size:0.72rem;color:var(--gray);text-align:center;">Demo code: <strong>oron1925</strong> (all roles)</p>
+  </div>
+</div>
+
+<!-- ══ PORTAL MAIN ══ -->
+<div id="portal-main">
+  <div class="portal-topbar">
+    <div class="portal-topbar-left">
+      <h2>Pending Applications</h2>
+      <p id="portal-subtitle">Reviewing all pending applications</p>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <span class="portal-role-badge" id="portal-role-badge">Role</span>
+      <button class="portal-logout" onclick="portalLogout()">Sign Out</button>
+    </div>
+  </div>
+
+  <div class="filter-tabs">
+    <button class="ftab active" onclick="filterApps('pending',this)">Pending</button>
+    <button class="ftab" onclick="filterApps('approved',this)">Approved</button>
+    <button class="ftab" onclick="filterApps('rejected',this)">Rejected</button>
+    <button class="ftab" onclick="filterApps('all',this)">All</button>
+  </div>
+
+  <div class="apps-list" id="apps-list"></div>
+</div>
+
+<script>
+(function () {
+  var DEMO_CODE = 'oron1925';
+  var currentRole = null;
+  var currentFilter = 'pending';
+
+  var LGA_CODES = {
+    'Oron': 'ORN', 'Urueoffong/Oruko': 'URO', 'Okobo': 'OKB', 'Mbo': 'MBO', 'Udunguko': 'UDG'
+  };
+
+  function getApps() {
+    try { return JSON.parse(localStorage.getItem('oron_applications') || '[]'); } catch (e) { return []; }
+  }
+  function saveApps(list) { localStorage.setItem('oron_applications', JSON.stringify(list)); }
+
+  window.portalLogin = function () {
+    var role = document.getElementById('portal-role').value;
+    var pin  = document.getElementById('portal-pin').value;
+    var err  = document.getElementById('pl-error');
+    if (!role || pin !== DEMO_CODE) { err.style.display = 'block'; return; }
+    err.style.display = 'none';
+    currentRole = role;
+    document.getElementById('portal-gate').style.display = 'none';
+    document.getElementById('portal-main').style.display = 'block';
+    var label, subtitle;
+    if (role === 'president-general') {
+      label    = 'President-General';
+      subtitle = 'Reviewing all applications endorsed to the President-General';
+    } else if (role === 'branch-president') {
+      label    = 'Branch President';
+      subtitle = 'Reviewing all Branch President endorsed membership applications';
+    } else if (role.startsWith('cr-')) {
+      label    = 'Clan Rep — ' + role.slice(3);
+      subtitle = 'Reviewing applications endorsed by the Clan Representative for ' + role.slice(3);
+    } else {
+      label = role; subtitle = 'Reviewing pending applications';
+    }
+    document.getElementById('portal-role-badge').textContent = label;
+    document.getElementById('portal-subtitle').textContent = subtitle;
+    renderApps();
+  };
+
+  window.portalLogout = function () {
+    currentRole = null;
+    document.getElementById('portal-gate').style.display = 'flex';
+    document.getElementById('portal-main').style.display = 'none';
+  };
+
+  window.filterApps = function (status, btn) {
+    currentFilter = status;
+    document.querySelectorAll('.ftab').forEach(function (t) { t.classList.remove('active'); });
+    btn.classList.add('active');
+    renderApps();
+  };
+
+  function renderApps() {
+    var all = getApps();
+
+    /* Filter by role */
+    var mine = all.filter(function (a) {
+      if (currentRole === 'president-general') {
+        return a.endorserType === 'president-general';
+      }
+      if (currentRole === 'branch-president') {
+        return a.endorserType === 'branch-president';
+      }
+      if (currentRole.startsWith('cr-')) {
+        var lga = currentRole.slice(3);
+        return a.endorserType === 'clan-rep' && a.endorserLga === lga;
+      }
+      return false;
+    });
+
+    /* Filter by status */
+    var shown = currentFilter === 'all' ? mine : mine.filter(function (a) { return a.status === currentFilter; });
+
+    var list = document.getElementById('apps-list');
+    if (!shown.length) {
+      list.innerHTML = '<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2z"/></svg><p>No ' + currentFilter + ' applications.</p></div>';
+      return;
+    }
+
+    list.innerHTML = shown.map(function (app, idx) { return buildCard(app, idx); }).join('');
+
+    list.querySelectorAll('.app-card-header').forEach(function (h) {
+      h.addEventListener('click', function () {
+        h.closest('.app-card').classList.toggle('open');
+      });
+    });
+
+    list.querySelectorAll('.btn-approve').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        approveApp(btn.dataset.ref);
+      });
+    });
+
+    list.querySelectorAll('.btn-reject').forEach(function (btn) {
+      var phase = 1;
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var card = btn.closest('.app-card');
+        var textarea = card.querySelector('.reject-reason');
+        if (phase === 1) {
+          textarea.style.display = 'block';
+          btn.textContent = 'Confirm Rejection';
+          phase = 2;
+        } else {
+          rejectApp(btn.dataset.ref, textarea.value);
+        }
+      });
+    });
+  }
+
+  function buildCard(app, idx) {
+    var initials = ((app.firstname || '?')[0] + (app.lastname || '?')[0]).toUpperCase();
+    var fullName = [app.title, app.firstname, app.lastname].filter(Boolean).join(' ');
+    var statusClass = 'status-' + app.status;
+
+    var bioDataHtml = [
+      ['Date of Birth', app.dob], ['Gender', app.gender], ['Marital Status', app.marital || '—'],
+      ['Place of Birth', app.placeofbirth], ['LGA', app.lga], ['Clan', app.clan],
+      ['Family / Compound', app.compound], ['Oron by Birth', app.byBirth === 'yes' ? 'Yes' : 'No'],
+      ['Phone', app.phone], ['Email', app.email], ['Country', app.country], ['State / Province', app.stateRes || '—'],
+      ['Occupation', app.occupation], ['Employer', app.employer || '—'], ['Qualification', app.qualification],
+      ['Endorser', app.endorserType === 'president-general' ? 'President-General' : app.endorserType === 'branch-president' ? 'Branch President (' + (app.endorserLga || '—') + ')' : app.endorserType === 'clan-rep' ? 'Clan Representative — ' + (app.endorserLga || '—') : (app.endorserLga || '—')],
+      ['Submitted', new Date(app.submittedAt).toLocaleDateString('en-NG')]
+    ].map(function (item) {
+      return '<div class="bd-item"><div class="bd-key">' + item[0] + '</div><div class="bd-val">' + (item[1] || '—') + '</div></div>';
+    }).join('');
+
+    var actionsHtml = '';
+    if (app.status === 'pending') {
+      actionsHtml = '<div class="app-actions">' +
+        '<button class="btn-approve" data-ref="' + app.ref + '">&#10003; Approve &amp; Issue Member ID</button>' +
+        '<button class="btn-reject" data-ref="' + app.ref + '">&#10007; Reject</button>' +
+        '</div><textarea class="reject-reason" rows="2" placeholder="Reason for rejection (optional)…"></textarea>';
+    } else if (app.status === 'approved') {
+      actionsHtml = '<div class="member-id-issued">Member ID Issued<span>' + app.memberId + '</span></div>';
+    } else if (app.status === 'rejected') {
+      actionsHtml = '<div style="color:#dc2626;font-size:0.82rem;padding-top:12px;border-top:1px solid var(--card-border);">Rejected' + (app.rejectReason ? ': ' + app.rejectReason : '') + '</div>';
+    }
+
+    var photoHtml = app.photo
+      ? '<img src="' + app.photo + '" alt="Photo" class="bd-photo" />'
+      : '<div class="bd-photo" style="display:flex;align-items:center;justify-content:center;color:var(--gray);font-size:0.7rem;">No photo</div>';
+
+    return '<div class="app-card" id="card-' + app.ref + '">' +
+      '<div class="app-card-header">' +
+        '<div class="app-avatar">' +
+          (app.photo ? '<img src="' + app.photo + '" alt="' + initials + '" />' : '<span class="app-avatar-initials">' + initials + '</span>') +
+        '</div>' +
+        '<div class="app-info">' +
+          '<div class="app-name">' + fullName + '</div>' +
+          '<div class="app-meta">' + (app.lga || '') + (app.occupation ? ' &middot; ' + app.occupation : '') + '</div>' +
+          '<div class="app-ref">' + app.ref + '</div>' +
+        '</div>' +
+        '<span class="app-status ' + statusClass + '">' + app.status + '</span>' +
+      '</div>' +
+      '<div class="app-body">' +
+        '<div class="bd-photo-wrap">' + photoHtml + '<div class="bd-bio-text">' + (app.bio || '<em>No bio provided</em>') + '</div></div>' +
+        '<div class="biodata-grid">' + bioDataHtml + '</div>' +
+        actionsHtml +
+      '</div>' +
+    '</div>';
+  }
+
+  function showToast(html, type) {
+    var el = document.getElementById('portal-toast');
+    if (!el) return;
+    var icon = type === 'error'
+      ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
+      : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:1px"><polyline points="20 6 9 17 4 12"/></svg>';
+    if (type === 'error') {
+      el.style.background = '#fef2f2'; el.style.border = '1px solid #fecaca'; el.style.color = '#dc2626';
+    } else {
+      el.style.background = '#f0fdf4'; el.style.border = '1px solid #bbf7d0'; el.style.color = '#15803d';
+    }
+    el.innerHTML = icon + '<div>' + html + '</div>';
+    el.style.transform = 'translateX(0)';
+    setTimeout(function () { el.style.transform = 'translateX(calc(100% + 40px))'; }, 5000);
+  }
+
+  function approveApp(ref) {
+    var apps = getApps();
+    var idx = apps.findIndex(function (a) { return a.ref === ref; });
+    if (idx === -1) return;
+    var app = apps[idx];
+    var memberId = generateMemberId(app.lga);
+    apps[idx].status = 'approved';
+    apps[idx].memberId = memberId;
+    apps[idx].approvedAt = new Date().toISOString();
+    apps[idx].approvedBy = currentRole;
+    try {
+      saveApps(apps);
+    } catch (e) {
+      showToast('Save failed — storage may be full. Try clearing browser data.', 'error');
+      return;
+    }
+    showToast('Application <strong>' + ref + '</strong> approved.<br>Member ID issued: <strong style="font-family:\'Cinzel\',serif;letter-spacing:0.05em;">' + memberId + '</strong>', 'success');
+    /* Switch to Approved tab so the user can see the issued ID */
+    currentFilter = 'approved';
+    document.querySelectorAll('.ftab').forEach(function (t) { t.classList.remove('active'); });
+    document.querySelectorAll('.ftab').forEach(function (t) { if (t.textContent.trim() === 'Approved') t.classList.add('active'); });
+    renderApps();
+  }
+
+  function rejectApp(ref, reason) {
+    var apps = getApps();
+    var idx = apps.findIndex(function (a) { return a.ref === ref; });
+    if (idx === -1) return;
+    apps[idx].status = 'rejected';
+    apps[idx].rejectReason = reason || '';
+    apps[idx].rejectedAt = new Date().toISOString();
+    try {
+      saveApps(apps);
+    } catch (e) {
+      showToast('Save failed — storage may be full.', 'error');
+      return;
+    }
+    showToast('Application <strong>' + ref + '</strong> rejected.', 'error');
+    currentFilter = 'rejected';
+    document.querySelectorAll('.ftab').forEach(function (t) { t.classList.remove('active'); });
+    document.querySelectorAll('.ftab').forEach(function (t) { if (t.textContent.trim() === 'Rejected') t.classList.add('active'); });
+    renderApps();
+  }
+
+  function generateMemberId(lga) {
+    var codes = { 'Oron': 'ORN', 'Urueoffong/Oruko': 'URO', 'Okobo': 'OKB', 'Mbo': 'MBO', 'Udunguko': 'UDG' };
+    var code = codes[lga] || 'GEN';
+    return 'OU-' + new Date().getFullYear() + '-' + code + '-' + String(Math.floor(Math.random() * 9000) + 1000);
+  }
+})();
+</script>
+
+<!-- ══ PORTAL TOAST ══ -->
+<div id="portal-toast" style="
+  position:fixed;top:88px;right:20px;z-index:9999;
+  max-width:380px;border-radius:12px;padding:16px 20px;
+  box-shadow:0 8px 30px rgba(0,0,0,0.18);font-size:0.875rem;font-weight:500;line-height:1.5;
+  display:flex;gap:12px;align-items:flex-start;
+  transform:translateX(calc(100% + 40px));
+  transition:transform 0.35s cubic-bezier(0.22,1,0.36,1);
+  pointer-events:none;
+"></div>
+
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+<script src="js/cursor.js"></script>
+</body>
+</html>

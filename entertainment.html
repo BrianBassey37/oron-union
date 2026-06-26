@@ -1,0 +1,755 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Entertainment — Oron Union</title>
+  <meta name="description" content="Oron Union entertainment hub: community events, cultural festivals, live TV broadcasts, and Oro indigenous music and videos." />
+  <link rel="icon" type="image/png" href="logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/inner.css" />
+  <style>
+    /* ── Live TV ── */
+    .tv-embed-wrap{background:#000;border-radius:14px;overflow:hidden;max-width:860px;margin:0 auto;position:relative;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;}
+    .tv-offline-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:rgba(255,255,255,.75);gap:16px;padding:40px;text-align:center;width:100%;}
+    #ent-live-video{width:100%;height:100%;display:none;position:absolute;inset:0;background:#000;}
+    .btn-watch-live{background:var(--red);color:#fff;border:none;border-radius:10px;padding:14px 36px;font-size:1rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;}
+    .btn-watch-live:hover{background:var(--red-hover);}
+    .tv-live-badge{display:inline-flex;align-items:center;gap:6px;background:#dc2626;color:#fff;border-radius:99px;padding:5px 14px;font-size:.75rem;font-weight:700;letter-spacing:.08em;}
+    .tv-live-dot{width:7px;height:7px;background:#fff;border-radius:50%;animation:blink 1s infinite;}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+    .tv-actions{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:20px;flex-wrap:wrap;}
+    .btn-tv-config{background:var(--beige);color:var(--black);border:1px solid #ddd;border-radius:8px;padding:10px 20px;font-size:.82rem;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;}
+    .btn-tv-config:hover{background:var(--beige-dark);}
+    .btn-tv-full{background:var(--maroon);color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:.82rem;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;font-family:Inter,sans-serif;}
+    .tv-cfg-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9999;align-items:center;justify-content:center;}
+    .tv-cfg-modal.open{display:flex;}
+    .tv-cfg-box{background:#fff;border-radius:16px;padding:32px;max-width:480px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.3);}
+    .tv-cfg-box h3{font-family:'Playfair Display',serif;margin:0 0 10px;color:var(--black);}
+    .tv-cfg-box p{font-size:.85rem;color:var(--gray);margin:0 0 16px;line-height:1.6;}
+    .tv-cfg-box input{width:100%;box-sizing:border-box;padding:10px 14px;border:1px solid #ddd;border-radius:8px;font-size:.9rem;margin-bottom:16px;font-family:Inter,sans-serif;}
+    .tv-cfg-btns{display:flex;gap:10px;justify-content:flex-end;}
+    .btn-tv-set{background:var(--red);color:#fff;border:none;border-radius:8px;padding:10px 24px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;}
+    .btn-tv-cancel{background:var(--beige);color:var(--black);border:none;border-radius:8px;padding:10px 24px;cursor:pointer;font-family:Inter,sans-serif;}
+    /* ── Media Library ── */
+    .media-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:20px;}
+    .media-card{background:var(--white);border:1px solid var(--card-border,#e8e4da);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;transition:box-shadow .25s,transform .25s;}
+    .media-card:hover{box-shadow:0 8px 32px rgba(0,0,0,.12);transform:translateY(-2px);}
+    .media-thumb{height:110px;display:flex;align-items:center;justify-content:center;position:relative;}
+    .media-thumb-audio{background:linear-gradient(135deg,var(--maroon),var(--red-deep,#3A000C));}
+    .media-thumb-video{background:linear-gradient(135deg,#0d1b2a,#1a3554);}
+    .media-type-badge{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.5);color:#fff;font-size:.65rem;font-weight:700;letter-spacing:.08em;padding:3px 8px;border-radius:99px;}
+    .media-card-body{padding:14px 18px;flex:1;}
+    .media-card-title{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;color:var(--black);margin-bottom:3px;line-height:1.3;}
+    .media-card-artist{font-size:.78rem;color:var(--red);font-weight:600;margin-bottom:6px;}
+    .media-card-desc{font-size:.78rem;color:var(--gray);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+    .media-card-actions{padding:10px 18px 14px;display:flex;gap:8px;border-top:1px solid var(--beige-dark,#E3DFD7);}
+    .btn-play-m,.btn-dl-m,.btn-del-m{border:none;border-radius:7px;padding:7px 13px;font-size:.78rem;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;transition:background .2s;}
+    .btn-play-m{background:var(--red);color:#fff;}
+    .btn-play-m:hover{background:var(--red-hover);}
+    .btn-dl-m{background:var(--beige);color:var(--black);}
+    .btn-dl-m:hover{background:var(--beige-dark);}
+    .btn-del-m{background:#fef2f2;color:#dc2626;margin-left:auto;}
+    .btn-del-m:hover{background:#fee2e2;}
+    #media-player-area{background:var(--maroon);border-radius:14px;padding:24px;margin-bottom:32px;display:none;}
+    .player-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+    #now-playing-title{color:#fff;font-family:'Playfair Display',serif;font-size:.95rem;}
+    .btn-close-player{background:rgba(255,255,255,.15);border:none;color:#fff;border-radius:50%;width:30px;height:30px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;}
+    #media-audio,#media-video{width:100%;border-radius:8px;margin-top:4px;}
+    #media-video{max-height:380px;background:#000;}
+    .media-empty{text-align:center;padding:60px 24px;color:var(--gray);}
+    .media-empty-icon{font-size:2.8rem;margin-bottom:14px;opacity:.35;}
+    /* Admin */
+    .media-admin-area{border-top:1px solid var(--beige-dark,#E3DFD7);padding-top:28px;margin-top:44px;text-align:center;}
+    .btn-admin-toggle{background:none;border:1px solid #ddd;color:var(--gray);border-radius:8px;padding:8px 20px;font-size:.78rem;cursor:pointer;font-family:Inter,sans-serif;}
+    .btn-admin-toggle:hover{border-color:var(--red);color:var(--red);}
+    .media-admin-panel{background:var(--beige);border-radius:14px;padding:28px;margin-top:16px;text-align:left;}
+    .media-admin-panel h4{font-family:'Playfair Display',serif;font-size:1.1rem;margin:0 0 18px;color:var(--black);}
+    .media-admin-panel input,.media-admin-panel textarea,.media-admin-panel select{display:block;width:100%;box-sizing:border-box;padding:10px 14px;border:1px solid #ddd;border-radius:8px;font-size:.88rem;margin-bottom:12px;font-family:Inter,sans-serif;background:#fff;}
+    .media-admin-panel textarea{resize:vertical;min-height:70px;}
+    .btn-add-media{background:var(--red);color:#fff;border:none;border-radius:8px;padding:11px 28px;font-size:.88rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;}
+    .btn-add-media:hover{background:var(--red-hover);}
+    #media-status{margin-top:12px;font-size:.83rem;padding:10px 14px;border-radius:8px;display:none;}
+    #media-status.ok{background:#f0fdf4;color:#15803d;display:block;}
+    #media-status.err{background:#fef2f2;color:#dc2626;display:block;}
+    .admin-file-or{text-align:center;color:var(--gray);font-size:.82rem;margin:4px 0;}
+    .upload-progress{width:100%;height:4px;background:#ddd;border-radius:2px;margin-top:8px;display:none;}
+    .upload-progress-bar{height:100%;background:var(--red);border-radius:2px;width:0;transition:width .3s;}
+  </style>
+</head>
+<body>
+
+<!-- ========== NAVBAR ========== -->
+<nav class="navbar" id="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">
+      <img src="logo.png" alt="Oron Union Crest" style="width:50px;height:50px;object-fit:contain;" />
+      <div class="nav-logo-text"><strong>Oron Union</strong><span>Unity &middot; Progress &middot; Heritage</span></div>
+    </a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="about.html">About <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4,6 8,10 12,6"/></svg></a>
+        <ul class="dropdown">
+          <li><a href="about.html#history">History</a></li>
+          <li><a href="about.html#mission">Mission &amp; Vision</a></li>
+          <li><a href="about.html#values">Core Values</a></li>
+          <li><a href="about.html#constitution">Constitution</a></li>
+          <li><a href="leadership.html#past">Past Leadership</a></li>
+          <li><a href="projects.html">Projects</a></li>
+        </ul>
+      </li>
+      <li><a href="culture.html">Culture &amp; Heritage <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4,6 8,10 12,6"/></svg></a>
+        <ul class="dropdown">
+          <li><a href="culture.html#history">History of Oron People</a></li>
+          <li><a href="culture.html#clans">Our Nine Clans</a></li>
+          <li><a href="culture.html#language">Language</a></li>
+          <li><a href="culture.html#festivals">Festivals &amp; Ceremonies</a></li>
+          <li><a href="culture.html#arts">Arts &amp; Crafts</a></li>
+          <li><a href="culture.html#folklore">Folklore &amp; Traditions</a></li>
+          <li><a href="culture.html#gallery">Photo Gallery</a></li>
+        </ul>
+      </li>
+      <li><a href="leadership.html">Leadership <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4,6 8,10 12,6"/></svg></a>
+        <ul class="dropdown">
+          <li><a href="leadership.html#executive">Central Executive Committee</a></li>
+          <li><a href="leadership.html#trustees">Board of Trustees</a></li>
+          <li><a href="leadership.html#cotr">Council of Oro Traditional Rulers</a></li>
+          <li><a href="leadership.html#structure">Org. Structure</a></li>
+          <li class="has-submenu"><a href="branches.html">Branches &amp; Chapters <svg class="chevron-right" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,4 10,8 6,12"/></svg></a>
+            <ul class="submenu">
+              <li><a href="branches.html#oron">Oron LGA</a></li>
+              <li><a href="branches.html#urueoffong">Urueoffong / Oruko</a></li>
+              <li><a href="branches.html#okobo">Okobo</a></li>
+              <li><a href="branches.html#mbo">Mbo</a></li>
+              <li><a href="branches.html#udunguko">Udunguko</a></li>
+              <li><a href="branches.html#domestic">Domestic Branches</a></li>
+              <li><a href="branches.html#international">International Chapters</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li><a href="entertainment.html" aria-current="page">Entertainment <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4,6 8,10 12,6"/></svg></a>
+        <ul class="dropdown">
+          <li><a href="entertainment.html#events">Upcoming Events</a></li>
+          <li><a href="entertainment.html#calendar">Event Calendar</a></li>
+          <li><a href="entertainment.html#festivals">Annual Festivals</a></li>
+          <li><a href="entertainment.html#livetv">Live TV</a></li>
+          <li><a href="entertainment.html#music">Music &amp; Videos</a></li>
+        </ul>
+      </li>
+      <li><a href="elections.html" class="nav-elections">Elections <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4,6 8,10 12,6"/></svg></a>
+        <ul class="dropdown">
+          <li><a href="elections.html">Member Voting Portal</a></li>
+          <li><a href="register.html">Apply for Membership</a></li>
+          <li><a href="endorser.html">Officials / Endorser Login</a></li>
+        </ul>
+      </li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="register.html" class="nav-join">Join Us</a></li>
+    </ul>
+    <div class="nav-mobile-toggle" id="menu-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></div>
+  </div>
+</nav>
+
+
+<!-- ========== HERO ========== -->
+<header class="ip-hero">
+  <div class="ip-hero-overlay"></div>
+  <div class="ip-hero-inner">
+    <span class="ip-hero-badge">Events &bull; Live TV &bull; Music &amp; Videos</span>
+    <h1 class="ip-hero-title">Entertainment</h1>
+    <p class="ip-hero-sub">Community gatherings, live broadcasts, cultural festivals and the music of the Oro Nation — all in one place.</p>
+  </div>
+</header>
+
+
+<!-- ========== UPCOMING EVENTS ========== -->
+<section class="ip-section" id="events" style="background:var(--white);padding:80px 0;">
+  <div class="ip-container" style="max-width:1100px;margin:0 auto;padding:0 24px;">
+    <h2 class="section-title reveal-scale">Upcoming Events</h2>
+    <div class="section-underline reveal-underline"></div>
+    <p class="section-sub reveal">Mark your calendars — important dates for the Oro community</p>
+
+    <div class="ip-grid-3" style="display:grid;grid-template-columns:repeat(3,1fr);gap:28px;">
+
+      <article class="event-card ip-card reveal" style="background:var(--white);border:1px solid var(--card-border);border-radius:14px;overflow:hidden;">
+        <div class="ip-card-img" style="position:relative;aspect-ratio:16/9;overflow:hidden;">
+          <img src="pictures/IMG-20260317-WA0060.jpg" alt="Annual General Meeting 2026" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.5s ease;" />
+          <div style="position:absolute;top:14px;left:14px;background:var(--red);color:#fff;border-radius:8px;padding:8px 12px;text-align:center;line-height:1.1;">
+            <span style="display:block;font-size:1.4rem;font-weight:700;font-family:'Playfair Display',serif;">15</span>
+            <span style="display:block;font-size:0.65rem;font-weight:700;letter-spacing:0.08em;">AUG</span>
+          </div>
+        </div>
+        <div class="ip-card-body" style="padding:22px;">
+          <span class="news-tag">AGM 2026</span>
+          <h3 style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;margin:10px 0 8px;color:var(--black);">Annual General Meeting</h3>
+          <p style="font-size:0.8rem;color:var(--red);font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:6px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Oron Town Hall, Oron City</p>
+          <p style="font-size:0.875rem;color:var(--gray);line-height:1.6;">The 2026 Annual General Meeting of the Oron Union. All registered members are invited to attend or vote online via the Member Portal.</p>
+        </div>
+      </article>
+
+      <article class="event-card ip-card reveal" style="background:var(--white);border:1px solid var(--card-border);border-radius:14px;overflow:hidden;">
+        <div class="ip-card-img" style="position:relative;aspect-ratio:16/9;overflow:hidden;">
+          <img src="pictures/IMG-20260317-WA0061.jpg" alt="Obon Festival 2026" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.5s ease;" />
+          <div style="position:absolute;top:14px;left:14px;background:var(--red);color:#fff;border-radius:8px;padding:8px 12px;text-align:center;line-height:1.1;">
+            <span style="display:block;font-size:1.4rem;font-weight:700;font-family:'Playfair Display',serif;">22</span>
+            <span style="display:block;font-size:0.65rem;font-weight:700;letter-spacing:0.08em;">AUG</span>
+          </div>
+        </div>
+        <div class="ip-card-body" style="padding:22px;">
+          <span class="news-tag" style="background:rgba(180,100,0,0.1);color:#b46400;">Cultural Festival</span>
+          <h3 style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;margin:10px 0 8px;color:var(--black);">Obon Festival 2026</h3>
+          <p style="font-size:0.8rem;color:var(--red);font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:6px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Oron City Cultural Centre</p>
+          <p style="font-size:0.875rem;color:var(--gray);line-height:1.6;">The annual Obon Festival celebrating Oro cultural heritage with masquerades, music, traditional dances and cultural exhibitions.</p>
+        </div>
+      </article>
+
+      <article class="event-card ip-card reveal" style="background:var(--white);border:1px solid var(--card-border);border-radius:14px;overflow:hidden;">
+        <div class="ip-card-img" style="position:relative;aspect-ratio:16/9;overflow:hidden;">
+          <img src="pictures/IMG-20260317-WA0062.jpg" alt="Youth Summit" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.5s ease;" />
+          <div style="position:absolute;top:14px;left:14px;background:var(--red);color:#fff;border-radius:8px;padding:8px 12px;text-align:center;line-height:1.1;">
+            <span style="display:block;font-size:1.4rem;font-weight:700;font-family:'Playfair Display',serif;">5</span>
+            <span style="display:block;font-size:0.65rem;font-weight:700;letter-spacing:0.08em;">SEP</span>
+          </div>
+        </div>
+        <div class="ip-card-body" style="padding:22px;">
+          <span class="news-tag" style="background:rgba(0,80,160,0.1);color:#004fa3;">Youth Summit</span>
+          <h3 style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;margin:10px 0 8px;color:var(--black);">Youth &amp; Future Forum</h3>
+          <p style="font-size:0.8rem;color:var(--red);font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:6px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Uyo, Akwa Ibom</p>
+          <p style="font-size:0.875rem;color:var(--gray);line-height:1.6;">A two-day summit for Oro youth to discuss education, entrepreneurship and career development.</p>
+        </div>
+      </article>
+
+      <article class="event-card ip-card reveal" style="background:var(--white);border:1px solid var(--card-border);border-radius:14px;overflow:hidden;">
+        <div class="ip-card-img" style="position:relative;aspect-ratio:16/9;overflow:hidden;">
+          <img src="pictures/IMG-20260317-WA0063.jpg" alt="UK Chapter Cultural Night" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.5s ease;" />
+          <div style="position:absolute;top:14px;left:14px;background:var(--red);color:#fff;border-radius:8px;padding:8px 12px;text-align:center;line-height:1.1;">
+            <span style="display:block;font-size:1.4rem;font-weight:700;font-family:'Playfair Display',serif;">20</span>
+            <span style="display:block;font-size:0.65rem;font-weight:700;letter-spacing:0.08em;">SEP</span>
+          </div>
+        </div>
+        <div class="ip-card-body" style="padding:22px;">
+          <span class="news-tag" style="background:rgba(120,0,160,0.1);color:#780096;">Diaspora</span>
+          <h3 style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;margin:10px 0 8px;color:var(--black);">UK Chapter Cultural Night</h3>
+          <p style="font-size:0.8rem;color:var(--red);font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:6px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>London, United Kingdom</p>
+          <p style="font-size:0.875rem;color:var(--gray);line-height:1.6;">Annual cultural night hosted by the Oron Union UK Chapter. Celebrating Oro heritage abroad.</p>
+        </div>
+      </article>
+
+      <article class="event-card ip-card reveal" style="background:var(--white);border:1px solid var(--card-border);border-radius:14px;overflow:hidden;">
+        <div class="ip-card-img" style="position:relative;aspect-ratio:16/9;overflow:hidden;">
+          <img src="pictures/IMG-20260317-WA0064.jpg" alt="Free Medical Outreach" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.5s ease;" />
+          <div style="position:absolute;top:14px;left:14px;background:var(--red);color:#fff;border-radius:8px;padding:8px 12px;text-align:center;line-height:1.1;">
+            <span style="display:block;font-size:1.4rem;font-weight:700;font-family:'Playfair Display',serif;">10</span>
+            <span style="display:block;font-size:0.65rem;font-weight:700;letter-spacing:0.08em;">OCT</span>
+          </div>
+        </div>
+        <div class="ip-card-body" style="padding:22px;">
+          <span class="news-tag" style="background:rgba(0,120,60,0.1);color:#007840;">Health</span>
+          <h3 style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;margin:10px 0 8px;color:var(--black);">Free Medical Outreach</h3>
+          <p style="font-size:0.8rem;color:var(--red);font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:6px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Oron LGA</p>
+          <p style="font-size:0.875rem;color:var(--gray);line-height:1.6;">Free medical services for community members in collaboration with Oron General Hospital.</p>
+        </div>
+      </article>
+
+      <article class="event-card ip-card reveal" style="background:var(--white);border:1px solid var(--card-border);border-radius:14px;overflow:hidden;">
+        <div class="ip-card-img" style="position:relative;aspect-ratio:16/9;overflow:hidden;">
+          <img src="pictures/IMG-20260317-WA0065.jpg" alt="Women's Empowerment Conference" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.5s ease;" />
+          <div style="position:absolute;top:14px;left:14px;background:var(--red);color:#fff;border-radius:8px;padding:8px 12px;text-align:center;line-height:1.1;">
+            <span style="display:block;font-size:1.4rem;font-weight:700;font-family:'Playfair Display',serif;">28</span>
+            <span style="display:block;font-size:0.65rem;font-weight:700;letter-spacing:0.08em;">NOV</span>
+          </div>
+        </div>
+        <div class="ip-card-body" style="padding:22px;">
+          <span class="news-tag" style="background:rgba(160,0,120,0.1);color:#a00078;">Women&rsquo;s Wing</span>
+          <h3 style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;margin:10px 0 8px;color:var(--black);">Women&rsquo;s Empowerment Conference</h3>
+          <p style="font-size:0.8rem;color:var(--red);font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:6px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Abuja</p>
+          <p style="font-size:0.875rem;color:var(--gray);line-height:1.6;">Conference focused on economic empowerment of Oro women in business and governance.</p>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ========== EVENT CALENDAR ========== -->
+<section class="ip-section-beige" id="calendar" style="background:var(--beige);padding:80px 0;">
+  <div class="ip-container" style="max-width:1100px;margin:0 auto;padding:0 24px;">
+    <h2 class="section-title reveal-scale">Event Calendar</h2>
+    <div class="section-underline reveal-underline"></div>
+    <p class="section-sub reveal">August 2026 — Key Dates</p>
+    <div class="reveal" style="max-width:700px;margin:0 auto;background:var(--white);border-radius:18px;border:1px solid var(--card-border);overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.07);">
+      <div style="background:var(--maroon);padding:24px 32px;display:flex;align-items:center;justify-content:space-between;">
+        <h3 style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:#fff;">August 2026</h3>
+        <span style="font-size:0.8rem;color:rgba(255,255,255,0.6);font-weight:500;letter-spacing:0.08em;">2 EVENTS</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);background:var(--beige-dark);">
+        <div style="padding:12px 0;text-align:center;font-size:0.7rem;font-weight:700;color:var(--gray);letter-spacing:0.06em;">SU</div>
+        <div style="padding:12px 0;text-align:center;font-size:0.7rem;font-weight:700;color:var(--gray);letter-spacing:0.06em;">MO</div>
+        <div style="padding:12px 0;text-align:center;font-size:0.7rem;font-weight:700;color:var(--gray);letter-spacing:0.06em;">TU</div>
+        <div style="padding:12px 0;text-align:center;font-size:0.7rem;font-weight:700;color:var(--gray);letter-spacing:0.06em;">WE</div>
+        <div style="padding:12px 0;text-align:center;font-size:0.7rem;font-weight:700;color:var(--gray);letter-spacing:0.06em;">TH</div>
+        <div style="padding:12px 0;text-align:center;font-size:0.7rem;font-weight:700;color:var(--gray);letter-spacing:0.06em;">FR</div>
+        <div style="padding:12px 0;text-align:center;font-size:0.7rem;font-weight:700;color:var(--red);letter-spacing:0.06em;">SA</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);padding:8px;">
+        <div style="padding:12px;text-align:center;font-size:0.9rem;color:transparent;">-</div><div style="padding:12px;text-align:center;font-size:0.9rem;color:transparent;">-</div><div style="padding:12px;text-align:center;font-size:0.9rem;color:transparent;">-</div><div style="padding:12px;text-align:center;font-size:0.9rem;color:transparent;">-</div><div style="padding:12px;text-align:center;font-size:0.9rem;color:transparent;">-</div><div style="padding:12px;text-align:center;font-size:0.9rem;color:transparent;">-</div>
+        <div style="padding:10px;text-align:center;font-size:0.9rem;color:var(--black);font-weight:500;">1</div>
+        <div style="padding:10px;text-align:center;font-size:0.9rem;color:var(--black);font-weight:500;">2</div><div style="padding:10px;text-align:center;font-size:0.9rem;color:var(--black);font-weight:500;">3</div><div style="padding:10px;text-align:center;font-size:0.9rem;color:var(--black);font-weight:500;">4</div><div style="padding:10px;text-align:center;font-size:0.9rem;color:var(--black);font-weight:500;">5</div><div style="padding:10px;text-align:center;font-size:0.9rem;color:var(--black);font-weight:500;">6</div><div style="padding:10px;text-align:center;font-size:0.9rem;color:var(--black);font-weight:500;">7</div><div style="padding:10px;text-align:center;font-size:0.9rem;color:var(--black);font-weight:500;">8</div>
+        <div style="padding:10px;text-align:center;font-size:0.9rem;color:var(--black);font-weight:500;">9</div><div style="padding:10px;text-align:center;font-size:0.9rem;color:var(--black);font-weight:500;">10</div><div style="padding:10px;text-align:center;font-size:0.9rem;color:var(--black);font-weight:500;">11</div><div style="padding:10px;text-align:center;font-size:0.9rem;color:var(--black);font-weight:500;">12</div><div style="padding:10px;text-align:center;font-size:0.9rem;color:var(--black);font-weight:500;">13</div><div style="padding:10px;text-align:center;font-size:0.9rem;color:var(--black);font-weight:500;">14</div>
+        <div style="padding:8px;text-align:center;"><span style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;background:var(--red);color:#fff;font-size:0.9rem;font-weight:700;" title="AGM 2026">15</span></div>
+        <div style="padding:10px;text-align:center;font-size:0.9rem;color:var(--black);font-weight:500;">16</div><div style="padding:10px;text-align:center;font-size:0.9rem;color:var(--black);font-weight:500;">17</div><div style="padding:10px;text-align:center;font-size:0.9rem;color:var(--black);font-weight:500;">18</div><div style="padding:10px;text-align:center;font-size:0.9rem;color:var(--black);font-weight:500;">19</div><div style="padding:10px;text-align:center;font-size:0.9rem;color:var(--black);font-weight:500;">20</div><div style="padding:10px;text-align:center;font-size:0.9rem;color:var(--black);font-weight:500;">21</div>
+        <div style="padding:8px;text-align:center;"><span style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;background:var(--maroon);color:#fff;font-size:0.9rem;font-weight:700;" title="Obon Festival">22</span></div>
+        <div style="padding:10px;text-align:center;font-size:0.9rem;color:var(--black);font-weight:500;">23</div><div style="padding:10px;text-align:center;font-size:0.9rem;color:var(--black);font-weight:500;">24</div><div style="padding:10px;text-align:center;font-size:0.9rem;color:var(--black);font-weight:500;">25</div><div style="padding:10px;text-align:center;font-size:0.9rem;color:var(--black);font-weight:500;">26</div><div style="padding:10px;text-align:center;font-size:0.9rem;color:var(--black);font-weight:500;">27</div><div style="padding:10px;text-align:center;font-size:0.9rem;color:var(--black);font-weight:500;">28</div><div style="padding:10px;text-align:center;font-size:0.9rem;color:var(--black);font-weight:500;">29</div>
+        <div style="padding:10px;text-align:center;font-size:0.9rem;color:var(--black);font-weight:500;">30</div><div style="padding:10px;text-align:center;font-size:0.9rem;color:var(--black);font-weight:500;">31</div>
+      </div>
+      <div style="padding:20px 28px;border-top:1px solid var(--card-border);display:flex;gap:24px;flex-wrap:wrap;">
+        <span style="display:flex;align-items:center;gap:8px;font-size:0.8rem;color:var(--gray);"><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:var(--red);"></span>Aug 15 — Annual General Meeting</span>
+        <span style="display:flex;align-items:center;gap:8px;font-size:0.8rem;color:var(--gray);"><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:var(--maroon);"></span>Aug 22 — Obon Festival 2026</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ========== PAST EVENTS ========== -->
+<section class="ip-section" id="past" style="background:var(--white);padding:80px 0;">
+  <div class="ip-container" style="max-width:1100px;margin:0 auto;padding:0 24px;">
+    <h2 class="section-title reveal-scale">Past Events</h2>
+    <div class="section-underline reveal-underline"></div>
+    <p class="section-sub reveal">A look back at our most memorable community gatherings</p>
+    <div class="ip-grid-3" style="display:grid;grid-template-columns:repeat(3,1fr);gap:28px;">
+      <article class="event-card ip-card reveal" style="background:var(--beige);border:1px solid var(--card-border);border-radius:14px;overflow:hidden;">
+        <div class="ip-card-img" style="aspect-ratio:16/9;overflow:hidden;filter:grayscale(20%);">
+          <img src="pictures/IMG-20260317-WA0059.jpg" alt="Grand Centenary Congress 2025" loading="lazy" style="width:100%;height:100%;object-fit:cover;" />
+        </div>
+        <div class="ip-card-body" style="padding:22px;">
+          <span class="news-tag" style="background:rgba(0,0,0,0.07);color:var(--gray);">November 2025</span>
+          <h3 style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;margin:10px 0 8px;color:var(--black);">Grand Centenary Congress 2025</h3>
+          <p style="font-size:0.875rem;color:var(--gray);line-height:1.6;">A landmark three-day congress marking 100 years of the Oron Union, attended by over 2,000 delegates, chiefs, and dignitaries from across Nigeria and the diaspora.</p>
+        </div>
+      </article>
+      <article class="event-card ip-card reveal" style="background:var(--beige);border:1px solid var(--card-border);border-radius:14px;overflow:hidden;">
+        <div class="ip-card-img" style="aspect-ratio:16/9;overflow:hidden;filter:grayscale(20%);">
+          <img src="pictures/IMG-20260317-WA0058.jpg" alt="Uduk Isong Harvest Festival 2025" loading="lazy" style="width:100%;height:100%;object-fit:cover;" />
+        </div>
+        <div class="ip-card-body" style="padding:22px;">
+          <span class="news-tag" style="background:rgba(0,0,0,0.07);color:var(--gray);">July 2025</span>
+          <h3 style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;margin:10px 0 8px;color:var(--black);">Uduk Isong Harvest Festival</h3>
+          <p style="font-size:0.875rem;color:var(--gray);line-height:1.6;">The annual harvest festival honouring the Oro tradition of communal thanksgiving, with traditional songs, dances, and the presentation of first fruits to community elders.</p>
+        </div>
+      </article>
+      <article class="event-card ip-card reveal" style="background:var(--beige);border:1px solid var(--card-border);border-radius:14px;overflow:hidden;">
+        <div class="ip-card-img" style="aspect-ratio:16/9;overflow:hidden;filter:grayscale(20%);">
+          <img src="pictures/IMG-20260317-WA0057.jpg" alt="Youth Leadership Conference 2025" loading="lazy" style="width:100%;height:100%;object-fit:cover;" />
+        </div>
+        <div class="ip-card-body" style="padding:22px;">
+          <span class="news-tag" style="background:rgba(0,0,0,0.07);color:var(--gray);">March 2025</span>
+          <h3 style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;margin:10px 0 8px;color:var(--black);">Youth Leadership Conference</h3>
+          <p style="font-size:0.875rem;color:var(--gray);line-height:1.6;">A two-day conference bringing together over 400 young Oro professionals and students to develop leadership skills and engage with the Union's development agenda.</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+
+<!-- ========== ANNUAL FESTIVALS ========== -->
+<section class="ip-section-beige" id="festivals" style="background:var(--beige);padding:80px 0;">
+  <div class="ip-container" style="max-width:1100px;margin:0 auto;padding:0 24px;">
+    <h2 class="section-title reveal-scale">Annual Festivals</h2>
+    <div class="section-underline reveal-underline"></div>
+    <p class="section-sub reveal">Three celebrations that define the Oro cultural calendar</p>
+    <div class="ip-grid-3" style="display:grid;grid-template-columns:repeat(3,1fr);gap:28px;">
+      <div class="ip-card reveal" style="background:var(--white);border:1px solid var(--card-border);border-radius:14px;padding:36px 30px;text-align:center;">
+        <div style="width:64px;height:64px;background:var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg></div>
+        <h3 style="font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;margin-bottom:8px;color:var(--black);">Obon Festival</h3>
+        <p style="font-size:0.8rem;color:var(--red);font-weight:600;margin-bottom:14px;">Held annually in August</p>
+        <p style="font-size:0.9rem;color:var(--gray);line-height:1.7;">The Obon Festival is the Oro Nation's most celebrated cultural event, featuring masquerades, traditional music, royal durbars, and communal feasting.</p>
+      </div>
+      <div class="ip-card reveal" style="background:var(--white);border:1px solid var(--card-border);border-radius:14px;padding:36px 30px;text-align:center;">
+        <div style="width:64px;height:64px;background:var(--maroon);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><circle cx="12" cy="8" r="6"/><path d="M12 14v8"/><path d="M8 18h8"/></svg></div>
+        <h3 style="font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;margin-bottom:8px;color:var(--black);">Uduk Isong Harvest</h3>
+        <p style="font-size:0.8rem;color:var(--red);font-weight:600;margin-bottom:14px;">Held annually in July</p>
+        <p style="font-size:0.9rem;color:var(--gray);line-height:1.7;">A thanksgiving celebration rooted in Oro agrarian traditions. Communities present first fruits to the elders, accompanied by traditional songs and communal prayer.</p>
+      </div>
+      <div class="ip-card reveal" style="background:var(--white);border:1px solid var(--card-border);border-radius:14px;padding:36px 30px;text-align:center;">
+        <div style="width:64px;height:64px;background:var(--red-hover);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <h3 style="font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;margin-bottom:8px;color:var(--black);">Founders Day Congress</h3>
+        <p style="font-size:0.8rem;color:var(--red);font-weight:600;margin-bottom:14px;">Held annually on May 23</p>
+        <p style="font-size:0.9rem;color:var(--gray);line-height:1.7;">Every 23rd of May, the Oron Union gathers to commemorate its founding in 1925 with awards, reflection and renewal of commitment to the Union's mission.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ========== LIVE TV ========== -->
+<section class="ip-section" id="livetv" style="background:var(--white);padding:80px 0;">
+  <div class="ip-container" style="max-width:1100px;margin:0 auto;padding:0 24px;">
+    <h2 class="section-title reveal-scale">Oron Union Live TV</h2>
+    <div class="section-underline reveal-underline"></div>
+    <p class="section-sub reveal">Watch live community broadcasts, town halls and cultural programmes</p>
+
+    <div class="tv-embed-wrap reveal">
+      <video id="ent-live-video" playsinline></video>
+      <div class="tv-offline-screen" id="ent-tv-offline">
+        <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg>
+        <p style="font-size:0.95rem;margin:0;color:rgba(255,255,255,.6);">Stream is currently offline</p>
+        <button class="btn-watch-live" id="ent-watch-btn" style="display:none;">&#9654; Watch Live</button>
+        <div class="tv-live-badge" id="ent-live-badge" style="display:none;"><span class="tv-live-dot"></span>LIVE NOW</div>
+      </div>
+    </div>
+
+    <div class="tv-actions">
+      <button class="btn-tv-config" id="ent-tv-config-btn">&#9881; Set Stream URL</button>
+      <a href="tv.html" class="btn-tv-full">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6"/><path d="M10 14L21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+        Open Full Screen TV
+      </a>
+    </div>
+    <p style="text-align:center;font-size:0.8rem;color:var(--gray);margin-top:14px;">Powered by HLS.js. Supports OBS streams, YouTube Live and any .m3u8 feed. <a href="tv.html" style="color:var(--red);">Full TV experience &rarr;</a></p>
+  </div>
+</section>
+
+<!-- TV Config Modal -->
+<div class="tv-cfg-modal" id="ent-tv-cfg-modal">
+  <div class="tv-cfg-box">
+    <h3>Set Live Stream URL</h3>
+    <p>Paste a valid HLS stream URL (.m3u8) to broadcast live. Leave blank to clear.</p>
+    <input type="url" id="ent-stream-url-input" placeholder="https://your-encoder/stream.m3u8" />
+    <div class="tv-cfg-btns">
+      <button class="btn-tv-cancel" id="ent-tv-cfg-cancel">Cancel</button>
+      <button class="btn-tv-set" id="ent-tv-cfg-save">Save &amp; Connect</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ========== ORO INDIGENOUS MUSIC & VIDEOS ========== -->
+<section class="ip-section-beige" id="music" style="background:var(--beige);padding:80px 0;">
+  <div class="ip-container" style="max-width:1100px;margin:0 auto;padding:0 24px;">
+    <h2 class="section-title reveal-scale">Oro Indigenous Music &amp; Videos</h2>
+    <div class="section-underline reveal-underline"></div>
+    <p class="section-sub reveal">Stream and download authentic Oro cultural music, spoken word and video recordings</p>
+
+    <!-- Inline player -->
+    <div id="media-player-area">
+      <div class="player-hdr">
+        <span id="now-playing-title">Now Playing</span>
+        <button class="btn-close-player" id="close-player-btn" title="Close player">&times;</button>
+      </div>
+      <audio id="media-audio" controls></audio>
+      <video id="media-video" controls style="display:none;"></video>
+    </div>
+
+    <!-- Media grid -->
+    <div id="media-grid"></div>
+
+    <!-- Admin area -->
+    <div class="media-admin-area">
+      <button class="btn-admin-toggle" id="media-admin-toggle">&#9998; Admin Upload</button>
+      <div class="media-admin-panel" id="media-admin-panel" style="display:none;">
+        <div id="media-login-row" style="display:flex;gap:10px;align-items:center;margin-bottom:16px;">
+          <input type="password" id="media-admin-code" placeholder="Admin code" style="margin:0;max-width:220px;" />
+          <button class="btn-add-media" id="media-admin-unlock" style="padding:10px 20px;">Unlock</button>
+        </div>
+        <div id="media-upload-form" style="display:none;">
+          <h4>Add Media to Library</h4>
+          <input type="text" id="new-media-title" placeholder="Title *" />
+          <input type="text" id="new-media-artist" placeholder="Artist / Creator" />
+          <textarea id="new-media-desc" placeholder="Description (optional)"></textarea>
+          <select id="new-media-type">
+            <option value="audio">Audio (Music / Spoken Word)</option>
+            <option value="video">Video</option>
+          </select>
+          <p style="font-size:.82rem;color:var(--gray);margin:4px 0 8px;">Upload a file from your device:</p>
+          <input type="file" id="new-media-file" accept="audio/*,video/*" />
+          <p class="admin-file-or">— or paste a direct URL —</p>
+          <input type="url" id="new-media-url" placeholder="https://example.com/song.mp3 (or YouTube link)" />
+          <div class="upload-progress" id="upload-progress"><div class="upload-progress-bar" id="upload-progress-bar"></div></div>
+          <button class="btn-add-media" id="add-media-btn">Add to Library</button>
+          <div id="media-status"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ========== CTA ========== -->
+<section class="join-cta" style="padding:80px 24px;">
+  <h2 class="reveal-scale" style="font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,2.6rem);color:#fff;margin-bottom:14px;">Host an Event with Oron Union</h2>
+  <p class="reveal" style="color:rgba(255,255,255,0.85);font-size:1rem;max-width:500px;margin:0 auto 36px;line-height:1.7;">Partner with us to organise a community event, cultural programme, or diaspora gathering. We welcome your ideas.</p>
+  <div class="join-cta-btns reveal">
+    <a href="contact.html" class="btn-white">Get in Touch</a>
+    <a href="register.html" class="btn-outline-white">Become a Member</a>
+  </div>
+</section>
+
+
+<!-- ========== FOOTER ========== -->
+<footer class="inner-footer" style="background:var(--maroon);padding:32px 0;">
+  <div class="ip-container" style="max-width:1100px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+    <a href="index.html" class="footer-logo-link"><img src="logo.png" alt="Oron Union" style="width:48px;height:48px;object-fit:contain;" /></a>
+    <p style="font-size:0.82rem;color:rgba(255,255,255,0.5);">&copy; 2026 Oron Union. All rights reserved. &nbsp;|&nbsp; <a href="contact.html" style="color:rgba(255,255,255,0.5);transition:color 0.2s;">Privacy Policy</a></p>
+  </div>
+</footer>
+
+
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.15/dist/hls.min.js"></script>
+<script src="js/cursor.js"></script>
+<script src="js/media.js"></script>
+<script>
+(function () {
+  /* ── Nav / Scroll ── */
+  var t = document.getElementById('menu-toggle'), n = document.getElementById('nav-links');
+  if (t && n) t.addEventListener('click', function () { n.classList.toggle('active'); });
+  var nav = document.getElementById('navbar');
+  if (nav) window.addEventListener('scroll', function () { nav.classList.toggle('scrolled', window.scrollY > 40); }, { passive: true });
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal,.reveal-scale,.ip-card,.event-card,.ip-card').forEach(function (el) { io.observe(el); });
+
+  /* ── Live TV ── */
+  var TV_URL_KEY = 'oron_tv_stream_url';
+  var liveVideo = document.getElementById('ent-live-video');
+  var offlineScreen = document.getElementById('ent-tv-offline');
+  var watchBtn = document.getElementById('ent-watch-btn');
+  var liveBadge = document.getElementById('ent-live-badge');
+  var cfgModal = document.getElementById('ent-tv-cfg-modal');
+  var cfgInput = document.getElementById('ent-stream-url-input');
+  var hlsInstance = null;
+
+  function loadTVStream(url) {
+    if (!url) return;
+    if (Hls.isSupported()) {
+      if (hlsInstance) hlsInstance.destroy();
+      hlsInstance = new Hls();
+      hlsInstance.loadSource(url);
+      hlsInstance.attachMedia(liveVideo);
+      hlsInstance.on(Hls.Events.MANIFEST_PARSED, function () { liveVideo.play(); });
+      hlsInstance.on(Hls.Events.ERROR, function (ev, data) { if (data.fatal) { showOffline(); } });
+    } else if (liveVideo.canPlayType('application/vnd.apple.mpegurl')) {
+      liveVideo.src = url;
+      liveVideo.play();
+    } else { showOffline(); return; }
+    liveVideo.style.display = 'block';
+    offlineScreen.style.display = 'none';
+  }
+
+  function showOffline() { liveVideo.style.display = 'none'; offlineScreen.style.display = 'flex'; watchBtn.style.display = 'none'; liveBadge.style.display = 'none'; }
+
+  (function initTV() {
+    var url = localStorage.getItem(TV_URL_KEY);
+    if (url) { watchBtn.style.display = 'block'; liveBadge.style.display = 'flex'; }
+  })();
+
+  if (watchBtn) watchBtn.addEventListener('click', function () {
+    var url = localStorage.getItem(TV_URL_KEY);
+    if (url) loadTVStream(url);
+  });
+
+  document.getElementById('ent-tv-config-btn').addEventListener('click', function () {
+    cfgInput.value = localStorage.getItem(TV_URL_KEY) || '';
+    cfgModal.classList.add('open');
+  });
+  document.getElementById('ent-tv-cfg-cancel').addEventListener('click', function () { cfgModal.classList.remove('open'); });
+  document.getElementById('ent-tv-cfg-save').addEventListener('click', function () {
+    var url = cfgInput.value.trim();
+    if (url) { localStorage.setItem(TV_URL_KEY, url); watchBtn.style.display = 'block'; liveBadge.style.display = 'flex'; }
+    else { localStorage.removeItem(TV_URL_KEY); showOffline(); }
+    cfgModal.classList.remove('open');
+    if (url) loadTVStream(url);
+  });
+
+  /* ── Music & Videos ── */
+  var ADMIN_HASH = 'b3JvbjE5MjU='; /* btoa('oron1925') */
+  var isMediaAdmin = false;
+  var currentObjUrl = null;
+
+  function renderMediaGrid() {
+    var grid = document.getElementById('media-grid');
+    var items = OM.getMeta();
+    if (!items.length) {
+      grid.innerHTML = '<div class="media-empty"><div class="media-empty-icon">&#127925;</div><p style="font-size:0.95rem;color:var(--gray);">No media uploaded yet. Check back soon.</p></div>';
+      return;
+    }
+    grid.innerHTML = '<div class="media-grid">' + items.map(function (m) {
+      var isAudio = m.mediaType === 'audio';
+      var icon = isAudio
+        ? '<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>'
+        : '<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>';
+      var adminBtns = isMediaAdmin ? '<button class="btn-del-m" data-del="' + m.id + '">Delete</button>' : '';
+      return '<div class="media-card"><div class="media-thumb ' + (isAudio ? 'media-thumb-audio' : 'media-thumb-video') + '">' + icon + '<span class="media-type-badge">' + (isAudio ? 'AUDIO' : 'VIDEO') + '</span></div><div class="media-card-body"><div class="media-card-title">' + esc(m.title || 'Untitled') + '</div>' + (m.artist ? '<div class="media-card-artist">' + esc(m.artist) + '</div>' : '') + (m.description ? '<div class="media-card-desc">' + esc(m.description) + '</div>' : '') + '</div><div class="media-card-actions"><button class="btn-play-m" data-play="' + m.id + '">&#9654; Play</button><button class="btn-dl-m" data-dl="' + m.id + '">&#8595; Download</button>' + adminBtns + '</div></div>';
+    }).join('') + '</div>';
+
+    grid.querySelectorAll('.btn-play-m').forEach(function (btn) {
+      btn.addEventListener('click', function () { playMedia(btn.dataset.play); });
+    });
+    grid.querySelectorAll('.btn-dl-m').forEach(function (btn) {
+      btn.addEventListener('click', function () { downloadMedia(btn.dataset.dl); });
+    });
+    if (isMediaAdmin) {
+      grid.querySelectorAll('.btn-del-m').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          if (!confirm('Delete this media item?')) return;
+          OM.removeMedia(btn.dataset.del, function () { renderMediaGrid(); });
+        });
+      });
+    }
+  }
+
+  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+  function getMediaById(id) { return OM.getMeta().filter(function (m) { return m.id === id; })[0] || null; }
+
+  function playMedia(id) {
+    var m = getMediaById(id);
+    if (!m) return;
+    var audio = document.getElementById('media-audio');
+    var video = document.getElementById('media-video');
+    var playerArea = document.getElementById('media-player-area');
+    var nowPlaying = document.getElementById('now-playing-title');
+    nowPlaying.textContent = 'Now Playing: ' + (m.title || 'Untitled') + (m.artist ? ' — ' + m.artist : '');
+    playerArea.style.display = 'block';
+    audio.style.display = 'none'; audio.pause(); audio.src = '';
+    video.style.display = 'none'; video.pause(); video.src = '';
+    if (currentObjUrl) { URL.revokeObjectURL(currentObjUrl); currentObjUrl = null; }
+
+    function setSrc(src) {
+      if (m.mediaType === 'video') {
+        video.src = src; video.style.display = 'block'; video.play();
+      } else {
+        audio.src = src; audio.style.display = 'block'; audio.play();
+      }
+      playerArea.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    if (m.storageType === 'blob') {
+      OM.getBlob(id, function (err, blob) {
+        if (err || !blob) { alert('Could not load media file.'); return; }
+        currentObjUrl = URL.createObjectURL(blob);
+        setSrc(currentObjUrl);
+      });
+    } else {
+      setSrc(embedUrl(m.url, m.mediaType));
+    }
+  }
+
+  function embedUrl(url, type) {
+    if (!url) return '';
+    var ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+    if (ytMatch) return 'https://www.youtube.com/embed/' + ytMatch[1] + '?autoplay=1';
+    return url;
+  }
+
+  function downloadMedia(id) {
+    var m = getMediaById(id);
+    if (!m) return;
+    if (m.storageType === 'blob') {
+      OM.getBlob(id, function (err, blob) {
+        if (err || !blob) { alert('Could not load media for download.'); return; }
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url; a.download = m.fileName || (m.title || 'media') + (m.mediaType === 'video' ? '.mp4' : '.mp3');
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        setTimeout(function () { URL.revokeObjectURL(url); }, 5000);
+      });
+    } else if (m.url) {
+      var a = document.createElement('a');
+      a.href = m.url; a.download = m.title || 'media'; a.target = '_blank';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    }
+  }
+
+  document.getElementById('close-player-btn').addEventListener('click', function () {
+    var audio = document.getElementById('media-audio');
+    var video = document.getElementById('media-video');
+    audio.pause(); audio.src = ''; video.pause(); video.src = '';
+    if (currentObjUrl) { URL.revokeObjectURL(currentObjUrl); currentObjUrl = null; }
+    document.getElementById('media-player-area').style.display = 'none';
+  });
+
+  /* Admin */
+  document.getElementById('media-admin-toggle').addEventListener('click', function () {
+    var panel = document.getElementById('media-admin-panel');
+    panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+  });
+
+  document.getElementById('media-admin-unlock').addEventListener('click', function () {
+    var code = document.getElementById('media-admin-code').value;
+    if (btoa(code) === ADMIN_HASH) {
+      isMediaAdmin = true;
+      document.getElementById('media-login-row').style.display = 'none';
+      document.getElementById('media-upload-form').style.display = 'block';
+      renderMediaGrid();
+    } else {
+      alert('Invalid admin code.');
+    }
+  });
+
+  document.getElementById('add-media-btn').addEventListener('click', function () {
+    var title = document.getElementById('new-media-title').value.trim();
+    var artist = document.getElementById('new-media-artist').value.trim();
+    var desc = document.getElementById('new-media-desc').value.trim();
+    var type = document.getElementById('new-media-type').value;
+    var file = document.getElementById('new-media-file').files[0];
+    var url = document.getElementById('new-media-url').value.trim();
+    var statusEl = document.getElementById('media-status');
+
+    if (!title) { setStatus('Please enter a title.', true); return; }
+    if (!file && !url) { setStatus('Please upload a file or provide a URL.', true); return; }
+
+    var meta = { title: title, artist: artist, description: desc, mediaType: type, url: url };
+
+    if (file) {
+      var prog = document.getElementById('upload-progress');
+      var bar = document.getElementById('upload-progress-bar');
+      prog.style.display = 'block'; bar.style.width = '0%';
+      var reader = new FileReader();
+      reader.onprogress = function (e) { if (e.lengthComputable) bar.style.width = (e.loaded / e.total * 100) + '%'; };
+      reader.onload = function () {
+        bar.style.width = '100%';
+        OM.addMedia(meta, file, function (err) {
+          prog.style.display = 'none';
+          if (err) { setStatus('Upload failed: ' + err.message, true); return; }
+          clearForm(); setStatus('Media added successfully!', false); renderMediaGrid();
+        });
+      };
+      reader.onerror = function () { setStatus('Could not read file.', true); prog.style.display = 'none'; };
+      reader.readAsArrayBuffer(file);
+    } else {
+      OM.addMedia(meta, null, function (err) {
+        if (err) { setStatus('Failed to save.', true); return; }
+        clearForm(); setStatus('Media added successfully!', false); renderMediaGrid();
+      });
+    }
+  });
+
+  function setStatus(msg, isErr) {
+    var el = document.getElementById('media-status');
+    el.textContent = msg; el.className = isErr ? 'err' : 'ok'; el.style.display = 'block';
+    setTimeout(function () { el.style.display = 'none'; }, 5000);
+  }
+
+  function clearForm() {
+    document.getElementById('new-media-title').value = '';
+    document.getElementById('new-media-artist').value = '';
+    document.getElementById('new-media-desc').value = '';
+    document.getElementById('new-media-url').value = '';
+    document.getElementById('new-media-file').value = '';
+  }
+
+  /* Init */
+  OM.init(function () { renderMediaGrid(); });
+})();
+</script>
+</body>
+</html>

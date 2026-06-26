@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Oron Union — Unity · Progress · Heritage</title>
+  <meta name="description" content="The Oron Union is one of Nigeria's first organised ethnic unions, founded in 1925. Uniting the Oro people across the world — preserving heritage, empowering communities, building a brighter future." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+<!-- ========== PRELOADER ========== -->
+<div id="preloader">
+  <div class="pre-inner">
+    <div class="pre-logo-wrap">
+      <img src="logo.png" alt="Oron Union Crest" />
+    </div>
+    <span class="pre-title">Oron Union</span>
+    <span class="pre-sub">Est. 1925 &nbsp;&middot;&nbsp; Unity &nbsp;&middot;&nbsp; Progress &nbsp;&middot;&nbsp; Heritage</span>
+    <div class="pre-bar-track">
+      <div class="pre-bar-fill" id="pre-bar"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== NAVBAR ========== -->
+<nav class="navbar" id="navbar">
+  <div class="nav-container">
+
+    <a href="index.html" class="nav-logo">
+      <img src="logo.png" alt="Oron Union Crest" style="width:50px;height:50px;object-fit:contain;" />
+      <div class="nav-logo-text">
+        <strong>Oron Union</strong>
+        <span>Unity &middot; Progress &middot; Heritage</span>
+      </div>
+    </a>
+
+    <ul class="nav-links" id="nav-links">
+      <li><a href="about.html">About <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4,6 8,10 12,6"/></svg></a>
+        <ul class="dropdown">
+          <li><a href="about.html#history">History</a></li>
+          <li><a href="about.html#mission">Mission &amp; Vision</a></li>
+          <li><a href="about.html#values">Core Values</a></li>
+          <li><a href="about.html#constitution">Constitution</a></li>
+          <li><a href="leadership.html#past">Past Leadership</a></li>
+          <li><a href="projects.html">Projects</a></li>
+        </ul>
+      </li>
+      <li><a href="culture.html">Culture &amp; Heritage <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4,6 8,10 12,6"/></svg></a>
+        <ul class="dropdown">
+          <li><a href="culture.html#history">History of Oron People</a></li>
+          <li><a href="culture.html#clans">Our Nine Clans</a></li>
+          <li><a href="culture.html#language">Language</a></li>
+          <li><a href="culture.html#festivals">Festivals &amp; Ceremonies</a></li>
+          <li><a href="culture.html#arts">Arts &amp; Crafts</a></li>
+          <li><a href="culture.html#folklore">Folklore &amp; Traditions</a></li>
+          <li><a href="culture.html#gallery">Photo Gallery</a></li>
+        </ul>
+      </li>
+      <li><a href="leadership.html">Leadership <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4,6 8,10 12,6"/></svg></a>
+        <ul class="dropdown">
+          <li><a href="leadership.html#executive">Central Executive Committee</a></li>
+          <li><a href="leadership.html#trustees">Board of Trustees</a></li>
+          <li><a href="leadership.html#cotr">Council of Oro Traditional Rulers</a></li>
+          <li><a href="leadership.html#structure">Org. Structure</a></li>
+          <li class="has-submenu"><a href="branches.html">Branches &amp; Chapters <svg class="chevron-right" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,4 10,8 6,12"/></svg></a>
+            <ul class="submenu">
+              <li><a href="branches.html#oron">Oron LGA</a></li>
+              <li><a href="branches.html#urueoffong">Urueoffong / Oruko</a></li>
+              <li><a href="branches.html#okobo">Okobo</a></li>
+              <li><a href="branches.html#mbo">Mbo</a></li>
+              <li><a href="branches.html#udunguko">Udunguko</a></li>
+              <li><a href="branches.html#domestic">Domestic Branches</a></li>
+              <li><a href="branches.html#international">International Chapters</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li><a href="entertainment.html">Entertainment <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4,6 8,10 12,6"/></svg></a>
+        <ul class="dropdown">
+          <li><a href="entertainment.html#events">Upcoming Events</a></li>
+          <li><a href="entertainment.html#calendar">Event Calendar</a></li>
+          <li><a href="entertainment.html#festivals">Annual Festivals</a></li>
+          <li><a href="entertainment.html#livetv">Live TV</a></li>
+          <li><a href="entertainment.html#music">Music &amp; Videos</a></li>
+        </ul>
+      </li>
+      <li><a href="elections.html" class="nav-elections">Elections <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4,6 8,10 12,6"/></svg></a>
+        <ul class="dropdown">
+          <li><a href="elections.html">Member Voting Portal</a></li>
+          <li><a href="register.html">Apply for Membership</a></li>
+          <li><a href="endorser.html">Officials / Endorser Login</a></li>
+        </ul>
+      </li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="register.html" class="nav-join">Join Us</a></li>
+    </ul>
+
+    <div class="nav-mobile-toggle" id="menu-toggle" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </div>
+
+  </div>
+</nav>
+
+
+<!-- ========== HERO ========== -->
+<section class="hero" id="home">
+
+  <!-- Slideshow backgrounds — populated by JS (daily rotation) -->
+  <div class="hero-slides" id="hero-slides"></div>
+
+  <div class="hero-overlay"></div>
+
+  <div class="hero-content">
+    <div class="hero-badge">Founded 1925 &nbsp;|&nbsp; Celebrating 100 Years</div>
+    <h1>
+      <span class="hero-line-welcome">Welcome to</span>
+      <span class="hero-line-main">Oron Union</span>
+    </h1>
+    <p>Uniting the Oro people across the world — preserving our heritage, empowering our communities, and building a brighter future together.</p>
+    <div class="hero-ctas">
+      <a href="#about" class="btn-primary">Discover Our Story</a>
+      <a href="register.html" class="btn-outline">Become a Member</a>
+    </div>
+  </div>
+
+  <!-- Slide dots — populated by JS -->
+  <div class="hero-dots" id="hero-dots"></div>
+
+  <div class="hero-scroll">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="6,9 12,15 18,9"/>
+    </svg>
+    Scroll
+  </div>
+</section>
+
+
+<!-- ========== MARQUEE TICKER ========== -->
+<div class="ticker-wrap" aria-hidden="true">
+  <div class="ticker-track">
+    <span class="ticker-item"><b>Oron Union</b></span><span class="ticker-sep">✦</span>
+    <span class="ticker-item">Founded 1925</span><span class="ticker-sep">✦</span>
+    <span class="ticker-item">Unity &amp; Progress</span><span class="ticker-sep">✦</span>
+    <span class="ticker-item">Oro Nation</span><span class="ticker-sep">✦</span>
+    <span class="ticker-item">100 Years of Service</span><span class="ticker-sep">✦</span>
+    <span class="ticker-item">Heritage &amp; Culture</span><span class="ticker-sep">✦</span>
+    <span class="ticker-item">Akwa Ibom, Nigeria</span><span class="ticker-sep">✦</span>
+    <span class="ticker-item">Empowering Communities</span><span class="ticker-sep">✦</span>
+    <span class="ticker-item">Est. 1925</span><span class="ticker-sep">✦</span>
+    <span class="ticker-item"><b>Oron Union</b></span><span class="ticker-sep">✦</span>
+    <span class="ticker-item">Founded 1925</span><span class="ticker-sep">✦</span>
+    <span class="ticker-item">Unity &amp; Progress</span><span class="ticker-sep">✦</span>
+    <span class="ticker-item">Oro Nation</span><span class="ticker-sep">✦</span>
+    <span class="ticker-item">100 Years of Service</span><span class="ticker-sep">✦</span>
+    <span class="ticker-item">Heritage &amp; Culture</span><span class="ticker-sep">✦</span>
+    <span class="ticker-item">Akwa Ibom, Nigeria</span><span class="ticker-sep">✦</span>
+    <span class="ticker-item">Empowering Communities</span><span class="ticker-sep">✦</span>
+    <span class="ticker-item">Est. 1925</span><span class="ticker-sep">✦</span>
+  </div>
+</div>
+
+
+<!-- ========== EXPLORE ========== -->
+<section class="explore" id="explore">
+  <div style="max-width:1100px;margin:0 auto;padding:0 24px;">
+    <h2 class="section-title reveal-scale">Explore Oron Union</h2>
+    <div class="section-underline reveal-underline"></div>
+    <p class="section-sub reveal">Your gateway to community, culture, and progress</p>
+  </div>
+
+  <div class="explore-grid">
+
+    <a href="about.html" class="explore-card reveal">
+      <div class="explore-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+      </div>
+      <div>
+        <h3>About Us</h3>
+        <p>Our history, mission and leadership</p>
+      </div>
+    </a>
+
+    <a href="culture.html" class="explore-card reveal">
+      <div class="explore-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="22" x2="21" y2="22"/>
+          <rect x="2" y="8" width="4" height="14"/>
+          <path d="M6 8V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v3"/>
+          <rect x="10" y="8" width="4" height="14"/>
+          <rect x="18" y="8" width="4" height="14"/>
+        </svg>
+      </div>
+      <div>
+        <h3>Culture &amp; Heritage</h3>
+        <p>Traditions, clans and festivals</p>
+      </div>
+    </a>
+
+    <a href="entertainment.html" class="explore-card reveal">
+      <div class="explore-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+          <line x1="16" y1="2" x2="16" y2="6"/>
+          <line x1="8" y1="2" x2="8" y2="6"/>
+          <line x1="3" y1="10" x2="21" y2="10"/>
+        </svg>
+      </div>
+      <div>
+        <h3>Events &amp; Entertainment</h3>
+        <p>Upcoming events, live TV &amp; media</p>
+      </div>
+    </a>
+
+    <a href="branches.html#international" class="explore-card reveal">
+      <div class="explore-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="2" y1="12" x2="22" y2="12"/>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        </svg>
+      </div>
+      <div>
+        <h3>Diaspora</h3>
+        <p>Our global network and chapters</p>
+      </div>
+    </a>
+
+    <a href="projects.html" class="explore-card reveal">
+      <div class="explore-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="7" width="20" height="14" rx="2"/>
+          <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+          <line x1="12" y1="12" x2="12" y2="16"/>
+          <line x1="10" y1="14" x2="14" y2="14"/>
+        </svg>
+      </div>
+      <div>
+        <h3>Projects</h3>
+        <p>Community development initiatives</p>
+      </div>
+    </a>
+
+    <a href="#contact" class="explore-card reveal">
+      <div class="explore-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="2" y1="12" x2="22" y2="12"/>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        </svg>
+      </div>
+      <div>
+        <h3>Diaspora</h3>
+        <p>Our global network and chapters</p>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+
+<!-- ========== ABOUT ========== -->
+<section class="about" id="about">
+  <div class="about-inner">
+    <div class="about-text reveal-left">
+      <h2>About Oron Union</h2>
+      <div class="about-rule reveal-underline"></div>
+      <p>
+        Founded on May 23, 1925 by 88 Oro patriots led by Chief Ekpu Edubio Odoro,
+        Chief John Anwana Esin, and Chief Okon Eyokunyi Isong. The Oron Union is one
+        of Nigeria's first organised ethnic unions — committed to fostering unity,
+        preserving our rich cultural heritage, and driving sustainable development.
+      </p>
+      <p>
+        Now celebrating 100 years of service, sacrifice, and solidarity, the Union
+        continues to bring together Oro sons and daughters across Nigeria and the
+        diaspora for the advancement of our communities.
+      </p>
+
+      <div class="about-stats">
+        <div class="stat-item">
+          <span class="num">1925</span>
+          <span class="label">Year Founded</span>
+        </div>
+        <div class="stat-item">
+          <span class="num">100+</span>
+          <span class="label">Years of Service</span>
+        </div>
+        <div class="stat-item">
+          <span class="num">88</span>
+          <span class="label">Founding Patriots</span>
+        </div>
+        <div class="stat-item stat-item-live">
+          <span class="num" id="stat-member-count">847</span>
+          <span class="label">Registered Members <span class="live-pip"></span></span>
+        </div>
+      </div>
+
+      <a href="about.html" class="about-link">
+        Learn More &nbsp;&rarr;
+      </a>
+    </div>
+
+    <div class="about-image reveal-right">
+      <img
+        src="pictures/IMG-20260317-WA0030.jpg"
+        alt="Oron Union traditional leaders and chiefs at the 100 Year Anniversary"
+        loading="lazy"
+      />
+    </div>
+  </div>
+</section>
+
+
+<!-- ========== CULTURE & HERITAGE ========== -->
+<section class="culture" id="culture">
+  <div class="culture-inner">
+    <h2 class="section-title reveal-scale">Our Culture &amp; Heritage</h2>
+    <div class="section-underline reveal-underline"></div>
+    <p class="section-sub reveal">A proud people with a rich and vibrant history</p>
+
+    <div class="culture-grid">
+
+      <div class="culture-card reveal">
+        <div class="culture-card-img">
+          <img
+            src="pictures/IMG-20260317-WA0011.jpg"
+            alt="Historical photograph — founding era of Oron Union"
+            loading="lazy"
+          />
+        </div>
+        <div class="culture-card-body">
+          <h3>Arts &amp; Crafts</h3>
+          <p>Discover the artistic traditions that define Oron identity — from wood carvings to weaving, a heritage passed through generations.</p>
+        </div>
+      </div>
+
+      <div class="culture-card reveal">
+        <div class="culture-card-img">
+          <img
+            src="pictures/IMG-20260317-WA0012.jpg"
+            alt="Oron traditional ceremony with fire torch ritual"
+            loading="lazy"
+          />
+        </div>
+        <div class="culture-card-body">
+          <h3>Festivals &amp; Ceremonies</h3>
+          <p>Experience the vibrant celebrations that bring our communities together in joy and unity — from torch-lit rituals to royal durbars.</p>
+        </div>
+      </div>
+
+      <div class="culture-card reveal">
+        <div class="culture-card-img">
+          <img
+            src="pictures/IMG-20260317-WA0100.jpg"
+            alt="Young women in traditional Oron cultural attire"
+            loading="lazy"
+          />
+        </div>
+        <div class="culture-card-body">
+          <h3>Attire &amp; Traditions</h3>
+          <p>See how we're keeping our traditional values alive — from colourful ceremonial dress to the oral histories that shape Oron identity.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ========== NEWS ========== -->
+<section class="news" id="news">
+  <div class="news-inner">
+    <div class="news-header reveal">
+      <h2>Latest News</h2>
+      <a href="entertainment.html" class="news-all">More on Entertainment &nbsp;&rarr;</a>
+    </div>
+
+    <div class="news-grid">
+
+      <div class="news-card reveal">
+        <span class="news-tag">Announcement</span>
+        <h3>Oron Union Annual General Meeting 2026</h3>
+        <p class="news-date">April 25, 2026</p>
+      </div>
+
+      <div class="news-card reveal">
+        <span class="news-tag">Youth Updates</span>
+        <h3>Youth Empowerment Program Launches in Oron</h3>
+        <p class="news-date">April 20, 2026</p>
+      </div>
+
+      <div class="news-card reveal">
+        <span class="news-tag">Press Release</span>
+        <h3>Cultural Heritage Preservation Initiative</h3>
+        <p class="news-date">April 15, 2026</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ========== EVENTS ========== -->
+<section class="events-section" id="events">
+  <div class="section-container">
+    <h2 class="section-title reveal-scale">Upcoming Events</h2>
+    <div class="section-underline reveal-underline"></div>
+    <p class="section-sub reveal">Join us for these important community gatherings</p>
+
+    <div class="events-grid">
+
+      <div class="culture-card reveal">
+        <div class="culture-card-img">
+          <img src="pictures/IMG-20260317-WA0130.jpg" alt="Annual cultural night entertainment" loading="lazy"/>
+        </div>
+        <div class="culture-card-body">
+          <span class="news-tag" style="margin-bottom:10px;display:inline-block;">July 2026</span>
+          <h3>Centenary Cultural Night</h3>
+          <p>An evening of music, dance, and performances celebrating 100 years of Oron Union's rich cultural heritage.</p>
+        </div>
+      </div>
+
+      <div class="culture-card reveal">
+        <div class="culture-card-img">
+          <img src="pictures/IMG-20260317-WA0060.jpg" alt="Community gathering and outreach" loading="lazy"/>
+        </div>
+        <div class="culture-card-body">
+          <span class="news-tag" style="margin-bottom:10px;display:inline-block;">August 2026</span>
+          <h3>Community Outreach Day</h3>
+          <p>Members come together for a day of grassroots development, health drives, and youth mentorship across Oron communities.</p>
+        </div>
+      </div>
+
+      <div class="culture-card reveal">
+        <div class="culture-card-img">
+          <img src="pictures/IMG-20260317-WA0020.jpg" alt="Leadership summit conference" loading="lazy"/>
+        </div>
+        <div class="culture-card-body">
+          <span class="news-tag" style="margin-bottom:10px;display:inline-block;">September 2026</span>
+          <h3>Annual Leadership Summit</h3>
+          <p>Bringing together Oro leaders, elders, and stakeholders to chart the course for the next century of progress and unity.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ========== PROJECTS ========== -->
+<section class="projects-section" id="projects">
+  <div class="section-container">
+    <h2 class="section-title reveal-scale">Projects &amp; Development</h2>
+    <div class="section-underline reveal-underline"></div>
+    <p class="section-sub reveal">Building infrastructure and empowering communities</p>
+
+    <div class="projects-grid">
+
+      <div class="project-card reveal" style="background:var(--white);border-radius:14px;padding:32px;border:1px solid var(--card-border);">
+        <div style="width:48px;height:48px;background:rgba(128,0,32,0.08);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:18px;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2">
+            <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+            <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+          </svg>
+        </div>
+        <h3 style="font-family:'Playfair Display',serif;font-size:1.2rem;margin-bottom:10px;">Education Fund</h3>
+        <p style="color:var(--gray);font-size:0.9rem;line-height:1.7;">Sponsoring scholarships and building schools for the next generation of Oro sons and daughters. Supporting over 200 students annually.</p>
+        <div class="progress-bar">
+          <div class="progress-fill" style="--target-w:72%;"></div>
+        </div>
+        <p style="font-size:0.78rem;color:var(--gray);margin-top:8px;">72% of 2026 target reached</p>
+      </div>
+
+      <div class="project-card reveal" style="background:var(--white);border-radius:14px;padding:32px;border:1px solid var(--card-border);">
+        <div style="width:48px;height:48px;background:rgba(128,0,32,0.08);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:18px;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9,22 9,12 15,12 15,22"/>
+          </svg>
+        </div>
+        <h3 style="font-family:'Playfair Display',serif;font-size:1.2rem;margin-bottom:10px;">Infrastructure Development</h3>
+        <p style="color:var(--gray);font-size:0.9rem;line-height:1.7;">Road construction, community halls, and public facilities to modernise Oron communities while honouring traditional values.</p>
+        <div class="progress-bar">
+          <div class="progress-fill" style="--target-w:55%;"></div>
+        </div>
+        <p style="font-size:0.78rem;color:var(--gray);margin-top:8px;">55% of 2026 target reached</p>
+      </div>
+
+      <div class="project-card reveal" style="background:var(--white);border-radius:14px;padding:32px;border:1px solid var(--card-border);">
+        <div style="width:48px;height:48px;background:rgba(128,0,32,0.08);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:18px;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+          </svg>
+        </div>
+        <h3 style="font-family:'Playfair Display',serif;font-size:1.2rem;margin-bottom:10px;">Health Initiatives</h3>
+        <p style="color:var(--gray);font-size:0.9rem;line-height:1.7;">Free medical outreaches, health sensitisation campaigns, and support for healthcare facilities serving Oron communities.</p>
+        <div class="progress-bar">
+          <div class="progress-fill" style="--target-w:88%;"></div>
+        </div>
+        <p style="font-size:0.78rem;color:var(--gray);margin-top:8px;">88% of 2026 target reached</p>
+      </div>
+
+      <div class="project-card reveal" style="background:var(--white);border-radius:14px;padding:32px;border:1px solid var(--card-border);">
+        <div style="width:48px;height:48px;background:rgba(128,0,32,0.08);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:18px;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12,6 12,12 16,14"/>
+          </svg>
+        </div>
+        <h3 style="font-family:'Playfair Display',serif;font-size:1.2rem;margin-bottom:10px;">Youth Empowerment</h3>
+        <p style="color:var(--gray);font-size:0.9rem;line-height:1.7;">Skills acquisition, entrepreneurship training, and mentorship programs equipping young Oro people with tools for the future.</p>
+        <div class="progress-bar">
+          <div class="progress-fill" style="--target-w:63%;"></div>
+        </div>
+        <p style="font-size:0.78rem;color:var(--gray);margin-top:8px;">63% of 2026 target reached</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ========== JOIN CTA ========== -->
+<section class="join-cta" id="join">
+  <h2 class="serif reveal-scale">Join the Oro Family</h2>
+  <p class="reveal">Whether at home or in the diaspora, your membership strengthens our union and empowers our communities. Complete the biodata form, get endorsed by a Union official, and receive your unique Member&nbsp;ID.</p>
+  <div class="join-cta-btns reveal">
+    <a href="register.html" class="btn-white">Register Now</a>
+    <a href="#contact" class="btn-outline-white">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+      </svg>
+      Support Us
+    </a>
+  </div>
+</section>
+
+
+<!-- ========== FOOTER ========== -->
+<footer id="contact">
+  <div class="footer-inner">
+
+    <div class="footer-brand">
+      <a href="index.html" class="footer-logo-link"><img src="logo.png" alt="Oron Union Crest" class="footer-logo-img" /></a>
+      <div class="footer-brand-name">Oron Union</div>
+      <div class="footer-tagline">Uniting the Oro people worldwide for progress, cultural preservation, and community development.</div>
+
+      <div class="footer-contact-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        info@oronunion.org
+      </div>
+      <div class="footer-contact-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.41 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.4a16 16 0 0 0 6.29 6.29l.88-.88a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        +234 802 541 6885
+      </div>
+      <div class="footer-contact-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Oron, Akwa Ibom, Nigeria
+      </div>
+    </div>
+
+    <div class="footer-col">
+      <h4>About</h4>
+      <ul>
+        <li><a href="#">History</a></li>
+        <li><a href="#">Mission &amp; Vision</a></li>
+        <li><a href="#">Leadership</a></li>
+        <li><a href="#">Constitution</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Community</h4>
+      <ul>
+        <li><a href="culture.html">Culture &amp; Heritage</a></li>
+        <li><a href="entertainment.html">Events &amp; Entertainment</a></li>
+        <li><a href="branches.html">Branches &amp; Chapters</a></li>
+        <li><a href="projects.html">Projects</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Get Involved</h4>
+      <ul>
+        <li><a href="register.html">Apply for Membership</a></li>
+        <li><a href="elections.html">Member Elections</a></li>
+        <li><a href="#">Donate / Support</a></li>
+        <li><a href="#">Youth Wing</a></li>
+        <li><a href="#">Women's Wing</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Resources</h4>
+      <ul>
+        <li><a href="#">Media Center</a></li>
+        <li><a href="#">Business Directory</a></li>
+        <li><a href="#">Diaspora Network</a></li>
+        <li><a href="endorser.html">Officials Portal</a></li>
+        <li><a href="#contact">Contact Us</a></li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    <p>&copy; 2026 Oron Union. All rights reserved.</p>
+    <div class="footer-bottom-links">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Use</a>
+    </div>
+  </div>
+</footer>
+
+
+<!-- ========== LIGHTBOX ========== -->
+<div class="lightbox-overlay" id="lightbox">
+  <span class="lightbox-close" id="lightbox-close">&times;</span>
+  <img class="lightbox-img" id="lightbox-img" src="" alt="Gallery image" />
+</div>
+
+<!-- Cursor elements -->
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+
+<!-- Scroll progress bar -->
+<div id="scroll-progress"></div>
+
+<!-- Film grain overlay -->
+<div id="grain"></div>
+
+<script src="js/cursor.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

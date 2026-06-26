@@ -1,0 +1,591 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Member Registration — Oron Union</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/register.css" />
+</head>
+<body class="register-page">
+
+<!-- ========== NAVBAR ========== -->
+<nav class="navbar" id="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">
+      <img src="logo.png" alt="Oron Union Crest" style="width:50px;height:50px;object-fit:contain;" />
+      <div class="nav-logo-text">
+        <strong>Oron Union</strong>
+        <span>Unity &middot; Progress &middot; Heritage</span>
+      </div>
+    </a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="about.html">About <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4,6 8,10 12,6"/></svg></a>
+        <ul class="dropdown">
+          <li><a href="about.html#history">History</a></li>
+          <li><a href="about.html#mission">Mission &amp; Vision</a></li>
+          <li><a href="about.html#values">Core Values</a></li>
+          <li><a href="about.html#constitution">Constitution</a></li>
+          <li><a href="leadership.html#past">Past Leadership</a></li>
+          <li><a href="projects.html">Projects</a></li>
+        </ul>
+      </li>
+      <li><a href="culture.html">Culture &amp; Heritage <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4,6 8,10 12,6"/></svg></a>
+        <ul class="dropdown">
+          <li><a href="culture.html#history">History of Oron People</a></li>
+          <li><a href="culture.html#clans">Our Nine Clans</a></li>
+          <li><a href="culture.html#language">Language</a></li>
+          <li><a href="culture.html#festivals">Festivals &amp; Ceremonies</a></li>
+          <li><a href="culture.html#arts">Arts &amp; Crafts</a></li>
+          <li><a href="culture.html#folklore">Folklore &amp; Traditions</a></li>
+          <li><a href="culture.html#gallery">Photo Gallery</a></li>
+        </ul>
+      </li>
+      <li><a href="leadership.html">Leadership <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4,6 8,10 12,6"/></svg></a>
+        <ul class="dropdown">
+          <li><a href="leadership.html#executive">Central Executive Committee</a></li>
+          <li><a href="leadership.html#trustees">Board of Trustees</a></li>
+          <li><a href="leadership.html#cotr">Council of Oro Traditional Rulers</a></li>
+          <li><a href="leadership.html#structure">Org. Structure</a></li>
+          <li class="has-submenu"><a href="branches.html">Branches &amp; Chapters <svg class="chevron-right" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,4 10,8 6,12"/></svg></a>
+            <ul class="submenu">
+              <li><a href="branches.html#oron">Oron LGA</a></li>
+              <li><a href="branches.html#urueoffong">Urueoffong / Oruko</a></li>
+              <li><a href="branches.html#okobo">Okobo</a></li>
+              <li><a href="branches.html#mbo">Mbo</a></li>
+              <li><a href="branches.html#udunguko">Udunguko</a></li>
+              <li><a href="branches.html#domestic">Domestic Branches</a></li>
+              <li><a href="branches.html#international">International Chapters</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li><a href="entertainment.html">Entertainment <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4,6 8,10 12,6"/></svg></a>
+        <ul class="dropdown">
+          <li><a href="entertainment.html#events">Upcoming Events</a></li>
+          <li><a href="entertainment.html#calendar">Event Calendar</a></li>
+          <li><a href="entertainment.html#festivals">Annual Festivals</a></li>
+          <li><a href="entertainment.html#livetv">Live TV</a></li>
+          <li><a href="entertainment.html#music">Music &amp; Videos</a></li>
+        </ul>
+      </li>
+      <li><a href="elections.html" class="nav-elections">Elections <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4,6 8,10 12,6"/></svg></a>
+        <ul class="dropdown">
+          <li><a href="elections.html">Member Voting Portal</a></li>
+          <li><a href="register.html">Apply for Membership</a></li>
+          <li><a href="endorser.html">Officials / Endorser Login</a></li>
+        </ul>
+      </li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="register.html" class="nav-join" aria-current="page">Join Us</a></li>
+    </ul>
+    <div class="nav-mobile-toggle" id="menu-toggle" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+
+<!-- ========== HERO ========== -->
+<div class="reg-hero">
+  <div class="reg-hero-bg"></div>
+  <div class="reg-hero-content">
+    <a href="index.html" class="reg-hero-logo-link"><img src="logo.png" alt="Oron Union" class="reg-hero-logo" /></a>
+    <h1>Membership Registration</h1>
+    <p>Oron Union &mdash; Est. 1925 &nbsp;&middot;&nbsp; Unity &nbsp;&middot;&nbsp; Progress &nbsp;&middot;&nbsp; Heritage</p>
+  </div>
+  <div class="reg-hero-wave">
+    <svg viewBox="0 0 1440 50" preserveAspectRatio="none"><path d="M0,25 C480,50 960,0 1440,25 L1440,50 L0,50 Z" fill="#EDEAE3"/></svg>
+  </div>
+</div>
+
+<!-- ========== FORM CONTAINER ========== -->
+<main class="reg-main">
+  <div class="reg-container">
+
+    <!-- Progress indicator -->
+    <div class="reg-progress" id="reg-progress">
+      <div class="rp-track"></div>
+      <div class="rp-fill" id="rp-fill"></div>
+      <div class="rp-steps">
+        <div class="rp-step active" data-step="1"><span class="rp-num">1</span><span class="rp-label">Personal</span></div>
+        <div class="rp-step" data-step="2"><span class="rp-num">2</span><span class="rp-label">Origin</span></div>
+        <div class="rp-step" data-step="3"><span class="rp-num">3</span><span class="rp-label">Contact</span></div>
+        <div class="rp-step" data-step="4"><span class="rp-num">4</span><span class="rp-label">Professional</span></div>
+        <div class="rp-step" data-step="5"><span class="rp-num">5</span><span class="rp-label">Endorsement</span></div>
+        <div class="rp-step" data-step="6"><span class="rp-num">6</span><span class="rp-label">Review</span></div>
+      </div>
+    </div>
+
+    <!-- ── STEP 1: Personal Bio ── -->
+    <div class="reg-panel active" id="step-1">
+      <div class="reg-panel-header">
+        <div class="reg-panel-num">01</div>
+        <div>
+          <h2>Personal Information</h2>
+          <p>Basic biographical data as it appears on official documents</p>
+        </div>
+      </div>
+      <div class="reg-fields">
+        <div class="field-row-3">
+          <div class="field-group">
+            <label>Title <span class="req">*</span></label>
+            <select id="f-title" required>
+              <option value="">Select</option>
+              <option>Mr</option><option>Mrs</option><option>Miss</option><option>Ms</option>
+              <option>Dr</option><option>Prof</option><option>Chief</option><option>Engr</option>
+              <option>Barr</option><option>Rev</option><option>Pastor</option><option>Elder</option>
+              <option>Hon</option><option>Arc</option>
+            </select>
+          </div>
+          <div class="field-group span-2">
+            <label>First Name <span class="req">*</span></label>
+            <input type="text" id="f-firstname" placeholder="First name" />
+          </div>
+        </div>
+        <div class="field-row-2">
+          <div class="field-group">
+            <label>Middle Name</label>
+            <input type="text" id="f-middlename" placeholder="Middle name (optional)" />
+          </div>
+          <div class="field-group">
+            <label>Last Name / Surname <span class="req">*</span></label>
+            <input type="text" id="f-lastname" placeholder="Last name" />
+          </div>
+        </div>
+        <div class="field-row-3">
+          <div class="field-group">
+            <label>Date of Birth <span class="req">*</span></label>
+            <input type="date" id="f-dob" max="2008-01-01" />
+          </div>
+          <div class="field-group">
+            <label>Gender <span class="req">*</span></label>
+            <select id="f-gender" required>
+              <option value="">Select</option>
+              <option>Male</option><option>Female</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label>Marital Status</label>
+            <select id="f-marital">
+              <option value="">Select</option>
+              <option>Single</option><option>Married</option><option>Widowed</option><option>Divorced</option>
+            </select>
+          </div>
+        </div>
+        <div class="field-row-2">
+          <div class="field-group">
+            <label>Place of Birth <span class="req">*</span></label>
+            <input type="text" id="f-placeofbirth" placeholder="Town / City of birth" />
+          </div>
+          <div class="field-group">
+            <label>Nationality</label>
+            <input type="text" id="f-nationality" value="Nigerian" />
+          </div>
+        </div>
+      </div>
+      <div class="reg-nav">
+        <span></span>
+        <button class="reg-btn-next" onclick="nextStep(1)">Next: Origin &rarr;</button>
+      </div>
+    </div>
+
+    <!-- ── STEP 2: Origin & Verification ── -->
+    <div class="reg-panel" id="step-2">
+      <div class="reg-panel-header">
+        <div class="reg-panel-num">02</div>
+        <div>
+          <h2>Origin &amp; Verification</h2>
+          <p>Your Oron heritage and community ties — used to verify membership eligibility</p>
+        </div>
+      </div>
+      <div class="reg-fields">
+        <div class="field-row-2">
+          <div class="field-group">
+            <label>LGA of Origin <span class="req">*</span></label>
+            <select id="f-lga" required>
+              <option value="">Select LGA</option>
+              <option>Oron</option>
+              <option>Urueoffong/Oruko</option>
+              <option>Okobo</option>
+              <option>Mbo</option>
+              <option>Udunguko</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label>Clan <span class="req">*</span></label>
+            <select id="f-clan">
+              <option value="">Select your clan</option>
+              <option>Afaha Ukwong</option>
+              <option>Afaha Ibighi</option>
+              <option>Afaha Oki-uso</option>
+              <option>Afaha Idua</option>
+              <option>Afaha Okpo</option>
+              <option>Afaha Ubodung</option>
+              <option>Ebughu</option>
+              <option>Effiat</option>
+              <option>Etta</option>
+            </select>
+          </div>
+        </div>
+        <div class="field-row-2">
+          <div class="field-group">
+            <label>Family / Compound Name <span class="req">*</span></label>
+            <input type="text" id="f-compound" placeholder="Name of family compound" />
+          </div>
+          <div class="field-group">
+            <label>State of Origin</label>
+            <input type="text" id="f-state-origin" value="Akwa Ibom" />
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label>Are you a son or daughter of Oron by birth? <span class="req">*</span></label>
+          <div class="radio-group">
+            <label class="radio-opt"><input type="radio" name="oron-birth" value="yes" id="f-birth-yes" /> Yes — I am of Oron descent by birth</label>
+            <label class="radio-opt"><input type="radio" name="oron-birth" value="no" id="f-birth-no" /> No — I am connected through other ties</label>
+          </div>
+        </div>
+
+        <div class="field-group" id="non-birth-fields" style="display:none;">
+          <label>How are you connected to the Oron community? <span class="req">*</span></label>
+          <textarea id="f-connection" rows="3" placeholder="Describe your connection to Oron — e.g. through marriage, long-term residence, adoption into a clan, etc."></textarea>
+        </div>
+
+        <div class="field-row-2" id="non-birth-years" style="display:none;">
+          <div class="field-group">
+            <label>Years of association with Oron community</label>
+            <input type="number" id="f-years" min="1" max="100" placeholder="e.g. 15" />
+          </div>
+          <div class="field-group">
+            <label>Name of Oron Indigene who can vouch for you</label>
+            <input type="text" id="f-voucher" placeholder="Full name of guarantor" />
+          </div>
+        </div>
+      </div>
+      <div class="reg-nav">
+        <button class="reg-btn-back" onclick="prevStep(2)">&larr; Back</button>
+        <button class="reg-btn-next" onclick="nextStep(2)">Next: Contact &rarr;</button>
+      </div>
+    </div>
+
+    <!-- ── STEP 3: Contact Details ── -->
+    <div class="reg-panel" id="step-3">
+      <div class="reg-panel-header">
+        <div class="reg-panel-num">03</div>
+        <div>
+          <h2>Contact Details</h2>
+          <p>How to reach you — used for notifications and your Member ID delivery</p>
+        </div>
+      </div>
+      <div class="reg-fields">
+        <div class="field-row-2">
+          <div class="field-group">
+            <label>Primary Phone Number <span class="req">*</span></label>
+            <input type="tel" id="f-phone" placeholder="+234 000 000 0000" />
+          </div>
+          <div class="field-group">
+            <label>WhatsApp Number</label>
+            <input type="tel" id="f-whatsapp" placeholder="Same as primary or different" />
+            <label class="inline-check"><input type="checkbox" id="same-whatsapp" /> Same as primary phone</label>
+          </div>
+        </div>
+        <div class="field-group">
+          <label>Email Address <span class="req">*</span></label>
+          <input type="email" id="f-email" placeholder="your@email.com" />
+        </div>
+        <div class="field-row-2">
+          <div class="field-group">
+            <label>Country of Residence <span class="req">*</span></label>
+            <input type="text" id="f-country" placeholder="e.g. Nigeria, United Kingdom, USA" />
+          </div>
+          <div class="field-group">
+            <label>State / Province of Residence</label>
+            <input type="text" id="f-state-res" placeholder="e.g. Akwa Ibom, Lagos, London" />
+          </div>
+        </div>
+        <div class="field-group">
+          <label>Full Residential Address</label>
+          <textarea id="f-address" rows="2" placeholder="House number, street, area, city"></textarea>
+        </div>
+      </div>
+      <div class="reg-nav">
+        <button class="reg-btn-back" onclick="prevStep(3)">&larr; Back</button>
+        <button class="reg-btn-next" onclick="nextStep(3)">Next: Professional &rarr;</button>
+      </div>
+    </div>
+
+    <!-- ── STEP 4: Professional Profile ── -->
+    <div class="reg-panel" id="step-4">
+      <div class="reg-panel-header">
+        <div class="reg-panel-num">04</div>
+        <div>
+          <h2>Professional Profile</h2>
+          <p>Your educational and professional background</p>
+        </div>
+      </div>
+      <div class="reg-fields">
+        <div class="field-row-2">
+          <div class="field-group">
+            <label>Highest Educational Qualification <span class="req">*</span></label>
+            <select id="f-qualification" required>
+              <option value="">Select</option>
+              <option>FSLC / Primary</option>
+              <option>WAEC / NECO / O-Level</option>
+              <option>National Diploma (ND)</option>
+              <option>Higher National Diploma (HND)</option>
+              <option>Bachelor's Degree (B.Sc / B.A / B.Eng)</option>
+              <option>Postgraduate Diploma (PGD)</option>
+              <option>Master's Degree (M.Sc / M.A / MBA)</option>
+              <option>Doctorate (Ph.D)</option>
+              <option>Professional Certification</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label>Field of Study / Discipline</label>
+            <input type="text" id="f-field" placeholder="e.g. Medicine, Engineering, Law" />
+          </div>
+        </div>
+        <div class="field-row-2">
+          <div class="field-group">
+            <label>Current Occupation / Profession <span class="req">*</span></label>
+            <input type="text" id="f-occupation" placeholder="e.g. Medical Doctor, Civil Engineer, Trader" />
+          </div>
+          <div class="field-group">
+            <label>Employer / Organisation</label>
+            <input type="text" id="f-employer" placeholder="Name of company or self-employed" />
+          </div>
+        </div>
+        <div class="field-group">
+          <label>Brief Bio <span class="bio-count" id="bio-count">0 / 200 words</span></label>
+          <textarea id="f-bio" rows="4" placeholder="Briefly describe your background, achievements, and how you hope to contribute to Oron Union (max 200 words)…"></textarea>
+        </div>
+      </div>
+      <div class="reg-nav">
+        <button class="reg-btn-back" onclick="prevStep(4)">&larr; Back</button>
+        <button class="reg-btn-next" onclick="nextStep(4)">Next: Endorsement &rarr;</button>
+      </div>
+    </div>
+
+    <!-- ── STEP 5: Endorsement ── -->
+    <div class="reg-panel" id="step-5">
+      <div class="reg-panel-header">
+        <div class="reg-panel-num">05</div>
+        <div>
+          <h2>Endorsement</h2>
+          <p>Your membership must be endorsed before your unique Member ID is issued</p>
+        </div>
+      </div>
+      <div class="reg-fields">
+
+        <div class="endorsement-info-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <div>
+            <strong>Why endorsement?</strong>
+            <p>Endorsement by a recognised Oron Union official verifies your membership claim and protects the integrity of the Union's membership roll.</p>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label>Who will endorse your membership? <span class="req">*</span></label>
+          <div class="endorse-cards">
+
+            <label class="endorse-card" id="card-president-general">
+              <input type="radio" name="endorser-type" value="president-general" id="f-end-pg" />
+              <div class="endorse-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="7" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/><polyline points="8 7 12 4 16 7"/></svg>
+              </div>
+              <div class="endorse-card-text">
+                <strong>President-General</strong>
+                <span>The President-General of Oron Union will personally review and endorse your membership</span>
+              </div>
+              <div class="endorse-card-check"></div>
+            </label>
+
+            <label class="endorse-card" id="card-branch-president">
+              <input type="radio" name="endorser-type" value="branch-president" id="f-end-bp" />
+              <div class="endorse-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="10" width="18" height="11" rx="2"/><path d="M7 10V6a5 5 0 0 1 10 0v4"/><circle cx="12" cy="16" r="1.5" fill="currentColor" stroke="none"/></svg>
+              </div>
+              <div class="endorse-card-text">
+                <strong>Branch President</strong>
+                <span>The President of your local Oron Union branch will endorse your application</span>
+              </div>
+              <div class="endorse-card-check"></div>
+            </label>
+
+            <label class="endorse-card" id="card-clan-rep">
+              <input type="radio" name="endorser-type" value="clan-rep" id="f-end-cr" />
+              <div class="endorse-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              </div>
+              <div class="endorse-card-text">
+                <strong>Clan Representative</strong>
+                <span>Your clan's recognised representative will verify your Oron heritage and endorse you</span>
+              </div>
+              <div class="endorse-card-check"></div>
+            </label>
+
+          </div>
+        </div>
+
+        <!-- Shown when Branch President or Clan Rep is selected -->
+        <div id="lga-rep-fields" class="lga-rep-section hidden">
+          <div class="field-row-2">
+            <div class="field-group">
+              <label id="lga-rep-label">LGA <span class="req">*</span></label>
+              <select id="f-endorser-lga" required>
+                <option value="">Select LGA</option>
+                <option value="Oron">Oron</option>
+                <option value="Urueoffong/Oruko">Urueoffong/Oruko</option>
+                <option value="Okobo">Okobo</option>
+                <option value="Mbo">Mbo</option>
+                <option value="Udunguko">Udunguko</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label id="lga-rep-name-label">Name of Endorser (if known)</label>
+              <input type="text" id="f-rep-name" placeholder="Optional — leave blank if unknown" />
+            </div>
+          </div>
+          <div class="lga-rep-note">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span id="lga-rep-note-text">Your selected endorser will receive this application and review your biodata before your Member ID is issued.</span>
+          </div>
+        </div>
+
+        <!-- Account password -->
+        <div class="password-section">
+          <h3 class="pwd-section-title">Set Your Account Password</h3>
+          <p class="pwd-section-sub">You will use this password to log in with your Member ID once approved</p>
+          <div class="field-row-2">
+            <div class="field-group">
+              <label>Password <span class="req">*</span></label>
+              <div class="password-wrap">
+                <input type="password" id="f-password" placeholder="Minimum 6 characters" />
+                <button type="button" class="toggle-pass" onclick="togglePass('f-password',this)" aria-label="Show/hide password">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+              </div>
+            </div>
+            <div class="field-group">
+              <label>Confirm Password <span class="req">*</span></label>
+              <div class="password-wrap">
+                <input type="password" id="f-password2" placeholder="Re-enter password" />
+                <button type="button" class="toggle-pass" onclick="togglePass('f-password2',this)" aria-label="Show/hide password">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="reg-nav">
+        <button class="reg-btn-back" onclick="prevStep(5)">&larr; Back</button>
+        <button class="reg-btn-next" onclick="nextStep(5)">Review Application &rarr;</button>
+      </div>
+    </div>
+
+    <!-- ── STEP 6: Review & Submit ── -->
+    <div class="reg-panel" id="step-6">
+      <div class="reg-panel-header">
+        <div class="reg-panel-num">06</div>
+        <div>
+          <h2>Review &amp; Submit</h2>
+          <p>Confirm your details and upload your photograph before submitting</p>
+        </div>
+      </div>
+      <div class="reg-fields">
+
+        <!-- Photo upload -->
+        <div class="photo-upload-section">
+          <div class="photo-preview" id="photo-preview">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span>No photo</span>
+          </div>
+          <div class="photo-upload-info">
+            <h4>Passport Photograph <span class="req">*</span></h4>
+            <p>Upload a recent clear passport-size photo with a white or plain background. Max 2MB. JPG or PNG only.</p>
+            <label class="photo-upload-btn">
+              Choose Photo
+              <input type="file" id="f-photo" accept="image/jpeg,image/png" style="display:none;" />
+            </label>
+            <span id="photo-name" class="photo-filename">No file chosen</span>
+          </div>
+        </div>
+
+        <!-- Data review accordion -->
+        <div class="review-accordion" id="review-accordion">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Declaration -->
+        <div class="declaration-box">
+          <h4>Declaration</h4>
+          <p>I, the undersigned, hereby declare that all information provided in this application is true and correct to the best of my knowledge. I understand that providing false information shall be grounds for immediate disqualification from membership of Oron Union. I agree to abide by the Constitution and By-Laws of Oron Union and to uphold the values of Unity, Progress and Heritage.</p>
+          <label class="declare-check">
+            <input type="checkbox" id="f-declaration" />
+            I have read and accept the above declaration
+          </label>
+        </div>
+
+        <div id="submit-error" class="submit-error hidden"></div>
+      </div>
+      <div class="reg-nav">
+        <button class="reg-btn-back" onclick="prevStep(6)">&larr; Back</button>
+        <button class="reg-btn-submit" id="submit-btn" onclick="submitApplication()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          Submit Application
+        </button>
+      </div>
+    </div>
+
+    <!-- ── SUCCESS SCREEN ── -->
+    <div class="reg-panel" id="step-success">
+      <div class="success-screen">
+        <div class="success-icon-ring">
+          <svg viewBox="0 0 52 52"><circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/><path class="checkmark-check" fill="none" d="M14 27l7.5 7.5 16-18"/></svg>
+        </div>
+        <h2>Application Submitted!</h2>
+        <p>Your membership application has been received and forwarded for endorsement.</p>
+
+        <div class="ref-box">
+          <span class="ref-label">Your Reference Number</span>
+          <span class="ref-num" id="ref-num">APP-—</span>
+          <span class="ref-sub">Keep this reference — you will need it to enquire about your application</span>
+        </div>
+
+        <div class="endorser-notified" id="endorser-notified">
+          <!-- Populated by JS -->
+        </div>
+
+        <div class="next-steps">
+          <h4>What happens next?</h4>
+          <ol>
+            <li>Your application is reviewed by your selected endorser</li>
+            <li>The endorser contacts you via phone or email if clarification is needed</li>
+            <li>Once approved, your unique <strong>Member ID</strong> is generated</li>
+            <li>Log in to <a href="elections.html">elections.oronunion.org</a> with your email and password to access your ID and all member features</li>
+          </ol>
+        </div>
+
+        <a href="elections.html" class="reg-btn-next" style="display:inline-block;text-decoration:none;text-align:center;margin-top:8px;">Go to Member Portal &rarr;</a>
+      </div>
+    </div>
+
+  </div><!-- /.reg-container -->
+</main>
+
+<div id="grain"></div>
+
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+
+<script src="js/cursor.js"></script>
+<script src="js/register.js"></script>
+</body>
+</html>

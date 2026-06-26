@@ -1,0 +1,707 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Branches &amp; Chapters — Oron Union</title>
+  <meta name="description" content="Oron Union branches and chapters across Nigeria and the world. View exco members, active membership counts and contact information." />
+  <link rel="icon" type="image/png" href="logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/inner.css" />
+  <style>
+    /* Branch page nav tabs */
+    .branch-tabs{background:var(--maroon);padding:0;overflow-x:auto;white-space:nowrap;position:sticky;top:72px;z-index:90;}
+    .branch-tabs a{display:inline-block;color:rgba(255,255,255,.65);font-size:.8rem;font-weight:600;letter-spacing:.04em;padding:14px 20px;text-decoration:none;border-bottom:3px solid transparent;transition:color .2s,border-color .2s;font-family:Inter,sans-serif;}
+    .branch-tabs a:hover,.branch-tabs a.active{color:#fff;border-bottom-color:#fff;}
+    /* Branch section */
+    .branch-section{padding:80px 0;border-bottom:1px solid var(--beige-dark);}
+    .branch-section:nth-child(odd){background:var(--white);}
+    .branch-section:nth-child(even){background:var(--beige);}
+    .branch-hdr{display:grid;grid-template-columns:auto 1fr auto;align-items:start;gap:24px;margin-bottom:40px;}
+    .branch-hdr-img{width:100px;height:100px;border-radius:12px;overflow:hidden;flex-shrink:0;}
+    .branch-hdr-img img{width:100%;height:100%;object-fit:cover;}
+    .branch-hdr-info h2{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;color:var(--black);margin:0 0 6px;}
+    .branch-hdr-info p{font-size:.88rem;color:var(--gray);margin:0 0 10px;}
+    .branch-established{display:inline-flex;align-items:center;gap:6px;background:var(--red);color:#fff;border-radius:99px;padding:4px 14px;font-size:.72rem;font-weight:700;letter-spacing:.08em;}
+    .branch-hq-badge{display:inline-flex;align-items:center;gap:6px;background:var(--maroon);color:#fff;border-radius:99px;padding:4px 14px;font-size:.72rem;font-weight:700;letter-spacing:.08em;margin-left:8px;}
+    .member-count-box{background:var(--maroon);color:#fff;border-radius:14px;padding:20px 28px;text-align:center;min-width:130px;flex-shrink:0;}
+    .member-count-num{font-family:'Playfair Display',serif;font-size:2.4rem;font-weight:700;line-height:1;display:block;}
+    .member-count-label{font-size:.72rem;letter-spacing:.08em;opacity:.8;margin-top:4px;display:block;}
+    /* Exco grid */
+    .exco-section{margin-bottom:36px;}
+    .exco-section h3{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--black);margin:0 0 20px;display:flex;align-items:center;justify-content:space-between;}
+    .exco-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px;}
+    .exco-card{background:var(--white);border:1px solid var(--card-border,#e8e4da);border-radius:12px;padding:20px;text-align:center;}
+    .exco-photo{width:70px;height:70px;border-radius:50%;margin:0 auto 12px;overflow:hidden;background:var(--beige-dark);display:flex;align-items:center;justify-content:center;border:2px solid var(--red);}
+    .exco-photo img{width:100%;height:100%;object-fit:cover;}
+    .exco-photo svg{opacity:.4;}
+    .exco-title{font-size:.7rem;font-weight:700;letter-spacing:.08em;color:var(--red);text-transform:uppercase;margin-bottom:6px;}
+    .exco-name{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;color:var(--black);line-height:1.3;}
+    .exco-name.placeholder{color:var(--gray);font-style:italic;font-size:.85rem;}
+    /* Members section */
+    .members-section{margin-top:16px;}
+    .members-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px;}
+    .members-hdr h3{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--black);margin:0;}
+    .btn-toggle-members{background:none;border:1px solid var(--red);color:var(--red);border-radius:8px;padding:7px 16px;font-size:.78rem;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;}
+    .btn-toggle-members:hover{background:var(--red);color:#fff;}
+    .btn-pdf{background:var(--red);color:#fff;border:none;border-radius:8px;padding:7px 16px;font-size:.78rem;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;display:flex;align-items:center;gap:6px;}
+    .btn-pdf:hover{background:var(--red-hover);}
+    .member-list-wrap{display:none;overflow-x:auto;}
+    .member-table{width:100%;border-collapse:collapse;font-size:.83rem;}
+    .member-table th{background:var(--maroon);color:#fff;padding:10px 14px;text-align:left;font-weight:600;font-size:.75rem;letter-spacing:.05em;}
+    .member-table td{padding:10px 14px;border-bottom:1px solid var(--beige-dark,#E3DFD7);color:var(--black);}
+    .member-table tr:last-child td{border-bottom:none;}
+    .member-table tr:hover td{background:var(--beige);}
+    .member-photo-mini{width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid var(--beige-dark);}
+    .member-id-tag{font-family:monospace;font-size:.78rem;color:var(--red);font-weight:700;}
+    .no-members{text-align:center;padding:32px;color:var(--gray);font-size:.88rem;}
+    /* Domestic/Intl grid */
+    .branch-card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:20px;}
+    .branch-mini-card{background:var(--white);border:1px solid var(--card-border,#e8e4da);border-radius:14px;padding:24px;display:flex;flex-direction:column;gap:10px;}
+    .branch-mini-card h3{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:var(--black);margin:0;}
+    .branch-mini-loc{font-size:.82rem;color:var(--gray);display:flex;align-items:center;gap:6px;}
+    .branch-mini-est{font-size:.72rem;font-weight:700;color:var(--red);letter-spacing:.06em;text-transform:uppercase;}
+    .branch-mini-info{font-size:.82rem;color:var(--gray);line-height:1.5;}
+    /* Admin panel */
+    .branch-admin-bar{background:var(--beige);border-top:3px solid var(--red);padding:24px 0;}
+    .branch-admin-inner{max-width:1100px;margin:0 auto;padding:0 24px;}
+    .branch-admin-inner h3{font-family:'Playfair Display',serif;font-size:1.1rem;margin:0 0 16px;color:var(--black);}
+    #branch-admin-unlock-row{display:flex;gap:10px;align-items:center;}
+    #branch-admin-code{padding:10px 14px;border:1px solid #ddd;border-radius:8px;font-size:.88rem;font-family:Inter,sans-serif;width:220px;}
+    .btn-branch-unlock{background:var(--red);color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:.88rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;}
+    #branch-exco-editor{display:none;margin-top:20px;}
+    .exco-editor-branch{background:var(--white);border-radius:12px;padding:20px;margin-bottom:16px;border:1px solid #ddd;}
+    .exco-editor-branch h4{font-family:'Playfair Display',serif;margin:0 0 14px;font-size:1rem;color:var(--black);}
+    .exco-editor-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+    .exco-editor-row label{font-size:.78rem;color:var(--gray);font-weight:600;display:block;margin-bottom:4px;}
+    .exco-editor-row input{width:100%;box-sizing:border-box;padding:8px 12px;border:1px solid #ddd;border-radius:7px;font-size:.85rem;font-family:Inter,sans-serif;}
+    .btn-save-exco{background:var(--maroon);color:#fff;border:none;border-radius:7px;padding:9px 20px;font-size:.82rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;margin-top:10px;}
+    .btn-save-exco:hover{background:var(--red-deep,#3A000C);}
+    .save-exco-status{font-size:.78rem;margin-top:8px;display:none;}
+    .save-exco-status.ok{color:#15803d;display:block;}
+    @media(max-width:700px){
+      .branch-hdr{grid-template-columns:1fr;}.member-count-box{display:none;}
+      .branch-hdr-img{width:70px;height:70px;}.branch-hdr-info h2{font-size:1.3rem;}
+      .exco-editor-row{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- ========== NAVBAR ========== -->
+<nav class="navbar" id="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">
+      <img src="logo.png" alt="Oron Union Crest" style="width:50px;height:50px;object-fit:contain;" />
+      <div class="nav-logo-text"><strong>Oron Union</strong><span>Unity &middot; Progress &middot; Heritage</span></div>
+    </a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="about.html">About <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4,6 8,10 12,6"/></svg></a>
+        <ul class="dropdown">
+          <li><a href="about.html#history">History</a></li>
+          <li><a href="about.html#mission">Mission &amp; Vision</a></li>
+          <li><a href="about.html#values">Core Values</a></li>
+          <li><a href="about.html#constitution">Constitution</a></li>
+          <li><a href="leadership.html#past">Past Leadership</a></li>
+          <li><a href="projects.html">Projects</a></li>
+        </ul>
+      </li>
+      <li><a href="culture.html">Culture &amp; Heritage <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4,6 8,10 12,6"/></svg></a>
+        <ul class="dropdown">
+          <li><a href="culture.html#history">History of Oron People</a></li>
+          <li><a href="culture.html#clans">Our Nine Clans</a></li>
+          <li><a href="culture.html#language">Language</a></li>
+          <li><a href="culture.html#festivals">Festivals &amp; Ceremonies</a></li>
+          <li><a href="culture.html#arts">Arts &amp; Crafts</a></li>
+          <li><a href="culture.html#folklore">Folklore &amp; Traditions</a></li>
+          <li><a href="culture.html#gallery">Photo Gallery</a></li>
+        </ul>
+      </li>
+      <li><a href="leadership.html" aria-current="page">Leadership <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4,6 8,10 12,6"/></svg></a>
+        <ul class="dropdown">
+          <li><a href="leadership.html#executive">Central Executive Committee</a></li>
+          <li><a href="leadership.html#trustees">Board of Trustees</a></li>
+          <li><a href="leadership.html#cotr">Council of Oro Traditional Rulers</a></li>
+          <li><a href="leadership.html#structure">Org. Structure</a></li>
+          <li class="has-submenu"><a href="branches.html">Branches &amp; Chapters <svg class="chevron-right" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,4 10,8 6,12"/></svg></a>
+            <ul class="submenu">
+              <li><a href="branches.html#oron">Oron LGA</a></li>
+              <li><a href="branches.html#urueoffong">Urueoffong / Oruko</a></li>
+              <li><a href="branches.html#okobo">Okobo</a></li>
+              <li><a href="branches.html#mbo">Mbo</a></li>
+              <li><a href="branches.html#udunguko">Udunguko</a></li>
+              <li><a href="branches.html#domestic">Domestic Branches</a></li>
+              <li><a href="branches.html#international">International Chapters</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li><a href="entertainment.html">Entertainment <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4,6 8,10 12,6"/></svg></a>
+        <ul class="dropdown">
+          <li><a href="entertainment.html#events">Upcoming Events</a></li>
+          <li><a href="entertainment.html#calendar">Event Calendar</a></li>
+          <li><a href="entertainment.html#festivals">Annual Festivals</a></li>
+          <li><a href="entertainment.html#livetv">Live TV</a></li>
+          <li><a href="entertainment.html#music">Music &amp; Videos</a></li>
+        </ul>
+      </li>
+      <li><a href="elections.html" class="nav-elections">Elections <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4,6 8,10 12,6"/></svg></a>
+        <ul class="dropdown">
+          <li><a href="elections.html">Member Voting Portal</a></li>
+          <li><a href="register.html">Apply for Membership</a></li>
+          <li><a href="endorser.html">Officials / Endorser Login</a></li>
+        </ul>
+      </li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="register.html" class="nav-join">Join Us</a></li>
+    </ul>
+    <div class="nav-mobile-toggle" id="menu-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></div>
+  </div>
+</nav>
+
+
+<!-- ========== INNER HERO ========== -->
+<header class="ip-hero">
+  <div class="ip-hero-overlay"></div>
+  <div class="ip-hero-inner">
+    <span class="ip-hero-badge">Our Network</span>
+    <h1 class="ip-hero-title">Branches &amp; Chapters</h1>
+    <p class="ip-hero-sub">From the five LGAs of Akwa Ibom to cities across Nigeria and the diaspora — the Oron Union is everywhere our people are.</p>
+  </div>
+</header>
+
+
+<!-- ========== QUICK NAV ========== -->
+<nav class="branch-tabs" aria-label="Branch navigation">
+  <a href="#oron">Oron LGA</a>
+  <a href="#urueoffong">Urueoffong / Oruko</a>
+  <a href="#okobo">Okobo</a>
+  <a href="#mbo">Mbo</a>
+  <a href="#udunguko">Udunguko</a>
+  <a href="#domestic">Domestic Branches</a>
+  <a href="#international">International Chapters</a>
+</nav>
+
+
+<!-- =========================================================
+     LGA BRANCHES
+     ========================================================= -->
+
+<!-- ORON LGA -->
+<section class="branch-section" id="oron">
+  <div class="ip-container" style="max-width:1100px;margin:0 auto;padding:0 24px;">
+    <div class="branch-hdr">
+      <div class="branch-hdr-img">
+        <img src="pictures/IMG-20260317-WA0030.jpg" alt="Oron LGA" />
+      </div>
+      <div class="branch-hdr-info">
+        <h2>Oron LGA Branch <span class="branch-established">Est. 1925</span> <span class="branch-hq-badge">HQ</span></h2>
+        <p>Oron, Akwa Ibom State &mdash; Founding Branch of the Oron Union</p>
+        <p style="font-size:.88rem;color:var(--gray);line-height:1.6;max-width:600px;">The Oron LGA Branch is the founding and headquarters branch of the Oron Union, established at the Union's inception in 1925. It oversees affairs for the heartland of the Oro Nation, including Oron City, the Oron Museum district and surrounding communities.</p>
+      </div>
+      <div class="member-count-box">
+        <span class="member-count-num" id="count-oron">—</span>
+        <span class="member-count-label">ACTIVE MEMBERS</span>
+      </div>
+    </div>
+    <!-- Exco -->
+    <div class="exco-section">
+      <h3>Executive Committee <span id="edit-btn-oron"></span></h3>
+      <div class="exco-grid" id="exco-oron"></div>
+    </div>
+    <!-- Members -->
+    <div class="members-section">
+      <div class="members-hdr">
+        <h3>Registered Members</h3>
+        <div style="display:flex;gap:10px;">
+          <button class="btn-toggle-members" data-target="ml-oron">Show / Hide List</button>
+          <button class="btn-pdf" onclick="printMembers('Oron')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>PDF List</button>
+        </div>
+      </div>
+      <div class="member-list-wrap" id="ml-oron"><div id="members-oron"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- URUEOFFONG/ORUKO -->
+<section class="branch-section" id="urueoffong">
+  <div class="ip-container" style="max-width:1100px;margin:0 auto;padding:0 24px;">
+    <div class="branch-hdr">
+      <div class="branch-hdr-img"><img src="pictures/IMG-20260317-WA0031.jpg" alt="Urueoffong/Oruko LGA" /></div>
+      <div class="branch-hdr-info">
+        <h2>Urueoffong / Oruko Branch <span class="branch-established">Est. 1928</span></h2>
+        <p>Urueoffong/Oruko, Akwa Ibom State</p>
+        <p style="font-size:.88rem;color:var(--gray);line-height:1.6;max-width:600px;">The Urueoffong/Oruko Branch serves the communities of the second largest Oro LGA, known for its rich fishing heritage and historic Oku Ibom waterways that have sustained communities for centuries.</p>
+      </div>
+      <div class="member-count-box">
+        <span class="member-count-num" id="count-urueoffong">—</span>
+        <span class="member-count-label">ACTIVE MEMBERS</span>
+      </div>
+    </div>
+    <div class="exco-section">
+      <h3>Executive Committee <span id="edit-btn-urueoffong"></span></h3>
+      <div class="exco-grid" id="exco-urueoffong"></div>
+    </div>
+    <div class="members-section">
+      <div class="members-hdr">
+        <h3>Registered Members</h3>
+        <div style="display:flex;gap:10px;">
+          <button class="btn-toggle-members" data-target="ml-urueoffong">Show / Hide List</button>
+          <button class="btn-pdf" onclick="printMembers('Urueoffong/Oruko')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>PDF List</button>
+        </div>
+      </div>
+      <div class="member-list-wrap" id="ml-urueoffong"><div id="members-urueoffong"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- OKOBO -->
+<section class="branch-section" id="okobo">
+  <div class="ip-container" style="max-width:1100px;margin:0 auto;padding:0 24px;">
+    <div class="branch-hdr">
+      <div class="branch-hdr-img"><img src="pictures/IMG-20260317-WA0032.jpg" alt="Okobo LGA" /></div>
+      <div class="branch-hdr-info">
+        <h2>Okobo Branch <span class="branch-established">Est. 1930</span></h2>
+        <p>Okobo, Akwa Ibom State</p>
+        <p style="font-size:.88rem;color:var(--gray);line-height:1.6;max-width:600px;">The Okobo Branch serves the agricultural heartland of the Oro Nation, an LGA with strong traditional governance structures, vibrant weekly markets and deep-rooted community leadership.</p>
+      </div>
+      <div class="member-count-box">
+        <span class="member-count-num" id="count-okobo">—</span>
+        <span class="member-count-label">ACTIVE MEMBERS</span>
+      </div>
+    </div>
+    <div class="exco-section">
+      <h3>Executive Committee <span id="edit-btn-okobo"></span></h3>
+      <div class="exco-grid" id="exco-okobo"></div>
+    </div>
+    <div class="members-section">
+      <div class="members-hdr">
+        <h3>Registered Members</h3>
+        <div style="display:flex;gap:10px;">
+          <button class="btn-toggle-members" data-target="ml-okobo">Show / Hide List</button>
+          <button class="btn-pdf" onclick="printMembers('Okobo')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>PDF List</button>
+        </div>
+      </div>
+      <div class="member-list-wrap" id="ml-okobo"><div id="members-okobo"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- MBO -->
+<section class="branch-section" id="mbo">
+  <div class="ip-container" style="max-width:1100px;margin:0 auto;padding:0 24px;">
+    <div class="branch-hdr">
+      <div class="branch-hdr-img"><img src="pictures/IMG-20260317-WA0033.jpg" alt="Mbo LGA" /></div>
+      <div class="branch-hdr-info">
+        <h2>Mbo Branch <span class="branch-established">Est. 1932</span></h2>
+        <p>Mbo, Akwa Ibom State</p>
+        <p style="font-size:.88rem;color:var(--gray);line-height:1.6;max-width:600px;">The Mbo Branch represents this coastal community renowned for traditional boat-building, deep-sea fishing and the celebrated Mbo annual regatta. The branch is also known for producing outstanding Oron Union officers across generations.</p>
+      </div>
+      <div class="member-count-box">
+        <span class="member-count-num" id="count-mbo">—</span>
+        <span class="member-count-label">ACTIVE MEMBERS</span>
+      </div>
+    </div>
+    <div class="exco-section">
+      <h3>Executive Committee <span id="edit-btn-mbo"></span></h3>
+      <div class="exco-grid" id="exco-mbo"></div>
+    </div>
+    <div class="members-section">
+      <div class="members-hdr">
+        <h3>Registered Members</h3>
+        <div style="display:flex;gap:10px;">
+          <button class="btn-toggle-members" data-target="ml-mbo">Show / Hide List</button>
+          <button class="btn-pdf" onclick="printMembers('Mbo')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>PDF List</button>
+        </div>
+      </div>
+      <div class="member-list-wrap" id="ml-mbo"><div id="members-mbo"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- UDUNGUKO -->
+<section class="branch-section" id="udunguko">
+  <div class="ip-container" style="max-width:1100px;margin:0 auto;padding:0 24px;">
+    <div class="branch-hdr">
+      <div class="branch-hdr-img"><img src="pictures/IMG-20260317-WA0034.jpg" alt="Udunguko LGA" /></div>
+      <div class="branch-hdr-info">
+        <h2>Udunguko Branch <span class="branch-established">Est. 1996</span></h2>
+        <p>Udunguko, Akwa Ibom State</p>
+        <p style="font-size:.88rem;color:var(--gray);line-height:1.6;max-width:600px;">The newest Oro LGA branch, established in 1996 following the creation of Udunguko LGA. Celebrated for its abundant agricultural produce and its emerging generation of dynamic youth leaders who have become a driving force in the Union.</p>
+      </div>
+      <div class="member-count-box">
+        <span class="member-count-num" id="count-udunguko">—</span>
+        <span class="member-count-label">ACTIVE MEMBERS</span>
+      </div>
+    </div>
+    <div class="exco-section">
+      <h3>Executive Committee <span id="edit-btn-udunguko"></span></h3>
+      <div class="exco-grid" id="exco-udunguko"></div>
+    </div>
+    <div class="members-section">
+      <div class="members-hdr">
+        <h3>Registered Members</h3>
+        <div style="display:flex;gap:10px;">
+          <button class="btn-toggle-members" data-target="ml-udunguko">Show / Hide List</button>
+          <button class="btn-pdf" onclick="printMembers('Udunguko')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>PDF List</button>
+        </div>
+      </div>
+      <div class="member-list-wrap" id="ml-udunguko"><div id="members-udunguko"></div></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- =========================================================
+     DOMESTIC BRANCHES
+     ========================================================= -->
+<section class="branch-section" id="domestic">
+  <div class="ip-container" style="max-width:1100px;margin:0 auto;padding:0 24px;">
+    <h2 class="section-title reveal-scale">Domestic Branches</h2>
+    <div class="section-underline reveal-underline"></div>
+    <p class="section-sub reveal">Oron Union branches serving Oro communities across Nigerian cities</p>
+    <div class="branch-card-grid" style="margin-top:40px;">
+      <div class="branch-mini-card reveal">
+        <div style="width:44px;height:44px;background:var(--red);border-radius:10px;display:flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+        <h3>Lagos Branch</h3>
+        <div class="branch-mini-loc"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Lagos, Nigeria</div>
+        <div class="branch-mini-est">Est. 1958</div>
+        <p class="branch-mini-info">The largest domestic branch, serving the Oro community in Lagos and its environs. Hosts monthly meetings and coordinates welfare activities for members in Lagos State.</p>
+        <div id="mini-exco-lagos" style="font-size:.8rem;color:var(--gray);"></div>
+      </div>
+      <div class="branch-mini-card reveal">
+        <div style="width:44px;height:44px;background:var(--maroon);border-radius:10px;display:flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+        <h3>Abuja Branch</h3>
+        <div class="branch-mini-loc"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Abuja, FCT, Nigeria</div>
+        <div class="branch-mini-est">Est. 1991</div>
+        <p class="branch-mini-info">The federal capital branch, serving Oro professionals and public servants resident in Abuja. Maintains active government liaison for Union advocacy work.</p>
+        <div id="mini-exco-abuja" style="font-size:.8rem;color:var(--gray);"></div>
+      </div>
+      <div class="branch-mini-card reveal">
+        <div style="width:44px;height:44px;background:var(--red-hover);border-radius:10px;display:flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+        <h3>Port Harcourt Branch</h3>
+        <div class="branch-mini-loc"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Port Harcourt, Rivers State</div>
+        <div class="branch-mini-est">Est. 1965</div>
+        <p class="branch-mini-info">Serving the Oro community in Port Harcourt and Rivers State. One of the most active domestic branches with a strong youth and professional membership base.</p>
+        <div id="mini-exco-ph" style="font-size:.8rem;color:var(--gray);"></div>
+      </div>
+      <div class="branch-mini-card reveal">
+        <div style="width:44px;height:44px;background:var(--red-deep,#3A000C);border-radius:10px;display:flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+        <h3>Kano Branch</h3>
+        <div class="branch-mini-loc"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Kano, Kano State</div>
+        <div class="branch-mini-est">Est. 1978</div>
+        <p class="branch-mini-info">The Northern Nigeria branch, serving Oro traders, professionals and academics in Kano and surrounding states. A testament to the Union's pan-Nigerian reach.</p>
+        <div id="mini-exco-kano" style="font-size:.8rem;color:var(--gray);"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- =========================================================
+     INTERNATIONAL CHAPTERS
+     ========================================================= -->
+<section class="branch-section" id="international">
+  <div class="ip-container" style="max-width:1100px;margin:0 auto;padding:0 24px;">
+    <h2 class="section-title reveal-scale">International Chapters</h2>
+    <div class="section-underline reveal-underline"></div>
+    <p class="section-sub reveal">Our global diaspora network — the Oron Union wherever the tide carries our people</p>
+    <div class="branch-card-grid" style="margin-top:40px;">
+      <div class="branch-mini-card reveal">
+        <div style="font-size:1.8rem;">&#127482;&#127480;</div>
+        <h3>USA Chapter</h3>
+        <div class="branch-mini-loc">United States of America</div>
+        <div class="branch-mini-est">Est. 1999</div>
+        <p class="branch-mini-info">With chapters in Houston, Atlanta, New York and Washington D.C., the USA is home to the largest Oron Union diaspora community outside Nigeria.</p>
+        <div id="mini-exco-usa" style="font-size:.8rem;color:var(--gray);"></div>
+      </div>
+      <div class="branch-mini-card reveal">
+        <div style="font-size:1.8rem;">&#127468;&#127463;</div>
+        <h3>UK Chapter</h3>
+        <div class="branch-mini-loc">United Kingdom</div>
+        <div class="branch-mini-est">Est. 2003</div>
+        <p class="branch-mini-info">Based in London with members across England, Scotland and Wales. The UK Chapter hosts the popular annual Oro Cultural Night and coordinates diaspora welfare initiatives.</p>
+        <div id="mini-exco-uk" style="font-size:.8rem;color:var(--gray);"></div>
+      </div>
+      <div class="branch-mini-card reveal">
+        <div style="font-size:1.8rem;">&#127464;&#127462;</div>
+        <h3>Canada Chapter</h3>
+        <div class="branch-mini-loc">Canada</div>
+        <div class="branch-mini-est">Est. 2007</div>
+        <p class="branch-mini-info">Primarily centred in Toronto and Calgary, serving Oro professionals and students resident in Canada. Known for its active cultural education programmes for Oro children.</p>
+        <div id="mini-exco-canada" style="font-size:.8rem;color:var(--gray);"></div>
+      </div>
+      <div class="branch-mini-card reveal">
+        <div style="font-size:1.8rem;">&#127465;&#127466;</div>
+        <h3>Germany Chapter</h3>
+        <div class="branch-mini-loc">Germany</div>
+        <div class="branch-mini-est">Est. 2012</div>
+        <p class="branch-mini-info">Serving the growing Oro community in Germany, particularly in Hamburg and Frankfurt. The chapter is known for its strong academic and professional network.</p>
+        <div id="mini-exco-germany" style="font-size:.8rem;color:var(--gray);"></div>
+      </div>
+      <div class="branch-mini-card reveal">
+        <div style="font-size:1.8rem;">&#127462;&#127482;</div>
+        <h3>Australia Chapter</h3>
+        <div class="branch-mini-loc">Australia</div>
+        <div class="branch-mini-est">Est. 2015</div>
+        <p class="branch-mini-info">The newest international chapter, with members primarily in Sydney and Melbourne. A young and vibrant chapter that has grown rapidly since its founding.</p>
+        <div id="mini-exco-australia" style="font-size:.8rem;color:var(--gray);"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- =========================================================
+     ADMIN PANEL
+     ========================================================= -->
+<div class="branch-admin-bar">
+  <div class="branch-admin-inner">
+    <h3>&#9998; Admin — Update Branch &amp; Exco Information</h3>
+    <div id="branch-admin-unlock-row">
+      <input type="password" id="branch-admin-code" placeholder="Admin code" />
+      <button class="btn-branch-unlock" id="branch-admin-btn">Unlock Admin</button>
+    </div>
+    <div id="branch-exco-editor"></div>
+  </div>
+</div>
+
+
+<!-- ========== CTA ========== -->
+<section class="join-cta" style="padding:80px 24px;">
+  <h2 class="reveal-scale" style="font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,2.6rem);color:#fff;margin-bottom:14px;">Find Your Branch</h2>
+  <p class="reveal" style="color:rgba(255,255,255,0.85);font-size:1rem;max-width:500px;margin:0 auto 36px;line-height:1.7;">Not sure which branch to join? Register as a member and your nearest branch will reach out to welcome you into the Oron Union family.</p>
+  <div class="join-cta-btns reveal">
+    <a href="register.html" class="btn-white">Apply for Membership</a>
+    <a href="contact.html" class="btn-outline-white">Contact Us</a>
+  </div>
+</section>
+
+
+<!-- ========== FOOTER ========== -->
+<footer class="inner-footer" style="background:var(--maroon);padding:32px 0;">
+  <div class="ip-container" style="max-width:1100px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+    <a href="index.html" class="footer-logo-link"><img src="logo.png" alt="Oron Union" style="width:48px;height:48px;object-fit:contain;" /></a>
+    <p style="font-size:0.82rem;color:rgba(255,255,255,0.5);">&copy; 2026 Oron Union. All rights reserved. &nbsp;|&nbsp; <a href="contact.html" style="color:rgba(255,255,255,0.5);">Privacy Policy</a></p>
+  </div>
+</footer>
+
+
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+<script src="js/cursor.js"></script>
+<script>
+(function () {
+  /* ── Nav / scroll ── */
+  var t = document.getElementById('menu-toggle'), n = document.getElementById('nav-links');
+  if (t && n) t.addEventListener('click', function () { n.classList.toggle('active'); });
+  var nav = document.getElementById('navbar');
+  if (nav) window.addEventListener('scroll', function () { nav.classList.toggle('scrolled', window.scrollY > 40); }, { passive: true });
+  var io = new IntersectionObserver(function (e) { e.forEach(function (x) { if (x.isIntersecting) { x.target.classList.add('visible'); io.unobserve(x.target); } }); }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal,.reveal-scale,.branch-mini-card').forEach(function (el) { io.observe(el); });
+
+  /* ── Branch tabs highlight ── */
+  var tabLinks = document.querySelectorAll('.branch-tabs a');
+  window.addEventListener('scroll', function () {
+    var cur = '';
+    document.querySelectorAll('.branch-section').forEach(function (s) {
+      if (window.scrollY >= s.offsetTop - 120) cur = s.id;
+    });
+    tabLinks.forEach(function (a) { a.classList.toggle('active', a.getAttribute('href') === '#' + cur); });
+  }, { passive: true });
+
+  /* ── Data ── */
+  var ADMIN_HASH = 'b3JvbjE5MjU=';
+  var isAdmin = false;
+  var EXCO_KEY = 'oron_branch_exco';
+
+  var LGA_BRANCHES = [
+    { id: 'oron', lgaKey: 'Oron', name: 'Oron LGA Branch' },
+    { id: 'urueoffong', lgaKey: 'Urueoffong/Oruko', name: 'Urueoffong/Oruko Branch' },
+    { id: 'okobo', lgaKey: 'Okobo', name: 'Okobo Branch' },
+    { id: 'mbo', lgaKey: 'Mbo', name: 'Mbo Branch' },
+    { id: 'udunguko', lgaKey: 'Udunguko', name: 'Udunguko Branch' }
+  ];
+
+  var DEFAULT_EXCO = [
+    { role: 'president', title: 'Branch President', name: '' },
+    { role: 'secretary', title: 'Secretary-General', name: '' },
+    { role: 'treasurer', title: 'Treasurer', name: '' },
+    { role: 'pro', title: 'PRO', name: '' }
+  ];
+
+  function getApps() {
+    try { return JSON.parse(localStorage.getItem('oron_applications') || '[]'); } catch (e) { return []; }
+  }
+
+  function getBranchMembers(lgaKey) {
+    return getApps().filter(function (a) {
+      if (a.status !== 'approved') return false;
+      if (a.endorserLga === lgaKey) return true;
+      /* Clan-rep endorsed members count under their own declared LGA */
+      if (a.endorserType === 'clan-rep' && a.lga === lgaKey) return true;
+      return false;
+    });
+  }
+
+  function getExco(branchId) {
+    try {
+      var all = JSON.parse(localStorage.getItem(EXCO_KEY) || '{}');
+      return all[branchId] || DEFAULT_EXCO.map(function (e) { return { role: e.role, title: e.title, name: '' }; });
+    } catch (e) { return DEFAULT_EXCO.map(function (x) { return { role: x.role, title: x.title, name: '' }; }); }
+  }
+
+  function saveExco(branchId, exco) {
+    try {
+      var all = JSON.parse(localStorage.getItem(EXCO_KEY) || '{}');
+      all[branchId] = exco;
+      localStorage.setItem(EXCO_KEY, JSON.stringify(all));
+    } catch (e) { console.warn('Could not save exco data'); }
+  }
+
+  function esc(s) {
+    return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function personIcon() {
+    return '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="rgba(128,0,32,0.4)" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
+  }
+
+  function renderExco(branchId) {
+    var container = document.getElementById('exco-' + branchId);
+    if (!container) return;
+    var exco = getExco(branchId);
+    container.innerHTML = exco.map(function (m) {
+      var hasName = m.name && m.name.trim();
+      return '<div class="exco-card">' +
+        '<div class="exco-photo">' + (m.photo ? '<img src="' + m.photo + '" alt="' + esc(m.name) + '" />' : personIcon()) + '</div>' +
+        '<div class="exco-title">' + esc(m.title) + '</div>' +
+        '<div class="exco-name' + (hasName ? '' : ' placeholder') + '">' + (hasName ? esc(m.name) : 'Not yet assigned') + '</div>' +
+        '</div>';
+    }).join('');
+  }
+
+  function renderMemberTable(branchId, lgaKey) {
+    var container = document.getElementById('members-' + branchId);
+    if (!container) return;
+    var members = getBranchMembers(lgaKey);
+    var countEl = document.getElementById('count-' + branchId);
+    if (countEl) countEl.textContent = members.length;
+    if (!members.length) {
+      container.innerHTML = '<div class="no-members">No active members registered under this branch yet. Members who select this branch during registration will appear here after endorsement.</div>';
+      return;
+    }
+    var rows = members.map(function (m, i) {
+      var photoCell = m.photo
+        ? '<img src="' + m.photo + '" class="member-photo-mini" alt="' + esc(m.firstname) + '" />'
+        : '<div class="member-photo-mini" style="background:var(--beige-dark);display:flex;align-items:center;justify-content:center;">' + personIcon().replace('30', '18').replace('30', '18') + '</div>';
+      var dateJoined = m.approvedAt ? new Date(m.approvedAt).toLocaleDateString('en-NG', { year: 'numeric', month: 'short', day: 'numeric' }) : '—';
+      return '<tr>' +
+        '<td>' + (i + 1) + '</td>' +
+        '<td>' + photoCell + '</td>' +
+        '<td><span class="member-id-tag">' + esc(m.memberId || '—') + '</span></td>' +
+        '<td>' + esc(m.firstname || '') + ' ' + esc(m.lastname || '') + '</td>' +
+        '<td>' + esc(m.lga || '—') + '</td>' +
+        '<td>' + dateJoined + '</td>' +
+        '</tr>';
+    }).join('');
+    container.innerHTML = '<table class="member-table"><thead><tr><th>#</th><th>Photo</th><th>Member ID</th><th>Name</th><th>LGA</th><th>Date Joined</th></tr></thead><tbody>' + rows + '</tbody></table>';
+  }
+
+  /* ── Show/hide toggle ── */
+  document.querySelectorAll('.btn-toggle-members').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var wrap = document.getElementById(btn.dataset.target);
+      if (wrap) wrap.style.display = wrap.style.display === 'none' ? 'block' : 'none';
+    });
+  });
+
+  /* ── PDF / Print member list ── */
+  window.printMembers = function (lgaKey) {
+    var members = getBranchMembers(lgaKey);
+    var rows = members.length ? members.map(function (m, i) {
+      var dateJoined = m.approvedAt ? new Date(m.approvedAt).toLocaleDateString('en-NG', { year: 'numeric', month: 'short', day: 'numeric' }) : '—';
+      return '<tr><td>' + (i + 1) + '</td><td>' + esc(m.memberId || '—') + '</td><td>' + esc((m.firstname || '') + ' ' + (m.lastname || '')) + '</td><td>' + esc(m.lga || '—') + '</td><td>' + dateJoined + '</td></tr>';
+    }).join('') : '<tr><td colspan="5" style="text-align:center;padding:20px;color:#888;">No members found.</td></tr>';
+
+    var html = '<!DOCTYPE html><html><head><title>Oron Union — ' + lgaKey + ' Member List</title><style>*{box-sizing:border-box;font-family:Arial,sans-serif;}body{margin:0;padding:20px;}h1{font-size:1.4rem;color:#800020;margin:0 0 4px;}h2{font-size:1rem;font-weight:400;color:#555;margin:0 0 20px;}table{width:100%;border-collapse:collapse;font-size:.85rem;}th{background:#800020;color:#fff;padding:9px 12px;text-align:left;}td{padding:8px 12px;border-bottom:1px solid #eee;}tr:last-child td{border-bottom:none;}tr:nth-child(even)td{background:#faf8f5;}.footer{margin-top:20px;font-size:.72rem;color:#888;}@media print{body{padding:10px;}}</style></head><body><h1>Oron Union — ' + esc(lgaKey) + ' Branch</h1><h2>Active Member List &mdash; Generated ' + new Date().toLocaleDateString('en-NG', { year: 'numeric', month: 'long', day: 'numeric' }) + '</h2><table><thead><tr><th>#</th><th>Member ID</th><th>Full Name</th><th>LGA</th><th>Date Joined</th></tr></thead><tbody>' + rows + '</tbody></table><div class="footer">Total: ' + members.length + ' active member(s) &nbsp;|&nbsp; Oron Union &copy; 2026</div></body></html>';
+
+    var w = window.open('', '_blank', 'width=860,height=660');
+    if (!w) { alert('Please allow pop-ups for this site to view the PDF.'); return; }
+    w.document.write(html);
+    w.document.close();
+    w.focus();
+    setTimeout(function () { w.print(); }, 400);
+  };
+
+  /* ── Admin unlock ── */
+  document.getElementById('branch-admin-btn').addEventListener('click', function () {
+    var code = document.getElementById('branch-admin-code').value;
+    if (btoa(code) !== ADMIN_HASH) { alert('Invalid admin code.'); return; }
+    isAdmin = true;
+    document.getElementById('branch-admin-unlock-row').style.display = 'none';
+    buildExcoEditor();
+    addAdminEditButtons();
+  });
+
+  function addAdminEditButtons() {
+    LGA_BRANCHES.forEach(function (b) {
+      var span = document.getElementById('edit-btn-' + b.id);
+      if (!span) return;
+      var btn = document.createElement('button');
+      btn.textContent = 'Edit Exco';
+      btn.style.cssText = 'background:none;border:1px solid var(--red);color:var(--red);border-radius:6px;padding:4px 12px;font-size:.72rem;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;';
+      btn.addEventListener('click', function () {
+        var editorId = 'editor-' + b.id;
+        var el = document.getElementById(editorId);
+        if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+      });
+      span.appendChild(btn);
+    });
+  }
+
+  function buildExcoEditor() {
+    var editor = document.getElementById('branch-exco-editor');
+    editor.style.display = 'block';
+    var html = '<p style="font-size:.85rem;color:var(--gray);margin:0 0 16px;">Update exco member names for each LGA branch below.</p>';
+    LGA_BRANCHES.forEach(function (b) {
+      var exco = getExco(b.id);
+      html += '<div class="exco-editor-branch" id="editor-' + b.id + '" style="display:none;">' +
+        '<h4>' + esc(b.name) + ' — Exco Members</h4>' +
+        exco.map(function (m) {
+          return '<div class="exco-editor-row"><div><label>' + esc(m.title) + ' — Name</label><input type="text" id="exco-' + b.id + '-' + m.role + '" value="' + esc(m.name) + '" placeholder="Full name" /></div><div><label>' + esc(m.title) + ' — Photo URL (optional)</label><input type="url" id="exco-' + b.id + '-' + m.role + '-photo" value="' + esc(m.photo || '') + '" placeholder="https://..." /></div></div>';
+        }).join('') +
+        '<button class="btn-save-exco" data-branch="' + b.id + '">Save Exco</button>' +
+        '<div class="save-exco-status" id="status-' + b.id + '"></div>' +
+        '</div>';
+    });
+    editor.innerHTML = html;
+    document.querySelectorAll('.btn-save-exco').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var branchId = btn.dataset.branch;
+        var exco = getExco(branchId).map(function (m) {
+          var nameEl = document.getElementById('exco-' + branchId + '-' + m.role);
+          var photoEl = document.getElementById('exco-' + branchId + '-' + m.role + '-photo');
+          return { role: m.role, title: m.title, name: nameEl ? nameEl.value.trim() : '', photo: photoEl ? photoEl.value.trim() : '' };
+        });
+        saveExco(branchId, exco);
+        renderExco(branchId);
+        var statusEl = document.getElementById('status-' + branchId);
+        if (statusEl) { statusEl.textContent = 'Saved.'; statusEl.className = 'save-exco-status ok'; setTimeout(function () { statusEl.style.display = 'none'; }, 3000); }
+      });
+    });
+  }
+
+  /* ── Init ── */
+  LGA_BRANCHES.forEach(function (b) {
+    renderExco(b.id);
+    renderMemberTable(b.id, b.lgaKey);
+  });
+
+})();
+</script>
+</body>
+</html>

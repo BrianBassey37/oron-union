@@ -1,0 +1,438 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact Us — Oron Union</title>
+  <meta name="description" content="Reach out to the Oron Union for membership inquiries, event information, partnership opportunities or press requests." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/inner.css" />
+  <style>
+    .contact-submit { transition: background 0.3s, color 0.3s; }
+    .ip-office-card { transition: box-shadow 0.2s, transform 0.2s; }
+    .ip-office-card:hover { box-shadow: 0 12px 32px rgba(128,0,32,0.1); transform: translateY(-3px); }
+    .ip-social-card { transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s; }
+    .ip-social-card:hover { box-shadow: 0 12px 32px rgba(128,0,32,0.1); transform: translateY(-4px); border-color: rgba(128,0,32,0.3); }
+    .ip-chapter-card { transition: box-shadow 0.2s, transform 0.2s; }
+    .ip-chapter-card:hover { box-shadow: 0 12px 32px rgba(128,0,32,0.1); transform: translateY(-4px); }
+    .contact-form-field { transition: border-color 0.2s, box-shadow 0.2s; }
+    .contact-form-field:focus { outline: none; border-color: var(--red); box-shadow: 0 0 0 3px rgba(128,0,32,0.1); }
+    @media (max-width: 768px) {
+      .contact-main-grid { grid-template-columns: 1fr !important; }
+      .ip-grid-4 { grid-template-columns: 1fr 1fr !important; }
+      .ip-social-grid { grid-template-columns: 1fr 1fr !important; }
+    }
+    @media (max-width: 520px) {
+      .ip-grid-4 { grid-template-columns: 1fr !important; }
+      .ip-social-grid { grid-template-columns: 1fr !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ========== NAVBAR ========== -->
+<nav class="navbar" id="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">
+      <img src="logo.png" alt="Oron Union Crest" style="width:50px;height:50px;object-fit:contain;" />
+      <div class="nav-logo-text"><strong>Oron Union</strong><span>Unity &middot; Progress &middot; Heritage</span></div>
+    </a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="about.html">About <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4,6 8,10 12,6"/></svg></a>
+        <ul class="dropdown">
+          <li><a href="about.html#history">History</a></li>
+          <li><a href="about.html#mission">Mission &amp; Vision</a></li>
+          <li><a href="about.html#values">Core Values</a></li>
+          <li><a href="about.html#constitution">Constitution</a></li>
+          <li><a href="leadership.html#past">Past Leadership</a></li>
+          <li><a href="projects.html">Projects</a></li>
+        </ul>
+      </li>
+      <li><a href="culture.html">Culture &amp; Heritage <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4,6 8,10 12,6"/></svg></a>
+        <ul class="dropdown">
+          <li><a href="culture.html#history">History of Oron People</a></li>
+          <li><a href="culture.html#clans">Our Nine Clans</a></li>
+          <li><a href="culture.html#language">Language</a></li>
+          <li><a href="culture.html#festivals">Festivals &amp; Ceremonies</a></li>
+          <li><a href="culture.html#arts">Arts &amp; Crafts</a></li>
+          <li><a href="culture.html#folklore">Folklore &amp; Traditions</a></li>
+          <li><a href="culture.html#gallery">Photo Gallery</a></li>
+        </ul>
+      </li>
+      <li><a href="leadership.html">Leadership <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4,6 8,10 12,6"/></svg></a>
+        <ul class="dropdown">
+          <li><a href="leadership.html#executive">Central Executive Committee</a></li>
+          <li><a href="leadership.html#trustees">Board of Trustees</a></li>
+          <li><a href="leadership.html#cotr">Council of Oro Traditional Rulers</a></li>
+          <li><a href="leadership.html#structure">Org. Structure</a></li>
+          <li class="has-submenu"><a href="branches.html">Branches &amp; Chapters <svg class="chevron-right" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,4 10,8 6,12"/></svg></a>
+            <ul class="submenu">
+              <li><a href="branches.html#oron">Oron LGA</a></li>
+              <li><a href="branches.html#urueoffong">Urueoffong / Oruko</a></li>
+              <li><a href="branches.html#okobo">Okobo</a></li>
+              <li><a href="branches.html#mbo">Mbo</a></li>
+              <li><a href="branches.html#udunguko">Udunguko</a></li>
+              <li><a href="branches.html#domestic">Domestic Branches</a></li>
+              <li><a href="branches.html#international">International Chapters</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li><a href="entertainment.html">Entertainment <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4,6 8,10 12,6"/></svg></a>
+        <ul class="dropdown">
+          <li><a href="entertainment.html#events">Upcoming Events</a></li>
+          <li><a href="entertainment.html#calendar">Event Calendar</a></li>
+          <li><a href="entertainment.html#festivals">Annual Festivals</a></li>
+          <li><a href="entertainment.html#livetv">Live TV</a></li>
+          <li><a href="entertainment.html#music">Music &amp; Videos</a></li>
+        </ul>
+      </li>
+      <li><a href="elections.html" class="nav-elections">Elections <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4,6 8,10 12,6"/></svg></a>
+        <ul class="dropdown">
+          <li><a href="elections.html">Member Voting Portal</a></li>
+          <li><a href="register.html">Apply for Membership</a></li>
+          <li><a href="endorser.html">Officials / Endorser Login</a></li>
+        </ul>
+      </li>
+      <li><a href="contact.html" aria-current="page">Contact</a></li>
+      <li><a href="register.html" class="nav-join">Join Us</a></li>
+    </ul>
+    <div class="nav-mobile-toggle" id="menu-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></div>
+  </div>
+</nav>
+
+
+<!-- ========== INNER HERO ========== -->
+<header class="ip-hero">
+  <div class="ip-hero-overlay"></div>
+  <div class="ip-hero-inner">
+    <span class="ip-hero-badge">Get in Touch</span>
+    <h1 class="ip-hero-title">Contact Oron Union</h1>
+    <p class="ip-hero-sub">Reach out to us for membership inquiries, event information, partnership opportunities or press requests.</p>
+  </div>
+</header>
+
+
+<!-- ========== CONTACT FORM + OFFICE INFO ========== -->
+<section class="ip-section" style="background:var(--white);padding:80px 0;">
+  <div class="ip-container" style="max-width:1100px;margin:0 auto;padding:0 24px;">
+
+    <div class="contact-main-grid" style="display:grid;grid-template-columns:3fr 2fr;gap:56px;align-items:start;">
+
+      <!-- LEFT: Contact Form -->
+      <div class="reveal">
+        <h2 style="font-family:'Playfair Display',serif;font-size:clamp(1.6rem,3vw,2rem);font-weight:700;margin-bottom:8px;color:var(--black);">Send Us a Message</h2>
+        <div style="width:56px;height:4px;background:var(--red);border-radius:2px;margin-bottom:32px;"></div>
+
+        <form id="contact-form" class="ip-contact-form" novalidate>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px;">
+            <div>
+              <label for="full-name" style="display:block;font-size:0.82rem;font-weight:600;color:var(--black);margin-bottom:7px;letter-spacing:0.03em;">Full Name <span style="color:var(--red);">*</span></label>
+              <input type="text" id="full-name" name="full-name" required placeholder="e.g. Effiong Okon Bassey"
+                class="contact-form-field"
+                style="width:100%;padding:12px 16px;border:1.5px solid var(--card-border);border-radius:8px;font-size:0.9rem;font-family:'Inter',sans-serif;background:var(--white);color:var(--black);" />
+            </div>
+            <div>
+              <label for="email" style="display:block;font-size:0.82rem;font-weight:600;color:var(--black);margin-bottom:7px;letter-spacing:0.03em;">Email Address <span style="color:var(--red);">*</span></label>
+              <input type="email" id="email" name="email" required placeholder="you@example.com"
+                class="contact-form-field"
+                style="width:100%;padding:12px 16px;border:1.5px solid var(--card-border);border-radius:8px;font-size:0.9rem;font-family:'Inter',sans-serif;background:var(--white);color:var(--black);" />
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px;">
+            <div>
+              <label for="phone" style="display:block;font-size:0.82rem;font-weight:600;color:var(--black);margin-bottom:7px;letter-spacing:0.03em;">Phone Number</label>
+              <input type="tel" id="phone" name="phone" placeholder="+234 800 000 0000"
+                class="contact-form-field"
+                style="width:100%;padding:12px 16px;border:1.5px solid var(--card-border);border-radius:8px;font-size:0.9rem;font-family:'Inter',sans-serif;background:var(--white);color:var(--black);" />
+            </div>
+            <div>
+              <label for="subject" style="display:block;font-size:0.82rem;font-weight:600;color:var(--black);margin-bottom:7px;letter-spacing:0.03em;">Subject <span style="color:var(--red);">*</span></label>
+              <select id="subject" name="subject" required
+                class="contact-form-field"
+                style="width:100%;padding:12px 16px;border:1.5px solid var(--card-border);border-radius:8px;font-size:0.9rem;font-family:'Inter',sans-serif;background:var(--white);color:var(--black);appearance:auto;">
+                <option value="" disabled selected>Select a subject</option>
+                <option value="general">General Inquiry</option>
+                <option value="membership">Membership</option>
+                <option value="events">Events</option>
+                <option value="media">Media / Press</option>
+                <option value="partnership">Partnership</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="margin-bottom:24px;">
+            <label for="message" style="display:block;font-size:0.82rem;font-weight:600;color:var(--black);margin-bottom:7px;letter-spacing:0.03em;">Message <span style="color:var(--red);">*</span></label>
+            <textarea id="message" name="message" required rows="6" placeholder="Please tell us how we can help you..."
+              class="contact-form-field"
+              style="width:100%;padding:14px 16px;border:1.5px solid var(--card-border);border-radius:8px;font-size:0.9rem;font-family:'Inter',sans-serif;background:var(--white);color:var(--black);resize:vertical;line-height:1.6;"></textarea>
+          </div>
+
+          <button type="submit" class="contact-submit"
+            style="display:inline-block;padding:14px 36px;background:var(--red);color:#fff;border:none;border-radius:8px;font-size:0.95rem;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;letter-spacing:0.02em;">
+            Send Message &rarr;
+          </button>
+
+        </form>
+      </div>
+
+      <!-- RIGHT: Office Information -->
+      <div style="display:flex;flex-direction:column;gap:18px;" class="reveal">
+
+        <h2 style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;margin-bottom:4px;color:var(--black);">Our Offices</h2>
+        <div style="width:48px;height:4px;background:var(--red);border-radius:2px;margin-bottom:10px;"></div>
+
+        <!-- HQ -->
+        <div class="ip-office-card" style="background:var(--beige);border:1px solid var(--card-border);border-radius:14px;padding:24px;">
+          <div style="display:flex;align-items:flex-start;gap:14px;">
+            <div style="width:40px;height:40px;background:var(--red);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+            </div>
+            <div>
+              <h3 style="font-size:0.95rem;font-weight:700;color:var(--black);margin-bottom:6px;">Headquarters</h3>
+              <p style="font-size:0.84rem;color:var(--gray);line-height:1.6;margin-bottom:8px;">Oron Union House, 12 Nwa Street,<br/>Oron City, Akwa Ibom State,<br/>Nigeria 531111</p>
+              <a href="mailto:info@oronunion.org" style="display:block;font-size:0.84rem;color:var(--red);font-weight:600;margin-bottom:3px;">info@oronunion.org</a>
+              <a href="tel:+2348030001925" style="display:block;font-size:0.84rem;color:var(--gray);">+234 803 000 1925</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lagos -->
+        <div class="ip-office-card" style="background:var(--beige);border:1px solid var(--card-border);border-radius:14px;padding:24px;">
+          <div style="display:flex;align-items:flex-start;gap:14px;">
+            <div style="width:40px;height:40px;background:var(--maroon);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <div>
+              <h3 style="font-size:0.95rem;font-weight:700;color:var(--black);margin-bottom:6px;">Lagos Office</h3>
+              <p style="font-size:0.84rem;color:var(--gray);line-height:1.6;margin-bottom:8px;">23 Awolowo Road, Ikoyi,<br/>Lagos, Nigeria</p>
+              <a href="mailto:lagos@oronunion.org" style="display:block;font-size:0.84rem;color:var(--red);font-weight:600;">lagos@oronunion.org</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Abuja -->
+        <div class="ip-office-card" style="background:var(--beige);border:1px solid var(--card-border);border-radius:14px;padding:24px;">
+          <div style="display:flex;align-items:flex-start;gap:14px;">
+            <div style="width:40px;height:40px;background:var(--maroon);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <div>
+              <h3 style="font-size:0.95rem;font-weight:700;color:var(--black);margin-bottom:6px;">Abuja Liaison Office</h3>
+              <p style="font-size:0.84rem;color:var(--gray);line-height:1.6;margin-bottom:8px;">Plot 15, Maitama,<br/>Abuja, FCT, Nigeria</p>
+              <a href="mailto:abuja@oronunion.org" style="display:block;font-size:0.84rem;color:var(--red);font-weight:600;">abuja@oronunion.org</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ========== INTERNATIONAL CHAPTERS ========== -->
+<section class="ip-section-beige" style="background:var(--beige);padding:80px 0;">
+  <div class="ip-container" style="max-width:1100px;margin:0 auto;padding:0 24px;">
+    <h2 class="section-title reveal-scale">International Chapters</h2>
+    <div class="section-underline reveal-underline"></div>
+    <p class="section-sub reveal">Connecting the Oro diaspora across four continents</p>
+
+    <div class="ip-grid-4" style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px;">
+
+      <!-- UK -->
+      <div class="ip-chapter-card ip-card reveal" style="background:var(--white);border:1px solid var(--card-border);border-radius:14px;padding:28px 22px;text-align:center;">
+        <div style="width:52px;height:52px;background:var(--maroon);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        </div>
+        <h3 style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--black);margin-bottom:4px;">UK Chapter</h3>
+        <p style="font-size:0.8rem;color:var(--gray);margin-bottom:14px;">London, United Kingdom</p>
+        <div style="border-top:1px solid var(--card-border);padding-top:14px;display:flex;flex-direction:column;gap:6px;">
+          <a href="tel:+447700900925" style="font-size:0.8rem;color:var(--gray);transition:color 0.2s;">+44 7700 900925</a>
+          <a href="mailto:uk@oronunion.org" style="font-size:0.8rem;color:var(--red);font-weight:600;transition:color 0.2s;">uk@oronunion.org</a>
+        </div>
+      </div>
+
+      <!-- USA -->
+      <div class="ip-chapter-card ip-card reveal" style="background:var(--white);border:1px solid var(--card-border);border-radius:14px;padding:28px 22px;text-align:center;">
+        <div style="width:52px;height:52px;background:var(--maroon);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        </div>
+        <h3 style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--black);margin-bottom:4px;">USA Chapter</h3>
+        <p style="font-size:0.8rem;color:var(--gray);margin-bottom:14px;">Houston, Texas</p>
+        <div style="border-top:1px solid var(--card-border);padding-top:14px;display:flex;flex-direction:column;gap:6px;">
+          <a href="tel:+17135550192" style="font-size:0.8rem;color:var(--gray);transition:color 0.2s;">+1 713 555 0192</a>
+          <a href="mailto:usa@oronunion.org" style="font-size:0.8rem;color:var(--red);font-weight:600;transition:color 0.2s;">usa@oronunion.org</a>
+        </div>
+      </div>
+
+      <!-- Canada -->
+      <div class="ip-chapter-card ip-card reveal" style="background:var(--white);border:1px solid var(--card-border);border-radius:14px;padding:28px 22px;text-align:center;">
+        <div style="width:52px;height:52px;background:var(--maroon);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        </div>
+        <h3 style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--black);margin-bottom:4px;">Canada Chapter</h3>
+        <p style="font-size:0.8rem;color:var(--gray);margin-bottom:14px;">Toronto, Ontario</p>
+        <div style="border-top:1px solid var(--card-border);padding-top:14px;display:flex;flex-direction:column;gap:6px;">
+          <a href="tel:+14165550192" style="font-size:0.8rem;color:var(--gray);transition:color 0.2s;">+1 416 555 0192</a>
+          <a href="mailto:canada@oronunion.org" style="font-size:0.8rem;color:var(--red);font-weight:600;transition:color 0.2s;">canada@oronunion.org</a>
+        </div>
+      </div>
+
+      <!-- Germany -->
+      <div class="ip-chapter-card ip-card reveal" style="background:var(--white);border:1px solid var(--card-border);border-radius:14px;padding:28px 22px;text-align:center;">
+        <div style="width:52px;height:52px;background:var(--maroon);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        </div>
+        <h3 style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--black);margin-bottom:4px;">Germany Chapter</h3>
+        <p style="font-size:0.8rem;color:var(--gray);margin-bottom:14px;">Hamburg, Germany</p>
+        <div style="border-top:1px solid var(--card-border);padding-top:14px;display:flex;flex-direction:column;gap:6px;">
+          <a href="tel:+494012345678" style="font-size:0.8rem;color:var(--gray);transition:color 0.2s;">+49 40 1234 5678</a>
+          <a href="mailto:germany@oronunion.org" style="font-size:0.8rem;color:var(--red);font-weight:600;transition:color 0.2s;">germany@oronunion.org</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ========== SOCIAL MEDIA ========== -->
+<section class="ip-section" style="background:var(--white);padding:80px 0;">
+  <div class="ip-container" style="max-width:1100px;margin:0 auto;padding:0 24px;text-align:center;">
+    <h2 class="section-title reveal-scale">Follow Us</h2>
+    <div class="section-underline reveal-underline"></div>
+    <p class="section-sub reveal">Stay connected with Oron Union on social media — news, events, live coverage and community stories.</p>
+
+    <div class="ip-social-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px;max-width:900px;margin:0 auto;">
+
+      <!-- Facebook -->
+      <a href="https://facebook.com/OronUnionOfficial" target="_blank" rel="noopener noreferrer"
+        class="ip-social-card ip-card reveal"
+        style="background:var(--beige);border:1px solid var(--card-border);border-radius:14px;padding:28px 20px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px;">
+        <div style="width:52px;height:52px;background:#1877f2;border-radius:12px;display:flex;align-items:center;justify-content:center;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="#fff"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+        </div>
+        <div>
+          <h3 style="font-size:0.95rem;font-weight:700;color:var(--black);margin-bottom:4px;">Facebook</h3>
+          <p style="font-size:0.8rem;color:var(--gray);">/OronUnionOfficial</p>
+        </div>
+      </a>
+
+      <!-- Twitter/X -->
+      <a href="https://twitter.com/OronUnion" target="_blank" rel="noopener noreferrer"
+        class="ip-social-card ip-card reveal"
+        style="background:var(--beige);border:1px solid var(--card-border);border-radius:14px;padding:28px 20px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px;">
+        <div style="width:52px;height:52px;background:var(--black);border-radius:12px;display:flex;align-items:center;justify-content:center;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        </div>
+        <div>
+          <h3 style="font-size:0.95rem;font-weight:700;color:var(--black);margin-bottom:4px;">Twitter / X</h3>
+          <p style="font-size:0.8rem;color:var(--gray);">@OronUnion</p>
+        </div>
+      </a>
+
+      <!-- Instagram -->
+      <a href="https://instagram.com/oron.union" target="_blank" rel="noopener noreferrer"
+        class="ip-social-card ip-card reveal"
+        style="background:var(--beige);border:1px solid var(--card-border);border-radius:14px;padding:28px 20px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px;">
+        <div style="width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </div>
+        <div>
+          <h3 style="font-size:0.95rem;font-weight:700;color:var(--black);margin-bottom:4px;">Instagram</h3>
+          <p style="font-size:0.8rem;color:var(--gray);">@oron.union</p>
+        </div>
+      </a>
+
+      <!-- YouTube -->
+      <a href="https://youtube.com/@OronUnionTV" target="_blank" rel="noopener noreferrer"
+        class="ip-social-card ip-card reveal"
+        style="background:var(--beige);border:1px solid var(--card-border);border-radius:14px;padding:28px 20px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px;">
+        <div style="width:52px;height:52px;background:#ff0000;border-radius:12px;display:flex;align-items:center;justify-content:center;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="#fff"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="red"/></svg>
+        </div>
+        <div>
+          <h3 style="font-size:0.95rem;font-weight:700;color:var(--black);margin-bottom:4px;">YouTube</h3>
+          <p style="font-size:0.8rem;color:var(--gray);">Oron Union TV</p>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ========== MAP PLACEHOLDER ========== -->
+<section class="ip-section-beige" style="background:var(--beige);padding:80px 0;">
+  <div class="ip-container" style="max-width:1100px;margin:0 auto;padding:0 24px;">
+    <h2 class="section-title reveal-scale">Find Us</h2>
+    <div class="section-underline reveal-underline"></div>
+
+    <div class="ip-map-box reveal" style="background:var(--maroon);border-radius:18px;overflow:hidden;min-height:320px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px;padding:60px 40px;text-align:center;position:relative;">
+      <!-- Subtle grid overlay -->
+      <div aria-hidden="true" style="position:absolute;inset:0;opacity:0.08;background-image:repeating-linear-gradient(0deg,transparent,transparent 39px,rgba(255,255,255,0.3) 39px,rgba(255,255,255,0.3) 40px),repeating-linear-gradient(90deg,transparent,transparent 39px,rgba(255,255,255,0.3) 39px,rgba(255,255,255,0.3) 40px);"></div>
+
+      <!-- Map pin SVG -->
+      <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="1.5" aria-hidden="true">
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+        <circle cx="12" cy="10" r="3"/>
+      </svg>
+
+      <div>
+        <h3 style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:#fff;margin-bottom:8px;">Oron Union House</h3>
+        <p style="font-size:0.95rem;color:rgba(255,255,255,0.7);line-height:1.7;">12 Nwa Street, Oron City, Akwa Ibom State, Nigeria 531111</p>
+      </div>
+
+      <a href="#" target="_blank" rel="noopener noreferrer"
+        style="display:inline-flex;align-items:center;gap:8px;padding:13px 28px;background:var(--red);color:#fff;border-radius:8px;font-weight:700;font-size:0.9rem;position:relative;z-index:1;transition:background 0.2s;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15,3 21,3 21,9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        View on Google Maps
+      </a>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ========== FOOTER ========== -->
+<footer class="inner-footer" style="background:var(--maroon);padding:32px 0;">
+  <div class="ip-container" style="max-width:1100px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+    <a href="index.html" class="footer-logo-link"><img src="logo.png" alt="Oron Union" style="width:48px;height:48px;object-fit:contain;" /></a>
+    <p style="font-size:0.82rem;color:rgba(255,255,255,0.5);">&copy; 2026 Oron Union. All rights reserved. &nbsp;|&nbsp; <a href="contact.html" style="color:rgba(255,255,255,0.5);transition:color 0.2s;">Privacy Policy</a></p>
+  </div>
+</footer>
+
+
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+<script src="js/cursor.js"></script>
+<script>
+(function(){
+  var t=document.getElementById('menu-toggle'),n=document.getElementById('nav-links');
+  if(t&&n)t.addEventListener('click',function(){n.classList.toggle('active');});
+  var nav=document.getElementById('navbar');
+  if(nav)window.addEventListener('scroll',function(){nav.classList.toggle('scrolled',window.scrollY>40);},{passive:true});
+  var io=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target);}});},{threshold:0.12});
+  document.querySelectorAll('.reveal,.reveal-scale,.ip-card,.value-card,.leader-card,.news-card,.event-card,.project-card,.ip-timeline-item,.clan-card').forEach(function(el){io.observe(el);});
+
+  // Form submit handler
+  var form = document.getElementById('contact-form');
+  if(form) form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var btn = form.querySelector('.contact-submit');
+    btn.textContent = 'Message Sent! ✓';
+    btn.style.background = '#065f46';
+    setTimeout(function(){ btn.textContent = 'Send Message →'; btn.style.background = ''; }, 4000);
+  });
+})();
+</script>
+</body>
+</html>

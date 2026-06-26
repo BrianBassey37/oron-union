@@ -1,0 +1,244 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Oron Union TV — Live Stream</title>
+  <meta name="description" content="Watch Oron Union live. Stream community events, town halls, cultural programmes and more." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/tv.css" />
+</head>
+<body class="tv-page">
+
+<!-- ========== NAVBAR ========== -->
+<nav class="navbar" id="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">
+      <img src="logo.png" alt="Oron Union Crest" style="width:50px;height:50px;object-fit:contain;" />
+      <div class="nav-logo-text">
+        <strong>Oron Union</strong>
+        <span>Unity &middot; Progress &middot; Heritage</span>
+      </div>
+    </a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="about.html">About <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4,6 8,10 12,6"/></svg></a>
+        <ul class="dropdown">
+          <li><a href="about.html#history">History</a></li>
+          <li><a href="about.html#mission">Mission &amp; Vision</a></li>
+          <li><a href="about.html#values">Core Values</a></li>
+          <li><a href="about.html#constitution">Constitution</a></li>
+          <li><a href="leadership.html#past">Past Leadership</a></li>
+          <li><a href="projects.html">Projects</a></li>
+        </ul>
+      </li>
+      <li><a href="culture.html">Culture &amp; Heritage <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4,6 8,10 12,6"/></svg></a>
+        <ul class="dropdown">
+          <li><a href="culture.html#history">History of Oron People</a></li>
+          <li><a href="culture.html#clans">Our Nine Clans</a></li>
+          <li><a href="culture.html#language">Language</a></li>
+          <li><a href="culture.html#festivals">Festivals &amp; Ceremonies</a></li>
+          <li><a href="culture.html#arts">Arts &amp; Crafts</a></li>
+          <li><a href="culture.html#folklore">Folklore &amp; Traditions</a></li>
+          <li><a href="culture.html#gallery">Photo Gallery</a></li>
+        </ul>
+      </li>
+      <li><a href="leadership.html">Leadership <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4,6 8,10 12,6"/></svg></a>
+        <ul class="dropdown">
+          <li><a href="leadership.html#executive">Central Executive Committee</a></li>
+          <li><a href="leadership.html#trustees">Board of Trustees</a></li>
+          <li><a href="leadership.html#cotr">Council of Oro Traditional Rulers</a></li>
+          <li><a href="leadership.html#structure">Org. Structure</a></li>
+          <li class="has-submenu"><a href="branches.html">Branches &amp; Chapters <svg class="chevron-right" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,4 10,8 6,12"/></svg></a>
+            <ul class="submenu">
+              <li><a href="branches.html#oron">Oron LGA</a></li>
+              <li><a href="branches.html#urueoffong">Urueoffong / Oruko</a></li>
+              <li><a href="branches.html#okobo">Okobo</a></li>
+              <li><a href="branches.html#mbo">Mbo</a></li>
+              <li><a href="branches.html#udunguko">Udunguko</a></li>
+              <li><a href="branches.html#domestic">Domestic Branches</a></li>
+              <li><a href="branches.html#international">International Chapters</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li><a href="entertainment.html" aria-current="page">Entertainment <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4,6 8,10 12,6"/></svg></a>
+        <ul class="dropdown">
+          <li><a href="entertainment.html#events">Upcoming Events</a></li>
+          <li><a href="entertainment.html#calendar">Event Calendar</a></li>
+          <li><a href="entertainment.html#festivals">Annual Festivals</a></li>
+          <li><a href="entertainment.html#livetv">Live TV</a></li>
+          <li><a href="entertainment.html#music">Music &amp; Videos</a></li>
+        </ul>
+      </li>
+      <li><a href="elections.html" class="nav-elections">Elections <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4,6 8,10 12,6"/></svg></a>
+        <ul class="dropdown">
+          <li><a href="elections.html">Member Voting Portal</a></li>
+          <li><a href="register.html">Apply for Membership</a></li>
+          <li><a href="endorser.html">Officials / Endorser Login</a></li>
+        </ul>
+      </li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="register.html" class="nav-join">Join Us</a></li>
+    </ul>
+    <div class="nav-mobile-toggle" id="menu-toggle" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+
+<!-- ========== TV LAYOUT ========== -->
+<div class="tv-layout">
+
+  <!-- ── MAIN COLUMN ── -->
+  <div class="tv-main">
+
+    <!-- Player -->
+    <div class="tv-player-wrap" id="tv-player-wrap">
+      <video id="live-video" playsinline></video>
+
+      <!-- Offline screen -->
+      <div class="tv-offline hidden" id="tv-offline">
+        <div class="tv-offline-inner">
+          <a href="index.html" class="tv-offline-logo-link"><img src="logo.png" alt="Oron Union" class="tv-offline-logo" /></a>
+          <h2>Oron Union TV</h2>
+          <p>No live broadcast right now</p>
+          <div class="tv-offline-next" id="tv-offline-next"></div>
+        </div>
+      </div>
+
+      <!-- Controls overlay (fades in on hover) -->
+      <div class="tv-overlay" id="tv-overlay">
+        <!-- Top bar -->
+        <div class="tv-top-bar">
+          <div class="tv-live-chip" id="tv-live-chip">
+            <span class="live-dot"></span> LIVE
+          </div>
+          <div class="tv-now-label" id="tv-now-label">Oron Union TV</div>
+          <div class="tv-viewers">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            <span id="viewer-count">0</span>
+          </div>
+        </div>
+
+        <!-- Centre click zone -->
+        <div class="tv-center-zone" id="tv-center-zone">
+          <div class="tv-big-icon hidden" id="tv-big-icon">
+            <svg id="big-play-svg" viewBox="0 0 24 24" fill="white"><polygon points="5,3 19,12 5,21"/></svg>
+          </div>
+        </div>
+
+        <!-- Bottom controls -->
+        <div class="tv-controls">
+          <button class="tv-btn" id="btn-play" title="Play / Pause">
+            <svg id="icon-play"  viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+            <svg id="icon-pause" viewBox="0 0 24 24" fill="currentColor" class="hidden"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+          </button>
+          <button class="tv-btn" id="btn-mute" title="Mute">
+            <svg id="icon-vol"  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11,5 6,9 2,9 2,15 6,15 11,19"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+            <svg id="icon-mute" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="hidden"><polygon points="11,5 6,9 2,9 2,15 6,15 11,19"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+          </button>
+          <input type="range" class="tv-vol-slider" id="vol-slider" min="0" max="1" step="0.02" value="1" title="Volume" />
+          <div class="tv-spacer"></div>
+          <button class="tv-btn tv-btn-live" id="btn-go-live" title="Jump to live edge">&#9679;&nbsp;LIVE</button>
+          <button class="tv-btn" id="btn-fs" title="Fullscreen">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15,3 21,3 21,9"/><polyline points="9,21 3,21 3,15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Now on air banner -->
+    <div class="tv-on-air-banner" id="tv-on-air-banner">
+      <span class="on-air-badge"><span class="live-dot"></span> Now On Air</span>
+      <h2 class="on-air-title" id="on-air-title">Oron Union TV</h2>
+      <p class="on-air-desc" id="on-air-desc">Stay tuned for live community broadcasts, news and cultural programmes.</p>
+    </div>
+
+    <!-- Programme Schedule -->
+    <section class="tv-section">
+      <div class="tv-section-inner">
+        <div class="tv-sec-hdr">
+          <h2 class="tv-sec-title">Today's Schedule</h2>
+          <span class="tv-sec-date" id="schedule-date"></span>
+        </div>
+        <div class="tv-schedule" id="schedule-list"></div>
+      </div>
+    </section>
+
+    <!-- Past Broadcasts / VOD -->
+    <section class="tv-section tv-section-beige">
+      <div class="tv-section-inner">
+        <div class="tv-sec-hdr">
+          <h2 class="tv-sec-title">Past Broadcasts</h2>
+          <p class="tv-sec-sub">Recordings of previous Oron Union events</p>
+        </div>
+        <div class="tv-vod-grid" id="vod-grid"></div>
+      </div>
+    </section>
+
+    <!-- Admin config link -->
+    <div class="tv-admin-bar">
+      <button class="tv-admin-link" id="tv-admin-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93A10 10 0 0 0 4.93 19.07M19.07 4.93A10 10 0 0 1 4.93 19.07"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        Stream Settings
+      </button>
+    </div>
+
+  </div>
+
+  <!-- ── CHAT SIDEBAR ── -->
+  <aside class="tv-sidebar">
+    <div class="tv-chat-wrap">
+      <div class="tv-chat-hdr">
+        <h3>Live Chat</h3>
+        <div class="chat-watchers">
+          <span class="live-dot"></span>
+          <span id="chat-viewer-count">0</span> watching
+        </div>
+      </div>
+      <div class="tv-chat-msgs" id="chat-messages" aria-live="polite"></div>
+      <div class="tv-chat-footer">
+        <input type="text" class="chat-name-input" id="chat-name-input" placeholder="Your name (optional)" maxlength="32" />
+        <div class="chat-send-row">
+          <input type="text" class="chat-msg-input" id="chat-msg-input" placeholder="Say something…" maxlength="280" />
+          <button class="chat-send-btn" id="chat-send-btn" title="Send">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22,2 15,22 11,13 2,9"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+</div>
+
+<!-- ========== STREAM CONFIG MODAL ========== -->
+<div class="modal-overlay hidden" id="stream-config-modal">
+  <div class="stream-config-box">
+    <button class="modal-close" id="stream-config-close">&times;</button>
+    <h3>Stream Configuration</h3>
+    <p>Paste a valid HLS stream URL (.m3u8) to broadcast live. To use the built-in demo stream, leave the field blank.</p>
+    <label class="sc-label">HLS Stream URL (.m3u8)</label>
+    <input type="url" class="sc-input" id="stream-url-input" placeholder="https://your-encoder/stream.m3u8" />
+    <div class="stream-status-row">
+      <span class="sc-status" id="sc-status"></span>
+    </div>
+    <div class="sc-actions">
+      <button class="sc-btn sc-go" id="sc-go-btn">&#9679;&nbsp;Go Live</button>
+      <button class="sc-btn sc-offline" id="sc-offline-btn">Take Offline</button>
+    </div>
+    <p class="sc-note">Supported sources: OBS (with RTMP &rarr; HLS relay), YouTube Live (HLS embed), or any .m3u8 feed.</p>
+  </div>
+</div>
+
+<div id="grain"></div>
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.15/dist/hls.min.js"></script>
+<script src="js/cursor.js"></script>
+<script src="js/tv.js"></script>
+</body>
+</html>
