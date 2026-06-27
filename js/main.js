@@ -192,6 +192,7 @@ var navLinks = document.querySelector('.nav-links');
 if (toggle && navLinks) {
   toggle.addEventListener('click', function () {
     navLinks.classList.toggle('open');
+    toggle.classList.toggle('open');
   });
 
   navLinks.querySelectorAll('li > a').forEach(function (link) {
@@ -200,7 +201,11 @@ if (toggle && navLinks) {
       link.addEventListener('click', function (e) {
         if (window.innerWidth <= 960) {
           e.preventDefault();
-          parent.classList.toggle('open');
+          var wasOpen = parent.classList.contains('open');
+          parent.parentElement.querySelectorAll('li.open').forEach(function (el) {
+            el.classList.remove('open');
+          });
+          if (!wasOpen) parent.classList.add('open');
         }
       });
     }
@@ -209,6 +214,7 @@ if (toggle && navLinks) {
   document.addEventListener('click', function (e) {
     if (!navLinks.contains(e.target) && !toggle.contains(e.target)) {
       navLinks.classList.remove('open');
+      toggle.classList.remove('open');
     }
   });
 }
