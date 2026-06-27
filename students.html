@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Oro Student Union — University chapters, exco members, and election portal for Oro students across Nigeria and the diaspora." />
+  <title>Oro Student Union | Oron Union — Est. 1925</title>
+  <link rel="icon" type="image/png" href="logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Playfair+Display:ital,wght@0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/inner.css" />
+</head>
+<body>
+
+<!-- ══ NAVBAR ══ -->
+<nav class="navbar" id="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">
+      <img src="logo.png" alt="Oron Union Crest" style="width:50px;height:50px;object-fit:contain;" />
+      <div class="nav-logo-text"><strong>Oron Union</strong><span>Unity &middot; Progress &middot; Heritage</span></div>
+    </a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="culture.html">Culture &amp; Heritage <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4,6 8,10 12,6"/></svg></a>
+        <ul class="dropdown">
+          <li><a href="culture.html#history">History of Oro People</a></li>
+          <li><a href="culture.html#clans">Our Nine Clans</a></li>
+          <li><a href="culture.html#language">Language</a></li>
+          <li><a href="culture.html#festivals">Festivals &amp; Ceremonies</a></li>
+          <li><a href="culture.html#arts">Arts &amp; Crafts</a></li>
+          <li><a href="culture.html#folklore">Folklore &amp; Traditions</a></li>
+          <li><a href="culture.html#gallery">Photo Gallery</a></li>
+        </ul>
+      </li>
+      <li><a href="leadership.html" aria-current="page">Leadership <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4,6 8,10 12,6"/></svg></a>
+        <ul class="dropdown">
+          <li><a href="leadership.html#executive">Central Executive Committee</a></li>
+          <li><a href="leadership.html#trustees">Board of Trustees</a></li>
+          <li><a href="leadership.html#cotr">Council of Oro Traditional Rulers</a></li>
+          <li><a href="leadership.html#structure">Org. Structure</a></li>
+          <li class="has-submenu"><a href="branches.html">Branches &amp; Chapters <svg class="chevron-right" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,4 10,8 6,12"/></svg></a>
+            <ul class="submenu">
+              <li><a href="branches.html#oron">Oron LGA</a></li>
+              <li><a href="branches.html#urueoffong">Urueoffong / Oruko</a></li>
+              <li><a href="branches.html#okobo">Okobo</a></li>
+              <li><a href="branches.html#mbo">Mbo</a></li>
+              <li><a href="branches.html#udunguko">Udunguko</a></li>
+              <li><a href="branches.html#domestic">Domestic Branches</a></li>
+              <li><a href="branches.html#international">International Chapters</a></li>
+            </ul>
+          </li>
+          <li><a href="youth.html">Youth Wing</a></li>
+          <li><a href="women.html">Women's Wing</a></li>
+          <li><a href="students.html">Oro Student Union</a></li>
+        </ul>
+      </li>
+      <li><a href="entertainment.html">Entertainment <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4,6 8,10 12,6"/></svg></a>
+        <ul class="dropdown">
+          <li><a href="entertainment.html#events">Upcoming Events</a></li>
+          <li><a href="entertainment.html#calendar">Event Calendar</a></li>
+          <li><a href="entertainment.html#festivals">Annual Festivals</a></li>
+          <li><a href="entertainment.html#livetv">Live TV</a></li>
+          <li><a href="entertainment.html#music">Music &amp; Videos</a></li>
+        </ul>
+      </li>
+      <li><a href="elections.html" class="nav-elections">Elections <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4,6 8,10 12,6"/></svg></a>
+        <ul class="dropdown">
+          <li><a href="elections.html">Member Voting Portal</a></li>
+          <li><a href="register.html">Apply for Membership</a></li>
+          <li><a href="endorser.html">Officials / Endorser Login</a></li>
+        </ul>
+      </li>
+      <li><a href="about.html">About <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4,6 8,10 12,6"/></svg></a>
+        <ul class="dropdown">
+          <li><a href="about.html#history">History</a></li>
+          <li><a href="about.html#mission">Mission &amp; Vision</a></li>
+          <li><a href="about.html#values">Core Values</a></li>
+          <li><a href="about.html#constitution">Constitution</a></li>
+          <li><a href="leadership.html#past">Past Leadership</a></li>
+          <li><a href="projects.html">Projects</a></li>
+        </ul>
+      </li>
+      <li><a href="register.html" class="nav-join">Join Us</a></li>
+    </ul>
+    <div class="nav-mobile-toggle" id="menu-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></div>
+  </div>
+</nav>
+
+<!-- ══ INNER HERO ══ -->
+<header class="inner-hero">
+  <div class="inner-breadcrumb">
+    <a href="index.html">Home</a><span>/</span><a href="leadership.html">Leadership</a><span>/</span>Oro Student Union
+  </div>
+  <div class="inner-hero-badge">Oron Union &middot; Student Body</div>
+  <h1 class="inner-hero-title">Oro Student Union</h1>
+  <p class="inner-hero-sub">Uniting Oro students across every campus in Nigeria and beyond — nurturing the scholars, innovators and leaders who will define the next chapter of the Oro Nation.</p>
+  <div class="inner-hero-wave">
+    <svg viewBox="0 0 1440 64" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,32 C360,64 1080,0 1440,32 L1440,64 L0,64 Z" fill="var(--beige)" />
+    </svg>
+  </div>
+</header>
+
+<!-- ══ OVERVIEW ══ -->
+<section class="ip-section beige" id="overview">
+  <div class="ip-container">
+    <div class="ip-grid-2">
+      <div>
+        <div class="ip-section-badge">Our Mandate</div>
+        <h2 class="ip-section-title">About the Oro Student Union</h2>
+        <p style="font-size:0.97rem;color:var(--gray);line-height:1.85;margin-bottom:18px;">
+          The <strong style="color:var(--black);">Oro Student Union (OSU)</strong> is the student arm of the Oron Union, connecting Oro sons and daughters studying at universities, polytechnics and colleges across Nigeria and in the diaspora. The OSU was established to foster unity among Oro students, promote academic excellence, preserve cultural identity and build a pipeline of well-prepared young leaders for the Union and the nation.
+        </p>
+        <p style="font-size:0.97rem;color:var(--gray);line-height:1.85;margin-bottom:18px;">
+          Through its university and polytechnic chapters, the OSU organises orientation programmes for new Oro students, cultural nights, academic mentorship, scholarships advocacy and community service initiatives. It maintains a close relationship with the Oron Union Youth Wing, which many OSU members transition into after graduation.
+        </p>
+        <p style="font-size:0.97rem;color:var(--gray);line-height:1.85;">
+          OSU national executive elections are held annually during the Student Union Congress. Chapter executives are elected at their respective institutions at the start of each academic session.
+        </p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div style="background:#fff;border-radius:14px;padding:28px;border:1px solid var(--card-border);">
+          <div style="font-size:2rem;font-weight:900;color:var(--red);font-family:'Cinzel',serif;">2025/26</div>
+          <div style="font-size:0.85rem;color:var(--gray);margin-top:4px;">Current Academic Session</div>
+        </div>
+        <div style="background:#fff;border-radius:14px;padding:28px;border:1px solid var(--card-border);">
+          <div style="font-size:2rem;font-weight:900;color:var(--red);font-family:'Cinzel',serif;">10</div>
+          <div style="font-size:0.85rem;color:var(--gray);margin-top:4px;">Active University Chapters</div>
+        </div>
+        <div style="background:#fff;border-radius:14px;padding:28px;border:1px solid var(--card-border);">
+          <div style="font-size:2rem;font-weight:900;color:var(--red);font-family:'Cinzel',serif;">Annual</div>
+          <div style="font-size:0.85rem;color:var(--gray);margin-top:4px;">National Election Cycle</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ EXCO MEMBERS ══ -->
+<section class="ip-section white" id="exco">
+  <div class="ip-container">
+    <div style="text-align:center;margin-bottom:48px;">
+      <div class="ip-section-badge">National Executive 2025/26</div>
+      <h2 class="ip-section-title">National Executives</h2>
+      <p class="ip-section-sub" style="margin:0 auto;">Elected at the 2025 Oro Student Union Congress, this national executive coordinates all chapters for the 2025/26 academic session.</p>
+    </div>
+    <div class="ip-grid-4">
+      <div class="leader-card reveal">
+        <div class="leader-avatar-placeholder">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <div class="leader-name">Comrade Okon Bassey Ekpo</div>
+        <div class="leader-role">President</div>
+        <div class="leader-lga">University of Uyo</div>
+      </div>
+      <div class="leader-card reveal">
+        <div class="leader-avatar-placeholder">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <div class="leader-name">Comrade Edem Etim Inyang</div>
+        <div class="leader-role">Vice President</div>
+        <div class="leader-lga">University of Calabar</div>
+      </div>
+      <div class="leader-card reveal">
+        <div class="leader-avatar-placeholder">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <div class="leader-name">Miss Uduak Okon Udo</div>
+        <div class="leader-role">Secretary General</div>
+        <div class="leader-lga">University of Lagos</div>
+      </div>
+      <div class="leader-card reveal">
+        <div class="leader-avatar-placeholder">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <div class="leader-name">Mr. Effiong Ime Ndem</div>
+        <div class="leader-role">Financial Secretary</div>
+        <div class="leader-lga">University of Ibadan</div>
+      </div>
+      <div class="leader-card reveal">
+        <div class="leader-avatar-placeholder">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <div class="leader-name">Mr. Asuquo Bassey Edet</div>
+        <div class="leader-role">Treasurer</div>
+        <div class="leader-lga">Covenant University</div>
+      </div>
+      <div class="leader-card reveal">
+        <div class="leader-avatar-placeholder">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <div class="leader-name">Miss Aniefon Emmanuel Essien</div>
+        <div class="leader-role">Public Relations Officer</div>
+        <div class="leader-lga">University of Port Harcourt</div>
+      </div>
+      <div class="leader-card reveal">
+        <div class="leader-avatar-placeholder">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <div class="leader-name">Mr. Etim Nka Ekong</div>
+        <div class="leader-role">Social Director</div>
+        <div class="leader-lga">University of Abuja</div>
+      </div>
+      <div class="leader-card reveal">
+        <div class="leader-avatar-placeholder">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <div class="leader-name">Miss Eseme Inyang Okon</div>
+        <div class="leader-role">Sports Director</div>
+        <div class="leader-lga">Federal University of Technology, Owerri</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CHAPTERS ══ -->
+<section class="ip-section beige" id="chapters">
+  <div class="ip-container">
+    <div style="text-align:center;margin-bottom:48px;">
+      <div class="ip-section-badge">Campus Network</div>
+      <h2 class="ip-section-title">University &amp; Polytechnic Chapters</h2>
+      <p class="ip-section-sub" style="margin:0 auto;">The Oro Student Union operates chapters at universities, polytechnics and colleges across Nigeria and in the diaspora. Each chapter elects its own executives at the start of every academic session.</p>
+    </div>
+
+    <h3 style="font-family:'Playfair Display',serif;font-size:1.15rem;color:var(--black);margin:0 0 20px;">Nigerian Chapters</h3>
+    <div class="ip-grid-3" style="margin-bottom:48px;">
+      <div style="background:#fff;border-radius:14px;padding:24px;border:1px solid var(--card-border);" class="reveal">
+        <div style="font-weight:700;color:var(--black);font-size:1rem;margin-bottom:6px;">University of Uyo Chapter</div>
+        <div style="font-size:0.85rem;color:var(--red);font-weight:600;margin-bottom:4px;">Chapter President: Comrade Effiong Okon Inyang</div>
+        <div style="font-size:0.8rem;color:var(--gray);">Uyo, Akwa Ibom State</div>
+      </div>
+      <div style="background:#fff;border-radius:14px;padding:24px;border:1px solid var(--card-border);" class="reveal">
+        <div style="font-weight:700;color:var(--black);font-size:1rem;margin-bottom:6px;">University of Calabar Chapter</div>
+        <div style="font-size:0.85rem;color:var(--red);font-weight:600;margin-bottom:4px;">Chapter President: Comrade Etim Bassey Edet</div>
+        <div style="font-size:0.8rem;color:var(--gray);">Calabar, Cross River State</div>
+      </div>
+      <div style="background:#fff;border-radius:14px;padding:24px;border:1px solid var(--card-border);" class="reveal">
+        <div style="font-weight:700;color:var(--black);font-size:1rem;margin-bottom:6px;">University of Lagos Chapter</div>
+        <div style="font-size:0.85rem;color:var(--red);font-weight:600;margin-bottom:4px;">Chapter President: Comrade Uduak Ime Ekpo</div>
+        <div style="font-size:0.8rem;color:var(--gray);">Akoka, Lagos State</div>
+      </div>
+      <div style="background:#fff;border-radius:14px;padding:24px;border:1px solid var(--card-border);" class="reveal">
+        <div style="font-weight:700;color:var(--black);font-size:1rem;margin-bottom:6px;">University of Ibadan Chapter</div>
+        <div style="font-size:0.85rem;color:var(--red);font-weight:600;margin-bottom:4px;">Chapter President: Comrade Aniefon Okon Ndem</div>
+        <div style="font-size:0.8rem;color:var(--gray);">Ibadan, Oyo State</div>
+      </div>
+      <div style="background:#fff;border-radius:14px;padding:24px;border:1px solid var(--card-border);" class="reveal">
+        <div style="font-weight:700;color:var(--black);font-size:1rem;margin-bottom:6px;">Federal University of Technology, Owerri</div>
+        <div style="font-size:0.85rem;color:var(--red);font-weight:600;margin-bottom:4px;">Chapter President: Comrade Nse Asuquo Udo</div>
+        <div style="font-size:0.8rem;color:var(--gray);">Owerri, Imo State</div>
+      </div>
+      <div style="background:#fff;border-radius:14px;padding:24px;border:1px solid var(--card-border);" class="reveal">
+        <div style="font-weight:700;color:var(--black);font-size:1rem;margin-bottom:6px;">Covenant University Chapter</div>
+        <div style="font-size:0.85rem;color:var(--red);font-weight:600;margin-bottom:4px;">Chapter President: Comrade Ekaette Bassey Essien</div>
+        <div style="font-size:0.8rem;color:var(--gray);">Ota, Ogun State</div>
+      </div>
+      <div style="background:#fff;border-radius:14px;padding:24px;border:1px solid var(--card-border);" class="reveal">
+        <div style="font-weight:700;color:var(--black);font-size:1rem;margin-bottom:6px;">University of Port Harcourt Chapter</div>
+        <div style="font-size:0.85rem;color:var(--red);font-weight:600;margin-bottom:4px;">Chapter President: Comrade Okon Effiong Edem</div>
+        <div style="font-size:0.8rem;color:var(--gray);">Port Harcourt, Rivers State</div>
+      </div>
+      <div style="background:#fff;border-radius:14px;padding:24px;border:1px solid var(--card-border);" class="reveal">
+        <div style="font-weight:700;color:var(--black);font-size:1rem;margin-bottom:6px;">University of Abuja Chapter</div>
+        <div style="font-size:0.85rem;color:var(--red);font-weight:600;margin-bottom:4px;">Chapter President: Comrade Ime Emmanuel Ukpe</div>
+        <div style="font-size:0.8rem;color:var(--gray);">FCT Abuja</div>
+      </div>
+    </div>
+
+    <h3 style="font-family:'Playfair Display',serif;font-size:1.15rem;color:var(--black);margin:0 0 20px;">International Chapters</h3>
+    <div class="ip-grid-3">
+      <div style="background:#fff;border-radius:14px;padding:24px;border:1px solid var(--card-border);" class="reveal">
+        <div style="font-weight:700;color:var(--black);font-size:1rem;margin-bottom:6px;">United Kingdom Chapter</div>
+        <div style="font-size:0.85rem;color:var(--red);font-weight:600;margin-bottom:4px;">Chapter President: Comrade Eseme Etim Inyang</div>
+        <div style="font-size:0.8rem;color:var(--gray);">United Kingdom (multiple universities)</div>
+      </div>
+      <div style="background:#fff;border-radius:14px;padding:24px;border:1px solid var(--card-border);" class="reveal">
+        <div style="font-weight:700;color:var(--black);font-size:1rem;margin-bottom:6px;">North America Chapter</div>
+        <div style="font-size:0.85rem;color:var(--red);font-weight:600;margin-bottom:4px;">Chapter President: Comrade Edem Nka Ekpo</div>
+        <div style="font-size:0.8rem;color:var(--gray);">USA &amp; Canada (multiple universities)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ ELECTION PORTAL ══ -->
+<section class="ip-section white" id="elections">
+  <div class="ip-container">
+    <div style="background:linear-gradient(135deg,var(--red-deep),var(--maroon));border-radius:20px;padding:56px 40px;text-align:center;color:#fff;">
+      <div style="display:inline-block;font-size:0.72rem;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.7);border:1px solid rgba(255,255,255,0.3);border-radius:20px;padding:5px 16px;margin-bottom:20px;">Election Portal</div>
+      <h2 style="font-family:'Cinzel',serif;font-size:clamp(1.6rem,3vw,2.4rem);font-weight:900;margin:0 0 16px;letter-spacing:0.04em;">OSU Elections</h2>
+      <p style="color:rgba(255,255,255,0.8);max-width:560px;margin:0 auto 32px;line-height:1.7;font-size:0.97rem;">Both national OSU elections and individual chapter elections are conducted through the Oron Union's secure digital voting platform. All registered student members with a valid matriculation or student ID are eligible to vote and stand for office within their chapter.</p>
+      <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+        <a href="elections.html" style="background:#fff;color:var(--maroon);border-radius:10px;padding:14px 32px;font-weight:700;font-size:0.95rem;text-decoration:none;display:inline-block;transition:transform 0.2s,box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.25)'" onmouseout="this.style.transform='';this.style.boxShadow=''">Access Voting Portal</a>
+        <a href="register.html" style="background:transparent;color:#fff;border:2px solid rgba(255,255,255,0.5);border-radius:10px;padding:14px 32px;font-weight:700;font-size:0.95rem;text-decoration:none;display:inline-block;transition:border-color 0.2s,background 0.2s;" onmouseover="this.style.borderColor='#fff';this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.5)';this.style.background='transparent'">Register as a Member</a>
+      </div>
+      <p style="font-size:0.8rem;color:rgba(255,255,255,0.55);margin-top:24px;">Next OSU national election: <strong style="color:rgba(255,255,255,0.85);">2026 Student Union Congress</strong></p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CTA STRIP ══ -->
+<section class="ip-cta-strip">
+  <div class="ip-container">
+    <h2>Oro Students: Your Heritage, Your Future</h2>
+    <p>Whether at home or abroad, the Oro Student Union is your community on campus. Join and stay connected to your roots.</p>
+    <a href="register.html" class="ip-cta-btn">Join the Oro Student Union</a>
+    <a href="youth.html" class="ip-cta-btn outline">Youth Wing</a>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer class="inner-footer">
+  <div class="ip-container">
+    <a href="index.html" class="footer-logo-link"><img src="logo.png" alt="Oron Union" class="inner-footer-logo" /></a>
+    <p>&copy; 2026 Oron Union. All rights reserved. &nbsp;|&nbsp; <a href="contact.html">Privacy Policy</a></p>
+  </div>
+</footer>
+
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+<script src="js/cursor.js"></script>
+<script>
+(function(){
+  var t=document.getElementById('menu-toggle'),n=document.getElementById('nav-links');
+  if(t&&n)t.addEventListener('click',function(){n.classList.toggle('active');});
+  var nav=document.getElementById('navbar');
+  if(nav)window.addEventListener('scroll',function(){nav.classList.toggle('scrolled',window.scrollY>40);},{passive:true});
+  var io=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target);}});},{threshold:0.12});
+  document.querySelectorAll('.reveal,.reveal-scale,.reveal-left,.ip-card,.leader-card').forEach(function(el){io.observe(el);});
+})();
+</script>
+</body>
+</html>

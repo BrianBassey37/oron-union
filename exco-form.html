@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Exco Data Collection | Oron Union</title>
+  <link rel="icon" type="image/png" href="logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --red: #8B0000;
+      --red-deep: #6b0000;
+      --maroon: #5a0000;
+      --beige: #faf6f0;
+      --white: #ffffff;
+      --black: #1a1a1a;
+      --gray: #555;
+      --border: #e5e0d8;
+      --radius: 14px;
+      --shadow: 0 4px 24px rgba(0,0,0,0.1);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--beige);
+      color: var(--black);
+      min-height: 100vh;
+    }
+
+    /* ── Top bar ── */
+    .topbar {
+      background: var(--maroon);
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+    }
+    .topbar img { width: 40px; height: 40px; object-fit: contain; }
+    .topbar-text strong { color: #fff; font-size: 1rem; display: block; font-family: 'Cinzel', serif; letter-spacing: 0.05em; }
+    .topbar-text span { color: rgba(255,255,255,0.6); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; }
+    .topbar-back { margin-left: auto; color: rgba(255,255,255,0.7); font-size: 0.82rem; text-decoration: none; border: 1px solid rgba(255,255,255,0.3); border-radius: 8px; padding: 6px 14px; transition: all 0.2s; }
+    .topbar-back:hover { color: #fff; border-color: #fff; }
+
+    /* ── Page layout ── */
+    .page-wrap { max-width: 780px; margin: 0 auto; padding: 40px 20px 80px; }
+
+    .page-header { text-align: center; margin-bottom: 36px; }
+    .page-badge {
+      display: inline-block;
+      font-size: 0.7rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--red); border: 1px solid var(--red); border-radius: 20px;
+      padding: 4px 14px; margin-bottom: 14px;
+    }
+    .page-title { font-family: 'Cinzel', serif; font-size: clamp(1.5rem, 4vw, 2.2rem); font-weight: 900; color: var(--black); margin-bottom: 10px; }
+    .page-sub { font-size: 0.9rem; color: var(--gray); max-width: 520px; margin: 0 auto; line-height: 1.65; }
+
+    /* ── Form card ── */
+    .form-card {
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 40px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+    }
+
+    .form-section-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--red);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 10px;
+      margin: 32px 0 20px;
+    }
+    .form-section-title:first-child { margin-top: 0; }
+
+    .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-label { font-size: 0.8rem; font-weight: 600; color: var(--black); letter-spacing: 0.02em; }
+    .form-label span { color: var(--red); }
+    .form-control {
+      border: 1.5px solid var(--border);
+      border-radius: 9px;
+      padding: 10px 14px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      color: var(--black);
+      background: #fff;
+      transition: border-color 0.2s;
+      width: 100%;
+    }
+    .form-control:focus { outline: none; border-color: var(--red); }
+    .form-control::placeholder { color: #aaa; }
+    select.form-control { cursor: pointer; }
+
+    /* ── Photo upload ── */
+    .photo-upload-area {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 28px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      position: relative;
+    }
+    .photo-upload-area:hover, .photo-upload-area.drag-over { border-color: var(--red); background: #fef9f9; }
+    .photo-upload-area input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+    .photo-icon { color: var(--red); margin-bottom: 8px; }
+    .photo-upload-area p { font-size: 0.85rem; color: var(--gray); }
+    .photo-upload-area small { font-size: 0.75rem; color: #aaa; }
+    #photo-preview-wrap { display: none; align-items: center; gap: 16px; padding: 12px; background: var(--beige); border-radius: 10px; margin-top: 12px; }
+    #photo-preview-wrap.show { display: flex; }
+    #photo-preview { width: 70px; height: 90px; object-fit: cover; border-radius: 6px; border: 2px solid var(--border); }
+    .photo-preview-info { text-align: left; }
+    .photo-preview-info span { display: block; font-size: 0.8rem; color: var(--black); font-weight: 600; }
+    .photo-preview-info small { font-size: 0.72rem; color: var(--gray); }
+    .photo-remove-btn { margin-left: auto; background: none; border: none; color: var(--red); cursor: pointer; font-size: 0.8rem; font-weight: 600; padding: 4px 8px; border-radius: 6px; }
+    .photo-remove-btn:hover { background: #fef0f0; }
+
+    /* ── Submit ── */
+    .form-footer { margin-top: 32px; }
+    .submit-btn {
+      width: 100%;
+      background: var(--red);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 15px 24px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      letter-spacing: 0.04em;
+      transition: background 0.2s, transform 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .submit-btn:hover:not(:disabled) { background: var(--red-deep); transform: translateY(-1px); }
+    .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .submit-btn .spinner {
+      display: none;
+      width: 18px; height: 18px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    .submit-btn.loading .spinner { display: block; }
+    .submit-btn.loading .btn-text { opacity: 0.7; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Success screen ── */
+    #success-screen {
+      display: none;
+      text-align: center;
+      padding: 60px 40px;
+      background: #fff;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+    }
+    .success-icon {
+      width: 64px; height: 64px;
+      background: #e8f5e9;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+    .success-icon svg { color: #2e7d32; }
+    #success-screen h2 { font-family: 'Cinzel', serif; font-size: 1.5rem; color: var(--black); margin-bottom: 10px; }
+    #success-screen p { color: var(--gray); font-size: 0.9rem; line-height: 1.65; max-width: 400px; margin: 0 auto 24px; }
+    .success-new-btn {
+      background: var(--red);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 28px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    /* ── Error banner ── */
+    .error-banner {
+      display: none;
+      background: #fff3f3;
+      border: 1px solid #ffc0c0;
+      border-radius: 9px;
+      padding: 12px 16px;
+      font-size: 0.85rem;
+      color: #c00;
+      margin-top: 14px;
+      align-items: center;
+      gap: 10px;
+    }
+    .error-banner.show { display: flex; }
+
+    /* ── Setup section ── */
+    .setup-section {
+      margin-top: 48px;
+      background: #fff;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .setup-toggle {
+      width: 100%;
+      background: none;
+      border: none;
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--black);
+    }
+    .setup-toggle:hover { background: var(--beige); }
+    .setup-toggle-icon { transition: transform 0.3s; }
+    .setup-toggle.open .setup-toggle-icon { transform: rotate(180deg); }
+    .setup-body { display: none; padding: 0 24px 28px; }
+    .setup-body.open { display: block; }
+    .setup-step { margin-bottom: 20px; }
+    .setup-step-num { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; background: var(--red); color: #fff; border-radius: 50%; font-size: 0.75rem; font-weight: 700; margin-right: 8px; flex-shrink: 0; vertical-align: middle; }
+    .setup-step p { font-size: 0.85rem; color: var(--gray); display: inline; line-height: 1.65; }
+    .setup-step a { color: var(--red); font-weight: 600; }
+    .code-block {
+      background: #1a1a2e;
+      color: #e8e8e8;
+      border-radius: 10px;
+      padding: 20px;
+      font-size: 0.72rem;
+      font-family: 'Courier New', monospace;
+      overflow-x: auto;
+      white-space: pre;
+      margin: 12px 0;
+      line-height: 1.6;
+      max-height: 320px;
+      overflow-y: auto;
+    }
+    .copy-btn {
+      background: var(--red);
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      padding: 7px 16px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      margin-top: 6px;
+    }
+    .url-input-wrap { display: flex; gap: 10px; margin-top: 12px; }
+    .url-input-wrap input {
+      flex: 1;
+      border: 1.5px solid var(--border);
+      border-radius: 9px;
+      padding: 9px 14px;
+      font-size: 0.85rem;
+      font-family: inherit;
+    }
+    .url-input-wrap input:focus { outline: none; border-color: var(--red); }
+    .url-save-btn {
+      background: var(--red);
+      color: #fff;
+      border: none;
+      border-radius: 9px;
+      padding: 9px 18px;
+      font-weight: 600;
+      font-size: 0.82rem;
+      cursor: pointer;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+    .url-hint { font-size: 0.75rem; color: #aaa; margin-top: 6px; }
+
+    @media (max-width: 600px) {
+      .form-card { padding: 24px 18px; }
+      .form-grid-2 { grid-template-columns: 1fr; }
+      .form-group.full { grid-column: 1; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Top bar ── -->
+<div class="topbar">
+  <img src="logo.png" alt="Oron Union" />
+  <div class="topbar-text">
+    <strong>Oron Union</strong>
+    <span>Exco Data Collection</span>
+  </div>
+  <a href="index.html" class="topbar-back">← Back to Site</a>
+</div>
+
+<!-- ── Page ── -->
+<div class="page-wrap">
+
+  <div class="page-header">
+    <div class="page-badge">Official Record Form</div>
+    <h1 class="page-title">Executive Member Registration</h1>
+    <p class="page-sub">Use this form to submit the name and passport photograph of each executive member across all wings, the CEC, clan representatives and branch coordinators.</p>
+  </div>
+
+  <!-- ── Main form ── -->
+  <div class="form-card" id="form-card">
+    <form id="exco-form" novalidate>
+
+      <div class="form-section-title">Group &amp; Role</div>
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label class="form-label" for="f-group">Group <span>*</span></label>
+          <select class="form-control" id="f-group" required>
+            <option value="">— Select Group —</option>
+            <option value="Central Executive Committee">Central Executive Committee (CEC)</option>
+            <option value="Youth Wing">Youth Wing</option>
+            <option value="Women's Wing">Women's Wing</option>
+            <option value="Oro Student Union">Oro Student Union (OSU)</option>
+            <option value="Clan Representatives">Clan Representatives</option>
+            <option value="Branch Coordinators">Branch Coordinators</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="f-role">Role / Position <span>*</span></label>
+          <select class="form-control" id="f-role" required disabled>
+            <option value="">— Select Group first —</option>
+          </select>
+        </div>
+        <div class="form-group full" id="affiliation-group" style="display:none;">
+          <label class="form-label" for="f-affiliation" id="affiliation-label">Affiliation <span>*</span></label>
+          <select class="form-control" id="f-affiliation" required>
+            <option value="">— Select —</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-section-title">Personal Details</div>
+      <div class="form-grid-2">
+        <div class="form-group full">
+          <label class="form-label" for="f-name">Full Name <span>*</span></label>
+          <input class="form-control" type="text" id="f-name" placeholder="e.g. Emmanuel Effiong Bassey" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="f-phone">Phone Number <span>*</span></label>
+          <input class="form-control" type="tel" id="f-phone" placeholder="e.g. 08012345678" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="f-email">Email Address</label>
+          <input class="form-control" type="email" id="f-email" placeholder="e.g. name@example.com" />
+        </div>
+      </div>
+
+      <div class="form-section-title">Passport Photograph</div>
+      <div class="form-group">
+        <label class="form-label">Upload Passport Photo <span>*</span></label>
+        <div class="photo-upload-area" id="photo-drop">
+          <input type="file" id="f-photo" accept="image/jpeg,image/png,image/webp" />
+          <div class="photo-icon">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>
+          </div>
+          <p>Click to browse or drag &amp; drop photo here</p>
+          <small>JPG or PNG &nbsp;·&nbsp; Max 5 MB &nbsp;·&nbsp; Will be auto-compressed</small>
+        </div>
+        <div id="photo-preview-wrap">
+          <img id="photo-preview" src="" alt="Passport preview" />
+          <div class="photo-preview-info">
+            <span id="photo-name-label">photo.jpg</span>
+            <small id="photo-size-label">—</small>
+          </div>
+          <button type="button" class="photo-remove-btn" id="photo-remove-btn">Remove</button>
+        </div>
+      </div>
+
+      <div class="form-footer">
+        <button type="submit" class="submit-btn" id="submit-btn">
+          <div class="spinner"></div>
+          <span class="btn-text">Submit Record</span>
+        </button>
+        <div class="error-banner" id="error-banner">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span id="error-text">Something went wrong. Please try again.</span>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- ── Success screen ── -->
+  <div id="success-screen">
+    <div class="success-icon">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>
+    </div>
+    <h2>Record Submitted</h2>
+    <p>The executive member's details and passport photo have been saved to Google Drive and added to the Oron Union Exco Database spreadsheet.</p>
+    <button class="success-new-btn" id="new-entry-btn">Add Another Member</button>
+  </div>
+
+  <!-- ── Setup instructions ── -->
+  <div class="setup-section">
+    <button class="setup-toggle" id="setup-toggle" type="button">
+      <span>⚙️ &nbsp;Admin Setup — Connect to Google Drive</span>
+      <svg class="setup-toggle-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
+    </button>
+    <div class="setup-body" id="setup-body">
+      <p style="font-size:0.82rem;color:var(--gray);line-height:1.6;margin-bottom:20px;">Follow these steps <strong>once</strong> to connect the form to your Google Drive. After setup, all submitted data goes automatically to a Google Sheet and the passport photos are saved in a Google Drive folder — both accessible from your Google account (<strong>brianbassey37@gmail.com</strong>).</p>
+
+      <div class="setup-step">
+        <span class="setup-step-num">1</span>
+        <p>Go to <a href="https://script.google.com" target="_blank" rel="noopener">script.google.com</a>, click <strong>New Project</strong>, name it <em>"Oron Union Exco Form"</em>, then delete any existing code and paste in the code below.</p>
+      </div>
+
+      <div class="code-block" id="apps-script-code">// ═══════════════════════════════════════════════════════
+// Oron Union — Exco Form Handler (Google Apps Script)
+// Paste this into script.google.com → New Project
+// ═══════════════════════════════════════════════════════
+
+const SHEET_NAME  = 'Oron Union Exco Database';
+const FOLDER_NAME = 'Oron Union Passport Photos';
+
+function doPost(e) {
+  try {
+    var data   = JSON.parse(e.postData.contents);
+    var sheet  = getOrCreateSheet().getSheets()[0];
+    var folder = getOrCreateFolder();
+
+    // Add header row on first use
+    if (sheet.getLastRow() === 0) {
+      var hdr = ['Timestamp','Group','Role','Full Name','Phone','Email','Affiliation','Passport Photo'];
+      sheet.appendRow(hdr);
+      sheet.getRange(1,1,1,hdr.length)
+           .setFontWeight('bold')
+           .setBackground('#8B0000')
+           .setFontColor('#ffffff');
+    }
+
+    var photoUrl = '';
+    if (data.photo && data.photo.length > 50) {
+      try { photoUrl = savePhoto(data.photo, data.fullName, folder); }
+      catch(pe) { photoUrl = 'Upload error: ' + pe.message; }
+    }
+
+    sheet.appendRow([
+      new Date().toLocaleString('en-GB', { timeZone: 'Africa/Lagos' }),
+      data.group       || '',
+      data.role        || '',
+      data.fullName    || '',
+      data.phone       || '',
+      data.email       || '',
+      data.affiliation || '',
+      photoUrl
+    ]);
+
+    return ContentService
+      .createTextOutput(JSON.stringify({ status: 'ok' }))
+      .setMimeType(ContentService.MimeType.JSON);
+
+  } catch (err) {
+    return ContentService
+      .createTextOutput(JSON.stringify({ status: 'error', message: err.message }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function doGet() {
+  return ContentService
+    .createTextOutput('Oron Union Exco Form — Web App is live ✓')
+    .setMimeType(ContentService.MimeType.TEXT);
+}
+
+// ── Helpers ────────────────────────────────────────────
+
+function getOrCreateSheet() {
+  var files = DriveApp.getFilesByName(SHEET_NAME);
+  if (files.hasNext()) return SpreadsheetApp.open(files.next());
+  return SpreadsheetApp.create(SHEET_NAME);
+}
+
+function getOrCreateFolder() {
+  var folders = DriveApp.getFoldersByName(FOLDER_NAME);
+  if (folders.hasNext()) return folders.next();
+  return DriveApp.createFolder(FOLDER_NAME);
+}
+
+function savePhoto(base64str, name, folder) {
+  var parts    = base64str.split(',');
+  var mime     = (parts[0].match(/:(.*?);/) || ['','image/jpeg'])[1];
+  var ext      = mime === 'image/png' ? 'png' : 'jpg';
+  var safeName = (name || 'passport').replace(/[^a-zA-Z0-9 ]/g, '').trim();
+  var blob     = Utilities.newBlob(
+                   Utilities.base64Decode(parts[1] || parts[0]),
+                   mime,
+                   safeName + '_passport.' + ext
+                 );
+  var file = folder.createFile(blob);
+  file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+  return file.getUrl();
+}</div>
+      <button class="copy-btn" id="copy-script-btn" type="button">Copy Script</button>
+
+      <div class="setup-step" style="margin-top:20px;">
+        <span class="setup-step-num">2</span>
+        <p>Click <strong>Deploy → New Deployment</strong>. Set type to <em>Web App</em>. Set <em>"Execute as"</em> to <strong>Me</strong> and <em>"Who has access"</em> to <strong>Anyone</strong>. Click <strong>Deploy</strong> and copy the Web App URL.</p>
+      </div>
+
+      <div class="setup-step">
+        <span class="setup-step-num">3</span>
+        <p>Paste the Web App URL below and click <strong>Save URL</strong>. The form is then fully connected.</p>
+      </div>
+
+      <div class="url-input-wrap">
+        <input type="url" id="script-url-input" placeholder="https://script.google.com/macros/s/…/exec" />
+        <button type="button" class="url-save-btn" id="save-url-btn">Save URL</button>
+      </div>
+      <div class="url-hint" id="url-status">No URL saved yet.</div>
+
+      <div class="setup-step" style="margin-top:20px;">
+        <span class="setup-step-num">4</span>
+        <p>After submissions come in, open your Google Drive and find <strong>"Oron Union Exco Database"</strong> (spreadsheet) and <strong>"Oron Union Passport Photos"</strong> (folder). All data and photos are there.</p>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script>
+// ═══════════════════════════════════════════════════════
+// CONFIG — paste your Apps Script Web App URL below
+// ═══════════════════════════════════════════════════════
+var HARDCODED_URL  = 'https://script.google.com/macros/s/AKfycbxpgBv-eKOjcNPzGAYNX8ChrQvRx3mYXe_jn2Dp4ou9HyauVvtSR8YtNs9KqDzmIHwezA/exec';
+var SCRIPT_URL_KEY = 'oron_exco_script_url';
+var scriptUrl = HARDCODED_URL || localStorage.getItem(SCRIPT_URL_KEY) || '';
+
+// ═══════════════════════════════════════════════════════
+// ROLE / AFFILIATION DATA
+// ═══════════════════════════════════════════════════════
+var ROLES = {
+  'Central Executive Committee': [
+    'President-General','Deputy President-General','General Secretary',
+    'Assistant General Secretary','Financial Secretary','Treasurer',
+    'Public Relations Officer','Auditor General'
+  ],
+  'Youth Wing': [
+    'President','Vice President','Secretary General','Assistant Secretary',
+    'Financial Secretary','Treasurer','Public Relations Officer','Welfare Officer'
+  ],
+  "Women's Wing": [
+    'Chairperson','Vice Chairperson','Secretary','Assistant Secretary',
+    'Financial Secretary','Treasurer','Public Relations Officer','Welfare Officer'
+  ],
+  'Oro Student Union': [
+    'President','Vice President','Secretary General','Financial Secretary',
+    'Treasurer','Public Relations Officer','Social Director','Sports Director'
+  ],
+  'Clan Representatives': [
+    'Clan Representative — Afaha Ukwong','Clan Representative — Afaha Ibighi',
+    'Clan Representative — Afaha Oki-uso','Clan Representative — Afaha Idua',
+    'Clan Representative — Afaha Okpo','Clan Representative — Afaha Ubodung',
+    'Clan Representative — Ebughu','Clan Representative — Effiat',
+    'Clan Representative — Etta'
+  ],
+  'Branch Coordinators': [
+    'Branch Coordinator — Oron LGA','Branch Coordinator — Urueoffong/Oruko LGA',
+    'Branch Coordinator — Okobo LGA','Branch Coordinator — Mbo LGA',
+    'Branch Coordinator — Udunguko LGA','Branch Coordinator — Lagos Chapter',
+    'Branch Coordinator — Abuja Chapter','Branch Coordinator — Port Harcourt Chapter',
+    'Branch Coordinator — United Kingdom Chapter','Branch Coordinator — United States Chapter'
+  ]
+};
+
+var AFFILIATIONS = {
+  'Central Executive Committee': {
+    label: 'LGA / Origin',
+    options: ['Oron LGA','Urueoffong/Oruko LGA','Okobo LGA','Mbo LGA','Udunguko LGA','Diaspora']
+  },
+  'Youth Wing': {
+    label: 'Branch / Chapter',
+    options: ['Oron LGA','Urueoffong/Oruko LGA','Okobo LGA','Mbo LGA','Udunguko LGA',
+              'Lagos Chapter','Abuja Chapter','Port Harcourt Chapter','United Kingdom Chapter','United States Chapter']
+  },
+  "Women's Wing": {
+    label: 'Branch / Chapter',
+    options: ['Oron LGA','Urueoffong/Oruko LGA','Okobo LGA','Mbo LGA','Udunguko LGA',
+              'Lagos Chapter','Abuja Chapter','Port Harcourt Chapter','United Kingdom Chapter','United States Chapter']
+  },
+  'Oro Student Union': {
+    label: 'University / Chapter',
+    options: ['University of Uyo','University of Calabar','University of Lagos',
+              'University of Ibadan','Federal University of Technology, Owerri',
+              'Covenant University','University of Port Harcourt','University of Abuja',
+              'United Kingdom Chapter','North America Chapter']
+  },
+  'Clan Representatives': null,
+  'Branch Coordinators': null
+};
+
+// ═══════════════════════════════════════════════════════
+// DYNAMIC FORM FIELDS
+// ═══════════════════════════════════════════════════════
+var groupSel = document.getElementById('f-group');
+var roleSel  = document.getElementById('f-role');
+var affGroup = document.getElementById('affiliation-group');
+var affLabel = document.getElementById('affiliation-label');
+var affSel   = document.getElementById('f-affiliation');
+
+groupSel.addEventListener('change', function () {
+  var g = this.value;
+  roleSel.innerHTML = '';
+  roleSel.disabled = !g;
+
+  if (!g) {
+    roleSel.innerHTML = '<option value="">— Select Group first —</option>';
+    affGroup.style.display = 'none';
+    return;
+  }
+
+  var placeholder = document.createElement('option');
+  placeholder.value = '';
+  placeholder.textContent = '— Select Role —';
+  roleSel.appendChild(placeholder);
+
+  (ROLES[g] || []).forEach(function (r) {
+    var opt = document.createElement('option');
+    opt.value = r;
+    opt.textContent = r;
+    roleSel.appendChild(opt);
+  });
+  roleSel.disabled = false;
+
+  var aff = AFFILIATIONS[g];
+  if (aff) {
+    affLabel.innerHTML = aff.label + ' <span>*</span>';
+    affSel.innerHTML = '<option value="">— Select —</option>';
+    aff.options.forEach(function (o) {
+      var opt = document.createElement('option');
+      opt.value = o; opt.textContent = o;
+      affSel.appendChild(opt);
+    });
+    affGroup.style.display = 'block';
+    affSel.required = true;
+  } else {
+    affGroup.style.display = 'none';
+    affSel.required = false;
+  }
+});
+
+// ═══════════════════════════════════════════════════════
+// PHOTO HANDLING
+// ═══════════════════════════════════════════════════════
+var photoInput    = document.getElementById('f-photo');
+var photoPreview  = document.getElementById('photo-preview');
+var previewWrap   = document.getElementById('photo-preview-wrap');
+var photoNameLbl  = document.getElementById('photo-name-label');
+var photoSizeLbl  = document.getElementById('photo-size-label');
+var photoRemove   = document.getElementById('photo-remove-btn');
+var photoDrop     = document.getElementById('photo-drop');
+var compressedB64 = null;
+
+photoInput.addEventListener('change', function () {
+  if (this.files && this.files[0]) loadPhoto(this.files[0]);
+});
+
+photoDrop.addEventListener('dragover', function (e) { e.preventDefault(); this.classList.add('drag-over'); });
+photoDrop.addEventListener('dragleave', function () { this.classList.remove('drag-over'); });
+photoDrop.addEventListener('drop', function (e) {
+  e.preventDefault();
+  this.classList.remove('drag-over');
+  var file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) loadPhoto(file);
+});
+
+function loadPhoto(file) {
+  if (file.size > 5 * 1024 * 1024) {
+    showError('Photo must be under 5 MB. Please choose a smaller file.');
+    return;
+  }
+  var reader = new FileReader();
+  reader.onload = function (ev) {
+    compressImage(ev.target.result, function (b64, size) {
+      compressedB64 = b64;
+      photoPreview.src = b64;
+      photoNameLbl.textContent = file.name;
+      photoSizeLbl.textContent = 'Compressed to ~' + Math.round(size / 1024) + ' KB';
+      previewWrap.classList.add('show');
+    });
+  };
+  reader.readAsDataURL(file);
+}
+
+photoRemove.addEventListener('click', function () {
+  compressedB64 = null;
+  photoInput.value = '';
+  previewWrap.classList.remove('show');
+  photoPreview.src = '';
+});
+
+function compressImage(src, cb) {
+  var img = new Image();
+  img.onload = function () {
+    var MAX_W = 500, MAX_H = 600;
+    var w = img.width, h = img.height;
+    if (w > MAX_W) { h = Math.round(h * MAX_W / w); w = MAX_W; }
+    if (h > MAX_H) { w = Math.round(w * MAX_H / h); h = MAX_H; }
+    var canvas = document.createElement('canvas');
+    canvas.width = w; canvas.height = h;
+    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+    var b64 = canvas.toDataURL('image/jpeg', 0.82);
+    cb(b64, Math.round((b64.length * 3) / 4));
+  };
+  img.src = src;
+}
+
+// ═══════════════════════════════════════════════════════
+// FORM SUBMIT
+// ═══════════════════════════════════════════════════════
+var form       = document.getElementById('exco-form');
+var submitBtn  = document.getElementById('submit-btn');
+var errBanner  = document.getElementById('error-banner');
+var errText    = document.getElementById('error-text');
+var formCard   = document.getElementById('form-card');
+var successScr = document.getElementById('success-screen');
+
+function showError(msg) {
+  errText.textContent = msg;
+  errBanner.classList.add('show');
+}
+function hideError() { errBanner.classList.remove('show'); }
+
+form.addEventListener('submit', function (e) {
+  e.preventDefault();
+  hideError();
+
+  var url = localStorage.getItem(SCRIPT_URL_KEY) || '';
+  if (!url) {
+    showError('Google Drive is not connected yet. Open the Admin Setup section below and save your Apps Script URL first.');
+    return;
+  }
+
+  var group = document.getElementById('f-group').value;
+  var role  = document.getElementById('f-role').value;
+  var name  = document.getElementById('f-name').value.trim();
+  var phone = document.getElementById('f-phone').value.trim();
+  var email = document.getElementById('f-email').value.trim();
+  var aff   = affSel.required ? affSel.value : '';
+
+  if (!group)  { showError('Please select a Group.'); return; }
+  if (!role)   { showError('Please select a Role.'); return; }
+  if (!name)   { showError('Full name is required.'); return; }
+  if (!phone)  { showError('Phone number is required.'); return; }
+  if (!compressedB64) { showError('Please upload a passport photograph.'); return; }
+
+  var payload = {
+    group:       group,
+    role:        role,
+    fullName:    name,
+    phone:       phone,
+    email:       email,
+    affiliation: aff,
+    photo:       compressedB64
+  };
+
+  submitBtn.disabled = true;
+  submitBtn.classList.add('loading');
+  submitBtn.querySelector('.btn-text').textContent = 'Submitting…';
+
+  fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify(payload)
+  })
+  .then(function (res) { return res.text(); })
+  .then(function () {
+    formCard.style.display = 'none';
+    successScr.style.display = 'block';
+  })
+  .catch(function (err) {
+    // Apps Script often returns opaque CORS response — treat as success
+    // unless the URL itself is wrong
+    if (err.name === 'TypeError' && err.message.includes('Failed to fetch')) {
+      showError('Network error. Check your internet connection and try again.');
+      resetBtn();
+    } else {
+      // CORS opaque response — request was delivered, treat as success
+      formCard.style.display = 'none';
+      successScr.style.display = 'block';
+    }
+  });
+});
+
+function resetBtn() {
+  submitBtn.disabled = false;
+  submitBtn.classList.remove('loading');
+  submitBtn.querySelector('.btn-text').textContent = 'Submit Record';
+}
+
+document.getElementById('new-entry-btn').addEventListener('click', function () {
+  form.reset();
+  compressedB64 = null;
+  previewWrap.classList.remove('show');
+  photoPreview.src = '';
+  roleSel.innerHTML = '<option value="">— Select Group first —</option>';
+  roleSel.disabled = true;
+  affGroup.style.display = 'none';
+  hideError();
+  resetBtn();
+  successScr.style.display = 'none';
+  formCard.style.display = 'block';
+});
+
+// ═══════════════════════════════════════════════════════
+// SETUP PANEL
+// ═══════════════════════════════════════════════════════
+var setupToggle = document.getElementById('setup-toggle');
+var setupBody   = document.getElementById('setup-body');
+var urlInput    = document.getElementById('script-url-input');
+var urlStatus   = document.getElementById('url-status');
+var saveUrlBtn  = document.getElementById('save-url-btn');
+var copyBtn     = document.getElementById('copy-script-btn');
+
+// Show saved URL
+if (scriptUrl) {
+  urlInput.value = scriptUrl;
+  urlStatus.textContent = '✓ URL saved and active.';
+  urlStatus.style.color = 'green';
+}
+
+setupToggle.addEventListener('click', function () {
+  this.classList.toggle('open');
+  setupBody.classList.toggle('open');
+});
+
+saveUrlBtn.addEventListener('click', function () {
+  var v = urlInput.value.trim();
+  if (!v || !v.startsWith('https://script.google.com')) {
+    urlStatus.textContent = 'Please enter a valid Apps Script URL.';
+    urlStatus.style.color = 'red';
+    return;
+  }
+  localStorage.setItem(SCRIPT_URL_KEY, v);
+  scriptUrl = v;
+  urlStatus.textContent = '✓ URL saved. Form is now connected to Google Drive.';
+  urlStatus.style.color = 'green';
+});
+
+copyBtn.addEventListener('click', function () {
+  var code = document.getElementById('apps-script-code').textContent;
+  navigator.clipboard.writeText(code).then(function () {
+    copyBtn.textContent = '✓ Copied!';
+    setTimeout(function () { copyBtn.textContent = 'Copy Script'; }, 2000);
+  });
+});
+</script>
+</body>
+</html>
