@@ -495,13 +495,9 @@
 <div id="cursor-dot"></div>
 <div id="cursor-ring"></div>
 <script src="js/cursor.js"></script>
+<script src="js/inner-nav.js"></script>
 <script>
 (function () {
-  /* ── Nav / scroll ── */
-  var t = document.getElementById('menu-toggle'), n = document.getElementById('nav-links');
-  if (t && n) t.addEventListener('click', function () { n.classList.toggle('active'); });
-  var nav = document.getElementById('navbar');
-  if (nav) window.addEventListener('scroll', function () { nav.classList.toggle('scrolled', window.scrollY > 40); }, { passive: true });
   var io = new IntersectionObserver(function (e) { e.forEach(function (x) { if (x.isIntersecting) { x.target.classList.add('visible'); io.unobserve(x.target); } }); }, { threshold: 0.1 });
   document.querySelectorAll('.reveal,.reveal-scale,.branch-mini-card').forEach(function (el) { io.observe(el); });
 

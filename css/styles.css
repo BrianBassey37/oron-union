@@ -1233,6 +1233,10 @@ html, body { overflow-x: hidden; }
 @media (max-width: 600px) {
   :root { --section-pad: 60px 0; }
 
+  /* Nav */
+  .nav-container { padding: 0 16px; gap: 12px; }
+  .nav-logo-text span { display: none; }
+
   /* Hero */
   .hero-content { padding: 0 20px; }
   .hero-badge   { font-size: 0.68rem; padding: 6px 14px; letter-spacing: 0.06em; }
@@ -1302,6 +1306,8 @@ html, body { overflow-x: hidden; }
   .about-stats  { grid-template-columns: 1fr 1fr; }
   .hero-badge   { font-size: 0.58rem; padding: 5px 10px; }
   .footer-bottom-links { flex-direction: column; gap: 8px; }
+  .nav-logo-text strong { font-size: 0.95rem; }
+  .nav-logo img { width: 36px; height: 36px; }
 }
 
 /* ===== LIGHTBOX ===== */

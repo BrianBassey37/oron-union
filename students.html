@@ -320,15 +320,6 @@
 <div id="cursor-dot"></div>
 <div id="cursor-ring"></div>
 <script src="js/cursor.js"></script>
-<script>
-(function(){
-  var t=document.getElementById('menu-toggle'),n=document.getElementById('nav-links');
-  if(t&&n)t.addEventListener('click',function(){n.classList.toggle('active');});
-  var nav=document.getElementById('navbar');
-  if(nav)window.addEventListener('scroll',function(){nav.classList.toggle('scrolled',window.scrollY>40);},{passive:true});
-  var io=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target);}});},{threshold:0.12});
-  document.querySelectorAll('.reveal,.reveal-scale,.reveal-left,.ip-card,.leader-card').forEach(function(el){io.observe(el);});
-})();
-</script>
+<script src="js/inner-nav.js"></script>
 </body>
 </html>

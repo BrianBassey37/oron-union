@@ -413,27 +413,6 @@
 <div id="cursor-dot"></div>
 <div id="cursor-ring"></div>
 <script src="js/cursor.js"></script>
-<script>
-(function(){
-  var t=document.getElementById('menu-toggle'),n=document.getElementById('nav-links');
-  if(t&&n)t.addEventListener('click',function(){n.classList.toggle('active');});
-  var nav=document.getElementById('navbar');
-  if(nav)window.addEventListener('scroll',function(){nav.classList.toggle('scrolled',window.scrollY>40);},{passive:true});
-  var io=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target);}});},{threshold:0.12});
-  document.querySelectorAll('.reveal,.reveal-scale,.ip-card,.value-card,.leader-card,.news-card,.event-card,.project-card,.ip-timeline-item,.clan-card').forEach(function(el){io.observe(el);});
-
-  // Animate progress bars when they become visible
-  var barObs = new IntersectionObserver(function(entries){
-    entries.forEach(function(e){
-      if(e.isIntersecting){
-        var fill = e.target.querySelector('.progress-fill');
-        if(fill) fill.classList.add('filled');
-        barObs.unobserve(e.target);
-      }
-    });
-  },{threshold:0.3});
-  document.querySelectorAll('.progress-bar').forEach(function(el){barObs.observe(el);});
-})();
-</script>
+<script src="js/inner-nav.js"></script>
 </body>
 </html>
