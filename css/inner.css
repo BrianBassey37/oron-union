@@ -916,3 +916,59 @@
   .leader-role { font-size: 0.75rem; }
   .inner-footer { padding: 28px 16px; font-size: 0.8rem; }
 }
+
+/* =================================================================
+   DARK MODE — INNER PAGES
+   ================================================================= */
+[data-theme="dark"] .ip-section { background: var(--white); }
+[data-theme="dark"] .ip-section:nth-child(even) { background: var(--beige); }
+
+[data-theme="dark"] .ip-card {
+  background: #1E1A1A;
+  border-color: rgba(255,255,255,0.08);
+  color: #EDEDE0;
+}
+[data-theme="dark"] .ip-card h3 { color: #EDEDE0; }
+[data-theme="dark"] .ip-card p  { color: #9A9A9A; }
+
+[data-theme="dark"] .leader-card {
+  background: #1E1A1A;
+  border-color: rgba(255,255,255,0.08);
+}
+[data-theme="dark"] .leader-name { color: #EDEDE0; }
+[data-theme="dark"] .leader-role { color: #9A9A9A; }
+
+[data-theme="dark"] .branch-card {
+  background: #1E1A1A;
+  border-color: rgba(255,255,255,0.08);
+}
+[data-theme="dark"] .branch-card h3 { color: #EDEDE0; }
+[data-theme="dark"] .branch-card p  { color: #9A9A9A; }
+
+[data-theme="dark"] .clan-card {
+  background: #1E1A1A;
+  border-color: rgba(255,255,255,0.08);
+}
+[data-theme="dark"] .clan-card h3 { color: #EDEDE0; }
+
+[data-theme="dark"] .value-card {
+  background: #1E1A1A;
+  border-color: rgba(255,255,255,0.08);
+}
+[data-theme="dark"] .value-card h3 { color: #EDEDE0; }
+[data-theme="dark"] .value-card p  { color: #9A9A9A; }
+
+[data-theme="dark"] .ip-timeline-item { border-left-color: rgba(255,255,255,0.12); }
+[data-theme="dark"] .ip-timeline-item h3 { color: #EDEDE0; }
+[data-theme="dark"] .ip-timeline-item p  { color: #9A9A9A; }
+
+[data-theme="dark"] .ip-section-title { color: #EDEDE0; }
+[data-theme="dark"] .ip-section-sub   { color: #9A9A9A; }
+
+[data-theme="dark"] .inner-footer {
+  background: var(--maroon);
+  color: rgba(255,255,255,0.55);
+}
+[data-theme="dark"] .inner-footer a { color: rgba(255,255,255,0.7); }
+
+/* Back-to-top and WhatsApp are also available on inner pages via styles.css */

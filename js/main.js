@@ -527,3 +527,70 @@ window.addEventListener('scroll', function () {
 })();
 
 /* Page transitions handled by js/cursor.js (shared across all pages) */
+
+// =====================================================================
+// DARK MODE TOGGLE
+// =====================================================================
+(function () {
+  var html = document.documentElement;
+  var btn  = document.getElementById('dark-mode-btn');
+
+  function applyTheme(dark) {
+    html.setAttribute('data-theme', dark ? 'dark' : 'light');
+    try { localStorage.setItem('oron_theme', dark ? 'dark' : 'light'); } catch (e) {}
+  }
+
+  var saved = null;
+  try { saved = localStorage.getItem('oron_theme'); } catch (e) {}
+  var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  applyTheme(saved === 'dark' || (!saved && prefersDark));
+
+  if (btn) {
+    btn.addEventListener('click', function () {
+      applyTheme(html.getAttribute('data-theme') !== 'dark');
+    });
+  }
+})();
+
+// =====================================================================
+// CENTENARY COUNTDOWN TIMER
+// =====================================================================
+(function () {
+  var target = new Date('2026-07-25T18:00:00');
+  var dEl = document.getElementById('cd-days');
+  var hEl = document.getElementById('cd-hours');
+  var mEl = document.getElementById('cd-mins');
+  var sEl = document.getElementById('cd-secs');
+  if (!dEl) return;
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function tick() {
+    var diff = target - Date.now();
+    if (diff <= 0) {
+      dEl.textContent = hEl.textContent = mEl.textContent = sEl.textContent = '00';
+      return;
+    }
+    dEl.textContent = pad(Math.floor(diff / 86400000));
+    hEl.textContent = pad(Math.floor((diff % 86400000) / 3600000));
+    mEl.textContent = pad(Math.floor((diff % 3600000) / 60000));
+    sEl.textContent = pad(Math.floor((diff % 60000) / 1000));
+  }
+
+  tick();
+  setInterval(tick, 1000);
+})();
+
+// =====================================================================
+// BACK TO TOP BUTTON
+// =====================================================================
+(function () {
+  var btn = document.getElementById('back-to-top');
+  if (!btn) return;
+  window.addEventListener('scroll', function () {
+    btn.classList.toggle('visible', window.scrollY > 400);
+  }, { passive: true });
+  btn.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+})();

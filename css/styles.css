@@ -2004,3 +2004,302 @@ html { scroll-behavior: smooth; }
   opacity: 0.82;
   transform: scale(1.06);
 }
+
+/* =================================================================
+   DARK MODE TOGGLE BUTTON
+   ================================================================= */
+.dark-mode-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  color: var(--black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  flex-shrink: 0;
+  transition: background 0.2s, color 0.2s;
+}
+.dark-mode-btn:hover { background: rgba(0,0,0,0.06); }
+.dark-mode-btn svg { width: 20px; height: 20px; transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+.dark-mode-btn:hover svg { transform: rotate(20deg); }
+.dark-mode-btn .dm-moon { display: none; }
+
+@media (max-width: 960px) {
+  .dark-mode-btn { margin-left: auto; }
+  .nav-mobile-toggle { margin-left: 0 !important; }
+}
+
+/* =================================================================
+   DARK MODE THEME
+   ================================================================= */
+[data-theme="dark"] {
+  --white: #161212;
+  --black: #EDEDE0;
+  --beige: #1E1A1A;
+  --beige-dark: #181414;
+  --gray: #9A9A9A;
+  --light-gray: #6B6B6B;
+  --card-border: rgba(255,255,255,0.1);
+  --maroon: #0A0505;
+}
+
+[data-theme="dark"] body { background: #161212; color: #EDEDE0; }
+
+[data-theme="dark"] .navbar {
+  background: rgba(16,12,12,0.97);
+  border-bottom-color: rgba(255,255,255,0.08);
+}
+
+[data-theme="dark"] .nav-links > li > a { color: #D8D4CC; }
+[data-theme="dark"] .nav-links > li > a:hover { color: var(--red); background: rgba(128,0,32,0.12); }
+[data-theme="dark"] .nav-logo-text strong { color: #EDEDE0; }
+[data-theme="dark"] .nav-logo-text span { color: #9A9A9A; }
+[data-theme="dark"] .nav-mobile-toggle span { background: #EDEDE0; }
+[data-theme="dark"] .dark-mode-btn { color: #EDEDE0; }
+[data-theme="dark"] .dark-mode-btn:hover { background: rgba(255,255,255,0.08); }
+[data-theme="dark"] .dark-mode-btn .dm-sun { display: none; }
+[data-theme="dark"] .dark-mode-btn .dm-moon { display: block; }
+
+[data-theme="dark"] .dropdown {
+  background: #221B1B;
+  border-color: rgba(255,255,255,0.1);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+}
+[data-theme="dark"] .dropdown li a { color: #C8C4BC; }
+[data-theme="dark"] .dropdown li a:hover { background: rgba(128,0,32,0.15); color: #fff; }
+[data-theme="dark"] .submenu { background: #221B1B; border-color: rgba(255,255,255,0.1); }
+[data-theme="dark"] .submenu li a { color: #C8C4BC; }
+
+[data-theme="dark"] .ticker-wrap { background: #0E0A0A; }
+
+[data-theme="dark"] .explore-card { background: #1E1A1A; border-color: rgba(255,255,255,0.08); }
+[data-theme="dark"] .explore-card:hover { border-color: rgba(128,0,32,0.35); }
+[data-theme="dark"] .explore-icon { background: rgba(128,0,32,0.2); }
+[data-theme="dark"] .explore-card h3 { color: #EDEDE0; }
+[data-theme="dark"] .explore-card p { color: #9A9A9A; }
+
+[data-theme="dark"] .about-image img { filter: brightness(0.85); }
+[data-theme="dark"] .about-stats { border-top-color: rgba(255,255,255,0.1); }
+
+[data-theme="dark"] .culture-card { background: #1E1A1A; border-color: rgba(255,255,255,0.08); }
+[data-theme="dark"] .culture-card-body h3 { color: #EDEDE0; }
+[data-theme="dark"] .culture-card-body p { color: #9A9A9A; }
+
+[data-theme="dark"] .news-card { background: #1E1A1A; border-color: rgba(255,255,255,0.08); }
+[data-theme="dark"] .news-card h3 { color: #EDEDE0; }
+
+[data-theme="dark"] .project-card { background: #1E1A1A !important; border-color: rgba(255,255,255,0.08) !important; }
+[data-theme="dark"] .project-card h3 { color: #EDEDE0 !important; }
+
+[data-theme="dark"] .progress-bar { background: rgba(255,255,255,0.08); }
+
+[data-theme="dark"] .footer-bottom { border-top-color: rgba(255,255,255,0.08); }
+[data-theme="dark"] .footer-contact-item { color: rgba(255,255,255,0.65); }
+[data-theme="dark"] .footer-tagline { color: rgba(255,255,255,0.6); }
+
+[data-theme="dark"] #preloader { background: #0E0A0A; }
+[data-theme="dark"] .pre-title { color: #EDEDE0; }
+[data-theme="dark"] .pre-sub { color: #9A9A9A; }
+
+[data-theme="dark"] .section-title,
+[data-theme="dark"] .tv-sec-title,
+[data-theme="dark"] .elec-section-title {
+  background: linear-gradient(135deg, #EDEDE0 0%, var(--gold) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+[data-theme="dark"] .nav-links.open,
+[data-theme="dark"] .nav-links.active {
+  background: #161212;
+}
+[data-theme="dark"] .nav-links.open > li > a,
+[data-theme="dark"] .nav-links.active > li > a { color: #EDEDE0; border-bottom-color: rgba(255,255,255,0.07); }
+[data-theme="dark"] .nav-links.open > li > a:hover,
+[data-theme="dark"] .nav-links.active > li > a:hover { background: rgba(128,0,32,0.12); }
+[data-theme="dark"] .nav-links.open .dropdown,
+[data-theme="dark"] .nav-links.active .dropdown { background: rgba(255,255,255,0.04); border-left-color: var(--red); }
+[data-theme="dark"] .nav-links.open .dropdown li a,
+[data-theme="dark"] .nav-links.active .dropdown li a { color: #9A9A9A; }
+
+/* =================================================================
+   COUNTDOWN STRIP
+   ================================================================= */
+.countdown-strip {
+  background: linear-gradient(135deg, var(--red-deep) 0%, var(--red) 50%, #A0002A 100%);
+  padding: 44px 24px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.countdown-strip::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+.countdown-event-name {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(1.3rem, 3vw, 1.8rem);
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 6px;
+  position: relative;
+}
+
+.countdown-label {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.75);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-weight: 500;
+  margin-bottom: 28px;
+  position: relative;
+}
+
+.countdown-boxes {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+  position: relative;
+}
+
+.cd-box {
+  min-width: 76px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.22);
+  border-radius: 12px;
+  padding: 16px 18px 12px;
+  backdrop-filter: blur(6px);
+  transition: transform 0.2s;
+}
+.cd-box:hover { transform: translateY(-4px); }
+
+.cd-box span {
+  display: block;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1;
+  margin-bottom: 6px;
+  min-width: 2.4ch;
+  text-align: center;
+}
+
+.cd-box small {
+  display: block;
+  font-size: 0.65rem;
+  color: rgba(255,255,255,0.72);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  text-align: center;
+}
+
+@media (max-width: 480px) {
+  .cd-box { min-width: 60px; padding: 12px 10px 8px; }
+  .cd-box span { font-size: 1.7rem; }
+  .countdown-boxes { gap: 10px; }
+}
+
+/* =================================================================
+   BACK TO TOP BUTTON
+   ================================================================= */
+.back-to-top {
+  position: fixed;
+  bottom: 100px;
+  right: 24px;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--red);
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 18px rgba(128,0,32,0.38);
+  transition: opacity 0.3s ease, transform 0.3s ease, background 0.2s;
+  opacity: 0;
+  transform: translateY(16px);
+  pointer-events: none;
+  z-index: 9988;
+}
+.back-to-top svg { width: 20px; height: 20px; }
+.back-to-top.visible { opacity: 1; transform: translateY(0); pointer-events: all; }
+.back-to-top:hover { background: var(--red-hover); transform: translateY(-4px); }
+
+@media (max-width: 600px) {
+  .back-to-top { right: 16px; bottom: 90px; width: 42px; height: 42px; }
+}
+
+/* =================================================================
+   WHATSAPP FLOATING BUTTON
+   ================================================================= */
+.whatsapp-btn {
+  position: fixed;
+  bottom: 32px;
+  right: 24px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #25D366;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(37,211,102,0.4);
+  z-index: 9988;
+  transition: background 0.2s, transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s;
+  animation: wa-bounce 3s ease-in-out 4s infinite;
+}
+.whatsapp-btn svg { width: 28px; height: 28px; }
+.whatsapp-btn:hover {
+  background: #128C7E;
+  transform: scale(1.12);
+  box-shadow: 0 8px 28px rgba(37,211,102,0.5);
+  animation: none;
+}
+
+@keyframes wa-bounce {
+  0%, 85%, 100% { transform: translateY(0); }
+  90%           { transform: translateY(-8px); }
+  95%           { transform: translateY(-4px); }
+}
+
+@media (max-width: 600px) {
+  .whatsapp-btn { right: 16px; bottom: 24px; width: 48px; height: 48px; }
+}
+
+/* =================================================================
+   IMPROVED NEWS CARDS
+   ================================================================= */
+.news-card {
+  border-top: 3px solid var(--red);
+  position: relative;
+  overflow: hidden;
+}
+.news-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--red), var(--gold), var(--red));
+  background-size: 200% auto;
+  animation: news-shimmer 3s linear infinite paused;
+}
+.news-card:hover::before { animation-play-state: running; }
+@keyframes news-shimmer {
+  to { background-position: 200% center; }
+}
