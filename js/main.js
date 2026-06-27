@@ -6,12 +6,12 @@
 // =====================================================================
 (function () {
 
-  // ── The 4 starting photos (shown on first visit / until 24 hrs pass)
+  // ── The starting photos (shown on first visit / until 24 hrs pass)
   var DEFAULT_SET = [
-    { src: 'pictures/IMG-20260317-WA0026.jpg', alt: 'Oron Union official delegation visit with traditional ruler' },
-    { src: 'pictures/IMG-20260317-WA0014.jpg', alt: 'Torch lighting ceremony at Chief Daniel Afiakurue House' },
-    { src: 'pictures/IMG-20260317-WA0031.jpg', alt: 'Oron Union leaders at the 100 Year Anniversary celebration' },
-    { src: 'pictures/IMG-20260317-WA0056.jpg', alt: 'Community outreach march with Oron Union members in orange vests' }
+    { src: 'pictures/PG and Ahta.JPG',  alt: 'Distinguished leaders of the Oro Nation' },
+    { src: 'pictures/Oro women.JPG',    alt: 'Oro women celebrating cultural heritage' },
+    { src: 'pictures/orotradition.JPG', alt: 'Oro people in traditional cultural gathering' },
+    { src: 'pictures/tradpic.JPG',      alt: 'Traditional scene from the Oro Nation' }
   ];
 
   // ── Full pool — every photo in the pictures/ folder (used for random rotation)
@@ -37,7 +37,7 @@
     };
   });
 
-  var STORAGE_KEY  = 'oron_hero_slides';
+  var STORAGE_KEY  = 'oron_hero_slides_v2';
   var MS_24H       = 24 * 60 * 60 * 1000;
 
   // ── Pick count unique random items from pool
