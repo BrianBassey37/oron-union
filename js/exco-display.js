@@ -7,7 +7,7 @@
 // =====================================================================
 
 (function () {
-  var SUPABASE_URL  = 'https://tmidqbxwgkeqtkuppauth.supabase.co';
+  var SUPABASE_URL  = 'https://tmidqbxwgkeqtkuppauh.supabase.co';
   var SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtaWRxYnh3Z2tlcXRrdXBwYXVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI1OTUwNzAsImV4cCI6MjA5ODE3MTA3MH0.1Hstj_lypWmbB5LpxpLkBJ4d2_ybSUsKY_KYeTVnnXQ';
 
   var _client = null;
