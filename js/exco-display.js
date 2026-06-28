@@ -48,7 +48,7 @@
     if (!c || !el) return;
 
     c.from('exco_members')
-      .select('*')
+      .select('id, grp, role, full_name, affiliation, photo_url, created_at')
       .eq('grp', groupName)
       .order('created_at', { ascending: true })
       .then(function (result) {
