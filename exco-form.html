@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <style>
     :root {
       --red: #8B0000;
@@ -331,9 +332,11 @@
 
 <script>
 // ═══════════════════════════════════════════════════════
-// CONFIG
+// CONFIG — replace with your Supabase project credentials
 // ═══════════════════════════════════════════════════════
-var scriptUrl = 'https://script.google.com/macros/s/AKfycbxpgBv-eKOjcNPzGAYNX8ChrQvRx3mYXe_jn2Dp4ou9HyauVvtSR8YtNs9KqDzmIHwezA/exec';
+var SUPABASE_URL  = 'YOUR_SUPABASE_URL';       // ← Settings → API → Project URL
+var SUPABASE_ANON = 'YOUR_SUPABASE_ANON_KEY';  // ← Settings → API → anon public key
+var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
 // ═══════════════════════════════════════════════════════
 // ROLE / AFFILIATION DATA
@@ -530,6 +533,14 @@ function showError(msg) {
 }
 function hideError() { errBanner.classList.remove('show'); }
 
+function base64ToBlob(b64) {
+  var parts = b64.split(',');
+  var byteStr = atob(parts[1]);
+  var arr = new Uint8Array(byteStr.length);
+  for (var i = 0; i < byteStr.length; i++) arr[i] = byteStr.charCodeAt(i);
+  return new Blob([arr], { type: 'image/jpeg' });
+}
+
 form.addEventListener('submit', function (e) {
   e.preventDefault();
   hideError();
@@ -541,48 +552,50 @@ form.addEventListener('submit', function (e) {
   var email = document.getElementById('f-email').value.trim();
   var aff   = affSel.required ? affSel.value : '';
 
-  if (!group)  { showError('Please select a Group.'); return; }
-  if (!role)   { showError('Please select a Role.'); return; }
-  if (!name)   { showError('Full name is required.'); return; }
-  if (!phone)  { showError('Phone number is required.'); return; }
-  if (!compressedB64) { showError('Please upload a passport photograph.'); return; }
-
-  var payload = {
-    group:       group,
-    role:        role,
-    fullName:    name,
-    phone:       phone,
-    email:       email,
-    affiliation: aff,
-    photo:       compressedB64
-  };
+  if (!group)        { showError('Please select a Group.'); return; }
+  if (!role)         { showError('Please select a Role.'); return; }
+  if (!name)         { showError('Full name is required.'); return; }
+  if (!phone)        { showError('Phone number is required.'); return; }
+  if (!compressedB64){ showError('Please upload a passport photograph.'); return; }
 
   submitBtn.disabled = true;
   submitBtn.classList.add('loading');
-  submitBtn.querySelector('.btn-text').textContent = 'Submitting…';
+  submitBtn.querySelector('.btn-text').textContent = 'Uploading photo…';
 
-  fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'text/plain' },
-    body: JSON.stringify(payload)
-  })
-  .then(function (res) { return res.text(); })
-  .then(function () {
-    formCard.style.display = 'none';
-    successScr.style.display = 'block';
-  })
-  .catch(function (err) {
-    // Apps Script often returns opaque CORS response — treat as success
-    // unless the URL itself is wrong
-    if (err.name === 'TypeError' && err.message.includes('Failed to fetch')) {
-      showError('Network error. Check your internet connection and try again.');
-      resetBtn();
-    } else {
-      // CORS opaque response — request was delivered, treat as success
+  // Build a safe filename: timestamp + role slug
+  var slug = role.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
+  var filename = Date.now() + '_' + slug + '.jpg';
+  var blob = base64ToBlob(compressedB64);
+
+  // 1. Upload photo to Supabase Storage
+  sb.storage.from('exco-photos').upload(filename, blob, { contentType: 'image/jpeg', upsert: false })
+    .then(function (res) {
+      if (res.error) throw res.error;
+
+      var photoUrl = sb.storage.from('exco-photos').getPublicUrl(res.data.path).data.publicUrl;
+
+      submitBtn.querySelector('.btn-text').textContent = 'Saving record…';
+
+      // 2. Insert member record
+      return sb.from('exco_members').insert({
+        grp:         group,
+        role:        role,
+        full_name:   name,
+        phone:       phone,
+        email:       email,
+        affiliation: aff,
+        photo_url:   photoUrl
+      });
+    })
+    .then(function (res) {
+      if (res.error) throw res.error;
       formCard.style.display = 'none';
       successScr.style.display = 'block';
-    }
-  });
+    })
+    .catch(function (err) {
+      showError('Error: ' + (err.message || 'Something went wrong. Please try again.'));
+      resetBtn();
+    });
 });
 
 function resetBtn() {

@@ -145,7 +145,7 @@
       <h2 class="ip-section-title">Women's Wing Executives</h2>
       <p class="ip-section-sub" style="margin:0 auto;">Elected at the 2023 Women's Wing Convention held in Oron City, this executive committee serves a two-year term.</p>
     </div>
-    <div class="ip-grid-4">
+    <div class="ip-grid-4" id="women-exco-grid">
       <div class="leader-card reveal">
         <div class="leader-avatar-placeholder">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -320,6 +320,9 @@
 <div id="cursor-dot"></div>
 <div id="cursor-ring"></div>
 <script src="js/cursor.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="js/exco-display.js"></script>
+<script>loadExcoSection("Women's Wing", 'women-exco-grid');</script>
 <script src="js/inner-nav.js"></script>
 </body>
 </html>
