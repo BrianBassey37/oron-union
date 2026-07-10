@@ -76,6 +76,29 @@
         navList.classList.toggle('open');
         toggle.classList.toggle('open');
       });
+
+      navList.querySelectorAll('li > a').forEach(function (link) {
+        var parent = link.closest('li');
+        if (parent.querySelector('.dropdown') || parent.querySelector('.submenu')) {
+          link.addEventListener('click', function (e) {
+            if (window.innerWidth <= 960) {
+              e.preventDefault();
+              var wasOpen = parent.classList.contains('open');
+              parent.parentElement.querySelectorAll('li.open').forEach(function (el) {
+                el.classList.remove('open');
+              });
+              if (!wasOpen) parent.classList.add('open');
+            }
+          });
+        }
+      });
+
+      document.addEventListener('click', function (e) {
+        if (!navList.contains(e.target) && !toggle.contains(e.target)) {
+          navList.classList.remove('open');
+          toggle.classList.remove('open');
+        }
+      });
     }
     if (navbar) {
       window.addEventListener('scroll', function () {

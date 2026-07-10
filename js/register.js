@@ -455,26 +455,8 @@
     }
   };
 
-  /* ── Navbar scroll behaviour ── */
-  function initNavbar() {
-    var nb = document.getElementById('navbar');
-    var toggle = document.getElementById('menu-toggle');
-    var links  = document.getElementById('nav-links');
-    if (!nb) return;
-    window.addEventListener('scroll', function () {
-      nb.classList[window.scrollY > 30 ? 'add' : 'remove']('scrolled');
-    });
-    if (toggle && links) {
-      toggle.addEventListener('click', function () {
-        links.classList.toggle('open');
-        toggle.classList.toggle('open');
-      });
-    }
-  }
-
   /* ── Boot ── */
   document.addEventListener('DOMContentLoaded', function () {
-    initNavbar();
     initEndorserToggle();
     initBirthToggle();
     initWhatsappCheck();

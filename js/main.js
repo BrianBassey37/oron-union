@@ -252,7 +252,7 @@ document.querySelectorAll(
 // STAT COUNTER — replays every time about section scrolls in/out
 // =====================================================================
 function getLiveMemberCount() {
-  var base = 847;
+  var base = 0;
   try {
     var apps = JSON.parse(localStorage.getItem('oron_applications') || '[]');
     return base + apps.filter(function (a) { return a.status === 'approved'; }).length;
@@ -448,34 +448,6 @@ function closeLightbox() {
 })();
 
 // =====================================================================
-// HERO TEXT SCRAMBLE — fires after entrance animation completes
-// =====================================================================
-(function () {
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  var el = document.querySelector('.hero-line-main');
-  if (!el) return;
-
-  var CHARS    = 'ABCDEFGHIJKLMNOPQRSTUVWXYZΩΨΦΘΞΛΣΔΓΠ∆∑∏';
-  var original = el.textContent.trim();
-  var delay    = 1800;
-
-  setTimeout(function () {
-    var iter = 0, max = original.length * 6;
-    var iv = setInterval(function () {
-      el.textContent = original.split('').map(function (ch, i) {
-        if (ch === ' ') return ' ';
-        if (i < Math.floor(iter / 6)) return original[i];
-        return CHARS[Math.floor(Math.random() * CHARS.length)];
-      }).join('');
-      if (++iter >= max) {
-        clearInterval(iv);
-        el.textContent = original;
-      }
-    }, 36);
-  }, delay);
-})();
-
-// =====================================================================
 // ACTIVE NAV LINK ON SCROLL
 // =====================================================================
 var sections = document.querySelectorAll('section[id]');
@@ -553,10 +525,10 @@ window.addEventListener('scroll', function () {
 })();
 
 // =====================================================================
-// CENTENARY COUNTDOWN TIMER
+// YOUTH SUMMIT COUNTDOWN TIMER
 // =====================================================================
 (function () {
-  var target = new Date('2026-07-25T18:00:00');
+  var target = new Date('2026-09-12T09:00:00');
   var dEl = document.getElementById('cd-days');
   var hEl = document.getElementById('cd-hours');
   var mEl = document.getElementById('cd-mins');

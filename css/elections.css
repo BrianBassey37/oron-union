@@ -168,18 +168,6 @@
 .auth-btn:hover { background: var(--red-hover); box-shadow: 0 6px 20px rgba(128,0,32,0.3); transform: translateY(-1px); }
 .auth-btn:active { transform: translateY(0); }
 
-.auth-demo-btn {
-  padding: 11px 24px;
-  background: none;
-  border: 1.5px dashed var(--card-border);
-  border-radius: 10px;
-  font-size: 0.875rem;
-  color: var(--gray);
-  cursor: pointer;
-  transition: border-color 0.2s, color 0.2s;
-}
-.auth-demo-btn:hover { border-color: var(--red); color: var(--red); }
-
 .auth-help {
   font-size: 0.78rem;
   color: var(--gray);
@@ -448,6 +436,14 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 28px;
+}
+
+.elec-empty-note {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 48px 20px;
+  color: var(--gray);
+  font-size: 0.95rem;
 }
 
 .election-card {

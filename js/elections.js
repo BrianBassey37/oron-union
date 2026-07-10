@@ -14,56 +14,13 @@
     registered: 'oron_registered_ids'
   };
 
-  /* ── Election data ── */
-  var ELECTIONS = [
-    {
-      id: 'exec-president-2026',
-      title: 'Executive President 2026–2028',
-      desc: 'Election for the President of Oron Union for the 2026–2028 term.',
-      deadline: '2026-07-31T23:59:59',
-      status: 'active',
-      registered: 847,
-      candidates: [
-        { id: 'c1', name: 'Chief Emmanuel Okon', role: 'Incumbent President (2022–2026)', initials: 'EO', color: '#800020', seed: 312 },
-        { id: 'c2', name: 'Barr. Grace Edet',    role: 'Former Vice President & Legal Expert', initials: 'GE', color: '#1a5276', seed: 241 },
-        { id: 'c3', name: 'Prof. Bassey Inyang', role: 'Academic & Community Leader', initials: 'BI', color: '#196F3D', seed: 178 }
-      ]
-    },
-    {
-      id: 'vice-president-2026',
-      title: 'Vice President 2026–2028',
-      desc: 'Election for the Vice President of Oron Union for the 2026–2028 term.',
-      deadline: '2026-07-31T23:59:59',
-      status: 'active',
-      registered: 847,
-      candidates: [
-        { id: 'c1', name: 'Mrs. Arit Udofia',    role: 'Women Wing Chairperson', initials: 'AU', color: '#800020', seed: 198 },
-        { id: 'c2', name: 'Engr. Sunday Akpan',  role: 'Infrastructure Committee Head', initials: 'SA', color: '#7B3F00', seed: 143 }
-      ]
-    },
-    {
-      id: 'secretary-2025',
-      title: 'General Secretary 2025–2026',
-      desc: 'Election for the General Secretary of Oron Union.',
-      deadline: '2026-01-15T23:59:59',
-      status: 'closed',
-      registered: 847,
-      candidates: [
-        { id: 'c1', name: 'Mr. Effiong Udo',     role: 'Former Assistant Secretary', initials: 'EU', color: '#800020', seed: 421 },
-        { id: 'c2', name: 'Miss Ibiere Okon',    role: 'Youth Wing Coordinator', initials: 'IO', color: '#1a5276', seed: 289 },
-        { id: 'c3', name: 'Dr. Nkeme Bassey',   role: 'External Affairs Officer',  initials: 'NB', color: '#196F3D', seed: 112 }
-      ]
-    }
-  ];
-
-  /* ── Demo member ── */
-  var DEMO_MEMBER = { id: 'demo-001', name: 'Demo Member', email: 'demo@oronunion.org', clan: 'Oron', memberId: 'OU-DEMO-001' };
+  /* ── Election data — populated once real elections are scheduled ── */
+  var ELECTIONS = [];
 
   /* ── State ── */
   var currentMember = null;
   var selectedCandidate = null;
   var activeElectionId = null;
-  var liveTimers = {};
   var bc = null;
 
   /* ───────────────────────────────────────────
@@ -123,7 +80,7 @@
   }
 
   function countRegisteredMembers() {
-    var base = 847;
+    var base = 0;
     try {
       var apps = JSON.parse(localStorage.getItem('oron_applications') || '[]');
       return base + apps.filter(function (a) { return a.status === 'approved'; }).length;
@@ -157,7 +114,6 @@
       nameEl.innerHTML += ' <span class="member-id-chip">' + currentMember.memberId + '</span>';
     }
     renderAll();
-    startLiveSimulation();
     initBroadcastChannel();
   }
 
@@ -263,12 +219,15 @@
     setTimeout(function () { el.classList.remove('bump'); }, 350);
   }
 
+  var NO_ACTIVE_HTML = '<p class="elec-empty-note">No active elections at this time. Check back soon.</p>';
+  var NO_PAST_HTML   = '<p class="elec-empty-note">No completed elections yet.</p>';
+
   function renderActiveElections() {
     var grid = document.getElementById('active-elections-grid');
     if (!grid) return;
     var active = ELECTIONS.filter(function (e) { return e.status === 'active'; });
     document.getElementById('stat-active').textContent = active.length;
-    grid.innerHTML = active.map(function (e) { return buildCard(e); }).join('');
+    grid.innerHTML = active.length ? active.map(function (e) { return buildCard(e); }).join('') : NO_ACTIVE_HTML;
     bindCardButtons();
     scheduleBarAnimate();
   }
@@ -277,7 +236,7 @@
     var grid = document.getElementById('past-elections-grid');
     if (!grid) return;
     var past = ELECTIONS.filter(function (e) { return e.status === 'closed'; });
-    grid.innerHTML = past.map(function (e) { return buildCard(e); }).join('');
+    grid.innerHTML = past.length ? past.map(function (e) { return buildCard(e); }).join('') : NO_PAST_HTML;
     bindCardButtons();
     scheduleBarAnimate();
   }
@@ -545,59 +504,9 @@
   }
 
   /* ───────────────────────────────────────────
-     LIVE VOTE SIMULATION
-     Drips in 1–3 votes every 6–14 seconds to
-     give the feel of real-time participation.
+     LIVE UI REFRESH — triggered when a real vote
+     is cast (locally or broadcast from another tab)
   ─────────────────────────────────────────── */
-  function startLiveSimulation() {
-    function tick() {
-      var active = ELECTIONS.filter(function (e) { return e.status === 'active'; });
-      if (!active.length) return;
-
-      /* Pick a random active election */
-      var election = active[Math.floor(Math.random() * active.length)];
-      var votes = getVotes();
-      if (!votes[election.id]) votes[election.id] = {};
-
-      /* Weight toward existing vote counts (leader stays leading) */
-      var total = Object.values(votes[election.id]).reduce(function (a, b) { return a + b; }, 0) || 1;
-      var r = Math.random() * total;
-      var cumul = 0;
-      var chosen = election.candidates[0];
-      for (var i = 0; i < election.candidates.length; i++) {
-        cumul += (votes[election.id][election.candidates[i].id] || 0);
-        if (r <= cumul) { chosen = election.candidates[i]; break; }
-      }
-
-      /* Add 1 simulated vote */
-      votes[election.id][chosen.id] = (votes[election.id][chosen.id] || 0) + 1;
-      setStore(STORE.votes, votes);
-
-      /* Broadcast */
-      broadcastUpdate({ type: 'sim', electionId: election.id });
-
-      /* Refresh UI */
-      refreshLiveUI();
-
-      /* If results modal is open for this election, refresh it */
-      var rm = document.getElementById('results-modal');
-      if (!rm.classList.contains('hidden') && activeElectionId === election.id) {
-        renderResultsList(activeElectionId);
-        setTimeout(function () {
-          document.querySelectorAll('.result-bar-fill[data-target]').forEach(function (el) {
-            el.style.width = el.dataset.target + '%';
-          });
-        }, 60);
-      }
-
-      /* Schedule next tick */
-      var delay = 6000 + Math.random() * 8000;
-      liveTimers.sim = setTimeout(tick, delay);
-    }
-
-    liveTimers.sim = setTimeout(tick, 4000 + Math.random() * 4000);
-  }
-
   function refreshLiveUI() {
     renderStats(); /* updates total votes + avg participation */
     /* Refresh card participation bars */
@@ -669,32 +578,10 @@
   }
 
   /* ───────────────────────────────────────────
-     NAVBAR (shared behaviour with main site)
-  ─────────────────────────────────────────── */
-  function initNavbar() {
-    var navbar = document.getElementById('navbar');
-    var toggle = document.getElementById('menu-toggle');
-    var navLinks = document.getElementById('nav-links');
-
-    window.addEventListener('scroll', function () {
-      if (window.scrollY > 30) { navbar.classList.add('scrolled'); }
-      else { navbar.classList.remove('scrolled'); }
-    });
-
-    if (toggle && navLinks) {
-      toggle.addEventListener('click', function () {
-        navLinks.classList.toggle('open');
-        toggle.classList.toggle('open');
-      });
-    }
-  }
-
-  /* ───────────────────────────────────────────
      BOOT
   ─────────────────────────────────────────── */
   document.addEventListener('DOMContentLoaded', function () {
 
-    initNavbar();
     initVotes(); /* seed if first visit */
 
     /* auth tabs removed — register is now a separate page (register.html) */
@@ -714,14 +601,6 @@
       var id  = document.getElementById('login-id').value.trim();
       var pwd = document.getElementById('login-pass').value;
       var err = document.getElementById('login-error');
-
-      /* Demo shortcut */
-      if (id === DEMO_MEMBER.email || id === DEMO_MEMBER.memberId || id.toLowerCase() === 'demo') {
-        saveSession(DEMO_MEMBER);
-        err.classList.add('hidden');
-        showElections();
-        return;
-      }
 
       var result = findMember(id, pwd);
       if (!result) {
@@ -745,16 +624,9 @@
       showElections();
     });
 
-    /* ── Demo login ── */
-    document.getElementById('demo-login-btn').addEventListener('click', function () {
-      saveSession(DEMO_MEMBER);
-      showElections();
-    });
-
     /* ── Logout ── */
     document.getElementById('logout-btn').addEventListener('click', function () {
       clearSession();
-      if (liveTimers.sim) clearTimeout(liveTimers.sim);
       if (bc) { try { bc.close(); } catch (e) {} }
       showAuthGate();
     });

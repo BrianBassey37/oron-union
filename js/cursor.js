@@ -1,23 +1,18 @@
 /* Oron Union — custom cursor + page transitions, shared across all pages */
 
 // =====================================================================
-// MOBILE NAV — dropdown + submenu toggle for inner pages
+// LIVE MEMBER COUNT — inner pages only (home page has its own
+// animated version in main.js, gated on the preloader element)
 // =====================================================================
 (function () {
-  var navLinks = document.getElementById('nav-links');
-  if (!navLinks) return;
-
-  navLinks.querySelectorAll('li > a').forEach(function (link) {
-    var parent = link.closest('li');
-    if (parent.querySelector('.dropdown') || parent.querySelector('.submenu')) {
-      link.addEventListener('click', function (e) {
-        if (window.innerWidth <= 960) {
-          e.preventDefault();
-          parent.classList.toggle('open');
-        }
-      });
-    }
-  });
+  if (document.getElementById('preloader')) return;
+  var el = document.getElementById('stat-member-count');
+  if (!el) return;
+  var base = 0;
+  try {
+    var apps = JSON.parse(localStorage.getItem('oron_applications') || '[]');
+    el.textContent = base + apps.filter(function (a) { return a.status === 'approved'; }).length;
+  } catch (e) { el.textContent = base; }
 })();
 
 // =====================================================================
