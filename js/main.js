@@ -8,10 +8,10 @@
 
   // ── The starting photos (shown on first visit / until 24 hrs pass)
   var DEFAULT_SET = [
-    { src: 'pictures/PG and Ahta.JPG',  alt: 'Distinguished leaders of the Oro Nation' },
-    { src: 'pictures/Oro women.JPG',    alt: 'Oro women celebrating cultural heritage' },
-    { src: 'pictures/orotradition.JPG', alt: 'Oro people in traditional cultural gathering' },
-    { src: 'pictures/tradpic.JPG',      alt: 'Traditional scene from the Oro Nation' }
+    { src: 'pictures/PG and Ahta.webp',  alt: 'Distinguished leaders of the Oro Nation' },
+    { src: 'pictures/Oro women.webp',    alt: 'Oro women celebrating cultural heritage' },
+    { src: 'pictures/orotradition.webp', alt: 'Oro people in traditional cultural gathering' },
+    { src: 'pictures/tradpic.webp',      alt: 'Traditional scene from the Oro Nation' }
   ];
 
   // ── Full pool — every photo in the pictures/ folder (used for random rotation)
@@ -29,10 +29,12 @@
     191,192,193,194,195,196,197,198,199,200
   ];
 
+  var UNCONVERTED = [140, 181]; // corrupted originals — left as .jpg, not converted to webp
   var FULL_POOL = POOL_NUMS.map(function (n) {
     var padded = String(n).padStart(4, '0');
+    var ext = UNCONVERTED.indexOf(n) !== -1 ? '.jpg' : '.webp';
     return {
-      src: 'pictures/' + SUFFIX + padded + '.jpg',
+      src: 'pictures/' + SUFFIX + padded + ext,
       alt: 'Oron Union community event photo'
     };
   });
