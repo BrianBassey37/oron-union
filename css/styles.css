@@ -1145,7 +1145,7 @@ footer {
     top: 70px;
     left: 0;
     right: 0;
-    height: calc(100vh - 70px);
+    max-height: calc(100vh - 70px);
     background: var(--white);
     padding: 12px 16px 32px;
     gap: 0;
