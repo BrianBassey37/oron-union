@@ -75,6 +75,7 @@
       toggle.addEventListener('click', function () {
         navList.classList.toggle('open');
         toggle.classList.toggle('open');
+        if (navList.classList.contains('open')) navList.scrollTop = 0;
       });
 
       navList.querySelectorAll('li > a').forEach(function (link) {

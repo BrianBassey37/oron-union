@@ -49,6 +49,7 @@
     toggle.addEventListener('click', function () {
       navLinks.classList.toggle('open');
       toggle.classList.toggle('open');
+      if (navLinks.classList.contains('open')) navLinks.scrollTop = 0;
     });
 
     // Expand dropdowns and submenus on tap

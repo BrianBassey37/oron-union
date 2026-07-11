@@ -193,6 +193,7 @@ if (toggle && navLinks) {
   toggle.addEventListener('click', function () {
     navLinks.classList.toggle('open');
     toggle.classList.toggle('open');
+    if (navLinks.classList.contains('open')) navLinks.scrollTop = 0;
   });
 
   navLinks.querySelectorAll('li > a').forEach(function (link) {
