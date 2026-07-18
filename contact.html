@@ -25,6 +25,9 @@
       .ip-grid-4 { grid-template-columns: 1fr 1fr !important; }
       .ip-social-grid { grid-template-columns: 1fr 1fr !important; }
     }
+    @media (max-width: 480px) {
+      .cf-row-2 { grid-template-columns: 1fr !important; }
+    }
     @media (max-width: 520px) {
       .ip-grid-4 { grid-template-columns: 1fr !important; }
       .ip-social-grid { grid-template-columns: 1fr !important; }
@@ -131,7 +134,7 @@
 
         <form id="contact-form" class="ip-contact-form" novalidate>
 
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px;">
+          <div class="cf-row-2" style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px;">
             <div>
               <label for="full-name" style="display:block;font-size:0.82rem;font-weight:600;color:var(--black);margin-bottom:7px;letter-spacing:0.03em;">Full Name <span style="color:var(--red);">*</span></label>
               <input type="text" id="full-name" name="full-name" required placeholder="e.g. Effiong Okon Bassey"
@@ -146,7 +149,7 @@
             </div>
           </div>
 
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px;">
+          <div class="cf-row-2" style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px;">
             <div>
               <label for="phone" style="display:block;font-size:0.82rem;font-weight:600;color:var(--black);margin-bottom:7px;letter-spacing:0.03em;">Phone Number</label>
               <input type="tel" id="phone" name="phone" placeholder="+234 800 000 0000"
@@ -247,7 +250,7 @@
     <div class="section-underline reveal-underline"></div>
     <p class="section-sub reveal">Connecting the Oro diaspora across four continents</p>
 
-    <div class="ip-grid-4" style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px;">
+    <div class="ip-grid-4" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;">
 
       <!-- UK -->
       <div class="ip-chapter-card ip-card reveal" style="background:var(--white);border:1px solid var(--card-border);border-radius:14px;padding:28px 22px;text-align:center;">
@@ -313,7 +316,7 @@
     <div class="section-underline reveal-underline"></div>
     <p class="section-sub reveal">Stay connected with Oron Union on social media — news, events, live coverage and community stories.</p>
 
-    <div class="ip-social-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px;max-width:900px;margin:0 auto;">
+    <div class="ip-social-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:20px;max-width:900px;margin:0 auto;">
 
       <!-- Facebook -->
       <a href="https://facebook.com/OronUnionOfficial" target="_blank" rel="noopener noreferrer"

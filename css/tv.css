@@ -267,10 +267,20 @@
   font-family: 'Playfair Display', Georgia, serif;
   font-size: 1.3rem;
   font-weight: 700;
-  color: #fff;
   margin: 0;
+  background: none;
+  -webkit-background-clip: initial;
+  background-clip: initial;
+  -webkit-text-fill-color: #fff;
+  color: #fff;
 }
-.tv-section-beige .tv-sec-title { color: var(--black); }
+.tv-section-beige .tv-sec-title {
+  background: linear-gradient(135deg, var(--black) 0%, #4a1a2a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: var(--black);
+}
 .tv-sec-date, .tv-sec-sub {
   font-size: 0.78rem;
   color: rgba(255,255,255,0.4);
