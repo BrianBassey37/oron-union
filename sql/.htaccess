@@ -1,0 +1,2 @@
+# No reason for the schema file to be fetchable over the web.
+Require all denied

@@ -7,6 +7,8 @@
 
   var TOTAL_STEPS = 6;
   var currentStep = 1;
+  var verifiedEmail = null;
+  var otpCooldownUntil = 0;
 
   var LGA_CODES = {
     'Oron': 'ORN',
@@ -24,24 +26,6 @@
     4: ['f-qualification', 'f-occupation'],
     5: ['f-password', 'f-password2']
   };
-
-  /* ── Storage ── */
-  function getApps() {
-    try { return JSON.parse(localStorage.getItem('oron_applications') || '[]'); }
-    catch (e) { return []; }
-  }
-  function saveApps(list) { localStorage.setItem('oron_applications', JSON.stringify(list)); }
-
-  function generateRef() {
-    var ts = Date.now().toString().slice(-6);
-    return 'APP-' + ts;
-  }
-
-  function generateMemberId(lga) {
-    var code = LGA_CODES[lga] || 'GEN';
-    var num = String(Math.floor(Math.random() * 9000) + 1000);
-    return 'OU-' + new Date().getFullYear() + '-' + code + '-' + num;
-  }
 
   /* ── Navigate steps ── */
   window.nextStep = function (from) {
@@ -98,6 +82,20 @@
       }
     }
 
+    /* Step 3: email must be verified via OTP */
+    if (step === 3) {
+      var emailEl = document.getElementById('f-email');
+      var email = emailEl.value.trim();
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        emailEl.classList.add('err');
+        showStepError('Please enter a valid email address.');
+        ok = false;
+      } else if (verifiedEmail !== email) {
+        showStepError('Please verify your email address before continuing.');
+        ok = false;
+      }
+    }
+
     /* Step 5: endorser type must be selected */
     if (step === 5) {
       var eType = document.querySelector('input[name="endorser-type"]:checked');
@@ -112,11 +110,6 @@
       var p2 = document.getElementById('f-password2');
       if (p1.value.length < 6) { p1.classList.add('err'); showStepError('Password must be at least 6 characters.'); ok = false; }
       else if (p1.value !== p2.value) { p2.classList.add('err'); showStepError('Passwords do not match.'); ok = false; }
-
-      /* Email duplicate check */
-      var email = document.getElementById('f-email').value.trim();
-      var existing = getApps().find(function (a) { return a.email === email; });
-      if (existing) { showStepError('An application with this email already exists (Ref: ' + existing.ref + ').'); ok = false; }
     }
 
     if (ok) clearStepError();
@@ -198,6 +191,94 @@
     });
   }
 
+  /* ── Email OTP verification ── */
+  function otpApi(action, body) {
+    return fetch('api/otp.php?action=' + action, {
+      method: 'POST', credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body || {})
+    }).then(function (res) { return res.json(); });
+  }
+
+  function initEmailOtp() {
+    var emailEl = document.getElementById('f-email');
+    var sendBtn = document.getElementById('send-otp-btn');
+    var codeRow = document.getElementById('otp-code-row');
+    var codeInput = document.getElementById('f-otp-code');
+    var verifyBtn = document.getElementById('verify-otp-btn');
+    var statusNote = document.getElementById('otp-status-note');
+    var verifiedNote = document.getElementById('otp-verified-note');
+    if (!emailEl || !sendBtn) return;
+
+    function resetVerification() {
+      verifiedEmail = null;
+      verifiedNote.classList.add('hidden');
+      codeRow.classList.add('hidden');
+      statusNote.textContent = '';
+    }
+
+    emailEl.addEventListener('input', function () {
+      if (verifiedEmail && verifiedEmail !== emailEl.value.trim()) resetVerification();
+    });
+
+    sendBtn.addEventListener('click', function () {
+      var email = emailEl.value.trim();
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        emailEl.classList.add('err');
+        showStepError('Enter a valid email address first.');
+        return;
+      }
+      if (Date.now() < otpCooldownUntil) return;
+
+      sendBtn.disabled = true;
+      sendBtn.textContent = 'Sending…';
+      otpApi('send', { email: email, purpose: 'register' }).then(function (res) {
+        if (!res.ok) {
+          sendBtn.disabled = false;
+          sendBtn.textContent = 'Send Code';
+          showStepError(res.error || 'Could not send code. Please try again.');
+          return;
+        }
+        codeRow.classList.remove('hidden');
+        statusNote.textContent = 'Code sent — check your inbox.';
+        codeInput.focus();
+        otpCooldownUntil = Date.now() + 45000;
+        var secondsLeft = 45;
+        sendBtn.textContent = 'Resend (' + secondsLeft + 's)';
+        var timer = setInterval(function () {
+          secondsLeft--;
+          if (secondsLeft <= 0) {
+            clearInterval(timer);
+            sendBtn.disabled = false;
+            sendBtn.textContent = 'Resend Code';
+          } else {
+            sendBtn.textContent = 'Resend (' + secondsLeft + 's)';
+          }
+        }, 1000);
+      });
+    });
+
+    verifyBtn.addEventListener('click', function () {
+      var email = emailEl.value.trim();
+      var code = codeInput.value.trim();
+      if (!code) { statusNote.textContent = 'Enter the code sent to your email.'; return; }
+
+      verifyBtn.disabled = true;
+      verifyBtn.textContent = 'Verifying…';
+      otpApi('verify', { email: email, purpose: 'register', code: code }).then(function (res) {
+        verifyBtn.disabled = false;
+        verifyBtn.textContent = 'Verify';
+        if (!res.ok) {
+          statusNote.textContent = res.error || 'Invalid code.';
+          return;
+        }
+        verifiedEmail = email;
+        codeRow.classList.add('hidden');
+        verifiedNote.classList.remove('hidden');
+        clearStepError();
+      });
+    });
+  }
+
   /* ── WhatsApp same as primary ── */
   function initWhatsappCheck() {
     var cb = document.getElementById('same-whatsapp');
@@ -237,11 +318,10 @@
       if (!file) return;
       if (file.size > 2 * 1024 * 1024) { alert('File too large. Max 2MB allowed.'); input.value = ''; return; }
       nameEl.textContent = file.name;
+      window._photoFile = file;
       var reader = new FileReader();
       reader.onload = function (e) {
         preview.innerHTML = '<img src="' + e.target.result + '" alt="Passport photo" />';
-        /* Store base64 in hidden field for submission */
-        window._photoData = e.target.result;
       };
       reader.readAsDataURL(file);
     });
@@ -369,8 +449,7 @@
       endorserType: eType ? eType.value : '',
       endorserLga:  val('f-endorser-lga'),
       repName:      val('f-rep-name'),
-      password:     val('f-password'),
-      photo:        window._photoData || null
+      password:     val('f-password')
     };
   }
 
@@ -382,7 +461,7 @@
   /* ── Submit ── */
   window.submitApplication = function () {
     /* Must have photo */
-    if (!window._photoData) {
+    if (!window._photoFile) {
       var err = document.getElementById('submit-error');
       err.textContent = 'Please upload your passport photograph.';
       err.classList.remove('hidden');
@@ -397,50 +476,63 @@
     }
 
     var btn = document.getElementById('submit-btn');
+    var errEl = document.getElementById('submit-error');
     btn.disabled = true;
     btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;animation:spin 1s linear infinite"><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0"/></svg> Submitting…';
 
-    setTimeout(function () {
-      var data = collectData();
-      var ref  = generateRef();
-      var app  = Object.assign({}, data, {
-        ref: ref,
-        status: 'pending',
-        submittedAt: new Date().toISOString(),
-        memberId: null
+    function fail(msg) {
+      errEl.textContent = msg;
+      errEl.classList.remove('hidden');
+      btn.disabled = false;
+      btn.innerHTML = 'Submit Application &rarr;';
+    }
+
+    var data = collectData();
+    var form = new FormData();
+    form.append('action', 'register');
+    Object.keys(data).forEach(function (key) {
+      if (data[key] !== null && data[key] !== undefined) form.append(key, data[key]);
+    });
+    form.append('photo', window._photoFile);
+
+    fetch('api/auth.php?action=register', { method: 'POST', body: form, credentials: 'same-origin' })
+      .then(function (res) { return res.json().then(function (json) { return { status: res.status, json: json }; }); })
+      .then(function (result) {
+        if (!result.json.ok) {
+          fail(result.json.error || 'Could not submit your application. Please try again.');
+          return;
+        }
+
+        var ref = result.json.ref;
+
+        /* Populate success screen */
+        document.getElementById('ref-num').textContent = ref;
+
+        var endorserLabels = {
+          'president-general': 'the President-General of Oron Union',
+          'branch-president':  'the Branch President' + (data.endorserLga ? ' (' + data.endorserLga + ' LGA)' : ''),
+          'clan-rep':          'the Clan Representative' + (data.endorserLga ? ' for ' + data.endorserLga : '')
+        };
+        var who = endorserLabels[data.endorserType] || 'your selected endorser';
+
+        document.getElementById('endorser-notified').innerHTML =
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg>' +
+          'Your application has been forwarded to <strong>' + who + '</strong> for review and endorsement.';
+
+        /* Show success */
+        document.querySelectorAll('.reg-panel').forEach(function (p) { p.classList.remove('active'); });
+        document.getElementById('step-success').classList.add('active');
+
+        /* Mark all steps done in progress */
+        document.querySelectorAll('.rp-step').forEach(function (s) { s.classList.remove('active'); s.classList.add('done'); });
+        var fill = document.getElementById('rp-fill');
+        if (fill) fill.style.width = '100%';
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      })
+      .catch(function () {
+        fail('Could not connect. Please check your internet connection and try again.');
       });
-      delete app.password; /* Don't store plaintext password in application record */
-      app.passwordHash = btoa(data.password); /* Very basic encoding — production must use real hashing */
-
-      var apps = getApps();
-      apps.push(app);
-      saveApps(apps);
-
-      /* Populate success screen */
-      document.getElementById('ref-num').textContent = ref;
-
-      var endorserLabels = {
-        'president-general': 'the President-General of Oron Union',
-        'branch-president':  'the Branch President' + (data.endorserLga ? ' (' + data.endorserLga + ' LGA)' : ''),
-        'clan-rep':          'the Clan Representative' + (data.endorserLga ? ' for ' + data.endorserLga : '')
-      };
-      var who = endorserLabels[data.endorserType] || 'your selected endorser';
-
-      document.getElementById('endorser-notified').innerHTML =
-        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg>' +
-        'Your application has been forwarded to <strong>' + who + '</strong> for review and endorsement.';
-
-      /* Show success */
-      document.querySelectorAll('.reg-panel').forEach(function (p) { p.classList.remove('active'); });
-      document.getElementById('step-success').classList.add('active');
-
-      /* Mark all steps done in progress */
-      document.querySelectorAll('.rp-step').forEach(function (s) { s.classList.remove('active'); s.classList.add('done'); });
-      var fill = document.getElementById('rp-fill');
-      if (fill) fill.style.width = '100%';
-
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, 1200);
   };
 
   /* ── Intercept "Next" on step 5 to build review ── */
@@ -459,6 +551,7 @@
   document.addEventListener('DOMContentLoaded', function () {
     initEndorserToggle();
     initBirthToggle();
+    initEmailOtp();
     initWhatsappCheck();
     initBioCount();
     initPhotoUpload();

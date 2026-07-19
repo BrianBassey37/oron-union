@@ -1,0 +1,11 @@
+# Uploaded photos/videos/audio live here — never execute anything in this
+# folder as code, even if someone manages to upload a file with a .php extension.
+<IfModule mod_php7.c>
+  php_flag engine off
+</IfModule>
+<IfModule mod_php8.c>
+  php_flag engine off
+</IfModule>
+<FilesMatch "\.(php|phtml|php\d?)$">
+  Require all denied
+</FilesMatch>

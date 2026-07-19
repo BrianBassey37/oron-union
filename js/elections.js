@@ -1,73 +1,94 @@
 /* ============================================================
-   ELECTIONS.JS — Oron Union Voting Portal
+   ELECTIONS.JS — Oron Union Voting Portal (Supabase-backed)
    ============================================================ */
 
 (function () {
   'use strict';
 
-  /* ── Storage keys ── */
-  var STORE = {
-    members:  'oron_members',
-    current:  'oron_current_member',
-    votes:    'oron_votes',        // { electionId: { candidateId: count } }
-    myVotes:  'oron_my_votes',     // { memberId: { electionId: candidateId } }
-    registered: 'oron_registered_ids'
-  };
-
-  /* ── Election data — populated once real elections are scheduled ── */
-  var ELECTIONS = [];
+  function apiGet(action) {
+    return fetch('api/elections.php?action=' + action, { credentials: 'same-origin' })
+      .then(function (res) { return res.json(); });
+  }
+  function apiPost(action, body) {
+    return fetch('api/elections.php?action=' + action, {
+      method: 'POST', credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body || {})
+    }).then(function (res) { return res.json(); });
+  }
+  function authGet(action) {
+    return fetch('api/auth.php?action=' + action, { credentials: 'same-origin' })
+      .then(function (res) { return res.json(); });
+  }
+  function authPost(action, body) {
+    return fetch('api/auth.php?action=' + action, {
+      method: 'POST', credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body || {})
+    }).then(function (res) { return res.json(); });
+  }
 
   /* ── State ── */
-  var currentMember = null;
+  var currentMember = null;   /* { id, name, email, memberId, lga, clan } */
+  var ELECTIONS = [];         /* [{id,title,desc,deadline,status,candidates:[...]}] */
+  var resultsCache = {};      /* { electionId: { candidateId: count } } */
+  var myVotes = {};           /* { electionId: candidateId } */
+  var registeredCount = 0;
   var selectedCandidate = null;
   var activeElectionId = null;
-  var bc = null;
+  var pollTimer = null;
 
   /* ───────────────────────────────────────────
-     STORAGE HELPERS
+     DATA LOADING
   ─────────────────────────────────────────── */
-  function getStore(key) {
-    try { return JSON.parse(localStorage.getItem(key) || 'null'); }
-    catch (e) { return null; }
-  }
-  function setStore(key, val) {
-    localStorage.setItem(key, JSON.stringify(val));
-  }
-
-  /* ── Initialise vote counts (seed) ── */
-  function initVotes() {
-    var stored = getStore(STORE.votes);
-    if (stored) return stored;
-    var data = {};
-    ELECTIONS.forEach(function (el) {
-      data[el.id] = {};
-      el.candidates.forEach(function (c) { data[el.id][c.id] = c.seed; });
+  function loadElections() {
+    return apiGet('list').then(function (res) {
+      var elections = (res.ok && res.elections) || [];
+      var candidates = (res.ok && res.candidates) || [];
+      ELECTIONS = elections.map(function (e) {
+        return {
+          id: e.id, title: e.title, desc: e.description, deadline: e.deadline, status: e.status,
+          candidates: candidates.filter(function (c) { return c.election_id === e.id; })
+            .sort(function (a, b) { return (a.sort_order || 0) - (b.sort_order || 0); })
+            .map(function (c) { return { id: c.id, name: c.name, role: c.role, initials: c.initials, color: c.color || '#800020' }; })
+        };
+      });
     });
-    setStore(STORE.votes, data);
-    return data;
   }
 
-  function getVotes() { return getStore(STORE.votes) || initVotes(); }
-
-  function getMyVotes() { return getStore(STORE.myVotes) || {}; }
-
-  function getMemberVoteKey() { return currentMember ? currentMember.id : null; }
-
-  function hasVoted(electionId) {
-    var mv = getMyVotes();
-    var key = getMemberVoteKey();
-    return key && mv[key] && mv[key][electionId];
+  function loadResults() {
+    return apiGet('results').then(function (res) {
+      var out = {};
+      ((res.ok && res.results) || []).forEach(function (r) {
+        if (!out[r.election_id]) out[r.election_id] = {};
+        out[r.election_id][r.candidate_id] = parseInt(r.vote_count, 10);
+      });
+      resultsCache = out;
+      registeredCount = (res.ok && res.registeredCount) || 0;
+    });
   }
 
-  function getMyChoiceFor(electionId) {
-    var mv = getMyVotes();
-    var key = getMemberVoteKey();
-    return key && mv[key] ? (mv[key][electionId] || null) : null;
+  function loadMyVotes() {
+    if (!currentMember) return Promise.resolve();
+    return apiGet('my_votes').then(function (res) {
+      var out = {};
+      ((res.ok && res.votes) || []).forEach(function (v) { out[v.election_id] = v.candidate_id; });
+      myVotes = out;
+    });
   }
+
+  function loadAllData() {
+    return Promise.all([loadElections(), loadResults(), loadMyVotes()]);
+  }
+
+  /* ───────────────────────────────────────────
+     DERIVED HELPERS (synchronous, read from cache)
+  ─────────────────────────────────────────── */
+  function getVotes(electionId) { return resultsCache[electionId] || {}; }
+  function hasVoted(electionId) { return !!myVotes[electionId]; }
+  function getMyChoiceFor(electionId) { return myVotes[electionId] || null; }
+  function countRegisteredMembers() { return registeredCount; }
 
   function totalVotesFor(electionId) {
-    var v = getVotes()[electionId];
-    if (!v) return 0;
+    var v = getVotes(electionId);
     return Object.values(v).reduce(function (a, b) { return a + b; }, 0);
   }
 
@@ -79,18 +100,10 @@
     return total;
   }
 
-  function countRegisteredMembers() {
-    var base = 0;
-    try {
-      var apps = JSON.parse(localStorage.getItem('oron_applications') || '[]');
-      return base + apps.filter(function (a) { return a.status === 'approved'; }).length;
-    } catch (e) { return base; }
-  }
-
   function avgParticipationRate() {
     var registered = countRegisteredMembers();
     var active = ELECTIONS.filter(function (e) { return e.status === 'active'; });
-    if (!active.length) return 0;
+    if (!active.length || !registered) return 0;
     var sum = active.reduce(function (acc, e) {
       return acc + Math.min(100, Math.round((totalVotesFor(e.id) / registered) * 100));
     }, 0);
@@ -114,75 +127,31 @@
       nameEl.innerHTML += ' <span class="member-id-chip">' + currentMember.memberId + '</span>';
     }
     renderAll();
-    initBroadcastChannel();
+    startLivePolling();
   }
 
-  function loadSession() {
-    var m = getStore(STORE.current);
-    if (m && m.id) { currentMember = m; return true; }
-    return false;
+  function memberFromResponse(p) {
+    return {
+      id: p.id,
+      name: [p.title, p.firstname, p.lastname].filter(Boolean).join(' '),
+      email: p.email, memberId: p.member_id, lga: p.lga, clan: p.clan
+    };
   }
 
-  function saveSession(member) {
-    currentMember = member;
-    setStore(STORE.current, member);
+  function attemptLogin(identifier, password) {
+    return authPost('login', { identifier: identifier, password: password }).then(function (res) {
+      if (!res.ok) {
+        return { ok: false, pending: !!res.pending, rejected: !!res.rejected, message: res.error };
+      }
+      currentMember = memberFromResponse(res.member);
+      return { ok: true };
+    });
   }
 
   function clearSession() {
     currentMember = null;
-    localStorage.removeItem(STORE.current);
-  }
-
-  function getMembers() { return getStore(STORE.members) || []; }
-
-  function saveMember(m) {
-    var list = getMembers();
-    list.push(m);
-    setStore(STORE.members, list);
-  }
-
-  function findMember(identifier, password) {
-    /* Check legacy oron_members store */
-    var list = getMembers();
-    for (var i = 0; i < list.length; i++) {
-      var m = list[i];
-      if ((m.email === identifier || m.memberId === identifier) && m.password === password) {
-        return { found: true, approved: true, member: m };
-      }
-    }
-    /* Check approved applications (new registration system) */
-    try {
-      var apps = JSON.parse(localStorage.getItem('oron_applications') || '[]');
-      for (var j = 0; j < apps.length; j++) {
-        var a = apps[j];
-        var passMatch = a.passwordHash && atob(a.passwordHash) === password;
-        var idMatch   = a.email === identifier || a.memberId === identifier;
-        if (idMatch && passMatch) {
-          if (a.status === 'approved') {
-            return {
-              found: true, approved: true,
-              member: {
-                id: a.ref,
-                name: [a.title, a.firstname, a.lastname].filter(Boolean).join(' '),
-                email: a.email,
-                memberId: a.memberId,
-                lga: a.lga,
-                clan: a.clan
-              }
-            };
-          } else if (a.status === 'pending') {
-            return { found: true, approved: false, pending: true, ref: a.ref };
-          } else if (a.status === 'rejected') {
-            return { found: true, approved: false, rejected: true, reason: a.rejectReason };
-          }
-        }
-      }
-    } catch (e) {}
-    return null;
-  }
-
-  function generateMemberId() {
-    return 'OU-' + new Date().getFullYear() + '-' + String(Math.floor(Math.random() * 9000) + 1000);
+    stopLivePolling();
+    authPost('logout');
   }
 
   /* ───────────────────────────────────────────
@@ -242,14 +211,13 @@
   }
 
   function buildCard(election) {
-    var votes = getVotes()[election.id] || {};
+    var votes = getVotes(election.id);
     var total = Object.values(votes).reduce(function (a, b) { return a + b; }, 0);
     var voted = hasVoted(election.id);
-    var myChoice = getMyChoiceFor(election.id);
     var isActive = election.status === 'active';
 
-    var deadline = new Date(election.deadline);
-    var deadlineStr = deadline.toLocaleDateString('en-NG', { day: 'numeric', month: 'long', year: 'numeric' });
+    var deadline = election.deadline ? new Date(election.deadline) : null;
+    var deadlineStr = deadline ? deadline.toLocaleDateString('en-NG', { day: 'numeric', month: 'long', year: 'numeric' }) : '—';
 
     /* Status badge */
     var statusClass = voted ? 'voted' : isActive ? 'active' : 'closed';
@@ -299,7 +267,7 @@
         '</div>' +
       '</div>' +
       '<div class="election-card-body">' +
-        '<p class="ec-desc">' + election.desc + '</p>' +
+        '<p class="ec-desc">' + (election.desc || '') + '</p>' +
         '<div class="ec-participation">' +
           '<div class="ec-part-label"><span>' + total + ' of ' + regCount + ' members voted</span><strong>' + partPct + '%</strong></div>' +
           '<div class="ec-part-track"><div class="ec-part-fill" data-target="' + partPct + '"></div></div>' +
@@ -338,7 +306,7 @@
     selectedCandidate = null;
 
     document.getElementById('vote-modal-title').textContent = election.title;
-    document.getElementById('vote-modal-desc').textContent = election.desc;
+    document.getElementById('vote-modal-desc').textContent = election.desc || '';
 
     var list = document.getElementById('candidates-list');
     list.innerHTML = election.candidates.map(function (c) {
@@ -346,7 +314,7 @@
         '<div class="cand-avatar" style="background:' + c.color + '">' + c.initials + '</div>' +
         '<div class="cand-info">' +
           '<div class="cand-name">' + c.name + '</div>' +
-          '<div class="cand-title-text">' + c.role + '</div>' +
+          '<div class="cand-title-text">' + (c.role || '') + '</div>' +
         '</div>' +
         '<div class="cand-radio"><div class="cand-radio-dot"></div></div>' +
       '</div>';
@@ -378,37 +346,38 @@
   }
 
   function castVote() {
-    if (!selectedCandidate || !activeElectionId) return;
+    if (!selectedCandidate || !activeElectionId || !currentMember) return;
     var castBtn = document.getElementById('cast-vote-btn');
     castBtn.disabled = true;
     castBtn.textContent = 'Submitting…';
 
-    setTimeout(function () {
-      /* Record vote in tallies */
-      var votes = getVotes();
-      if (!votes[activeElectionId]) votes[activeElectionId] = {};
-      votes[activeElectionId][selectedCandidate] = (votes[activeElectionId][selectedCandidate] || 0) + 1;
-      setStore(STORE.votes, votes);
+    apiPost('vote', { electionId: activeElectionId, candidateId: selectedCandidate }).then(function (res) {
+      if (!res.ok) {
+        castBtn.disabled = false;
+        if (/already voted/i.test(res.error || '')) {
+          castBtn.textContent = 'You already voted';
+          myVotes[activeElectionId] = myVotes[activeElectionId] || selectedCandidate;
+          renderAll();
+        } else {
+          castBtn.textContent = 'Try again';
+          alert('Could not submit your vote: ' + res.error);
+        }
+        return;
+      }
 
-      /* Record member's personal vote */
-      var mv = getMyVotes();
-      var key = getMemberVoteKey();
-      if (!mv[key]) mv[key] = {};
-      mv[key][activeElectionId] = selectedCandidate;
-      setStore(STORE.myVotes, mv);
+      myVotes[activeElectionId] = selectedCandidate;
 
-      /* Broadcast to other tabs */
-      broadcastUpdate({ type: 'vote', electionId: activeElectionId });
+      loadResults().then(function () {
+        var election = ELECTIONS.find(function (e) { return e.id === activeElectionId; });
+        var cand = election.candidates.find(function (c) { return c.id === selectedCandidate; });
+        document.getElementById('success-message').textContent =
+          'You voted for ' + cand.name + ' in ' + election.title + '. Your vote has been recorded.';
 
-      var election = ELECTIONS.find(function (e) { return e.id === activeElectionId; });
-      var cand = election.candidates.find(function (c) { return c.id === selectedCandidate; });
-      document.getElementById('success-message').textContent =
-        'You voted for ' + cand.name + ' in ' + election.title + '. Your vote has been recorded.';
-
-      closeVoteModal();
-      showSuccessOverlay();
-      renderAll();
-    }, 900);
+        closeVoteModal();
+        showSuccessOverlay();
+        renderAll();
+      });
+    });
   }
 
   /* ───────────────────────────────────────────
@@ -436,7 +405,7 @@
     var election = ELECTIONS.find(function (e) { return e.id === electionId; });
     if (!election) return;
 
-    var votes = getVotes()[electionId] || {};
+    var votes = getVotes(electionId);
     var total = Object.values(votes).reduce(function (a, b) { return a + b; }, 0);
     var myChoice = getMyChoiceFor(electionId);
 
@@ -458,7 +427,7 @@
               (isLeading ? '<span class="result-leading-tag">Leading</span>' : '') +
               (isMyVote  ? '<span class="result-my-vote-tag">Your Vote</span>' : '') +
             '</div>' +
-            '<div style="font-size:0.75rem;color:var(--gray);">' + c.role + '</div>' +
+            '<div style="font-size:0.75rem;color:var(--gray);">' + (c.role || '') + '</div>' +
           '</div>' +
           '<span class="result-votes">' + v.toLocaleString() + ' votes</span>' +
           '<span class="result-pct-label">' + pct + '%</span>' +
@@ -472,8 +441,8 @@
     document.getElementById('results-list').innerHTML = html;
     var regForMeta = countRegisteredMembers();
     document.getElementById('results-modal-meta').textContent =
-      total.toLocaleString() + ' of ' + regForMeta + ' registered members have voted (' +
-      Math.round(total / regForMeta * 100) + '% participation)';
+      total.toLocaleString() + ' of ' + regForMeta + ' registered members have voted' +
+      (regForMeta > 0 ? ' (' + Math.round(total / regForMeta * 100) + '% participation)' : '');
 
     var votedNotice = document.getElementById('voted-notice');
     if (hasVoted(electionId)) {
@@ -504,21 +473,20 @@
   }
 
   /* ───────────────────────────────────────────
-     LIVE UI REFRESH — triggered when a real vote
-     is cast (locally or broadcast from another tab)
+     LIVE UI REFRESH — polls Supabase for fresh
+     results so every visitor sees real, shared
+     tallies (not just their own browser).
   ─────────────────────────────────────────── */
   function refreshLiveUI() {
-    renderStats(); /* updates total votes + avg participation */
-    /* Refresh card participation bars */
+    renderStats();
     ELECTIONS.forEach(function (election) {
       var card = document.querySelector('[data-election-id="' + election.id + '"]');
       if (!card) return;
-      var votes = getVotes()[election.id] || {};
+      var votes = getVotes(election.id);
       var total   = Object.values(votes).reduce(function (a, b) { return a + b; }, 0);
       var regLive = countRegisteredMembers();
-      var partPct = Math.round((total / regLive) * 100);
+      var partPct = regLive > 0 ? Math.round((total / regLive) * 100) : 0;
 
-      /* Update participation text */
       var label = card.querySelector('.ec-part-label');
       if (label) {
         var span = label.querySelector('span');
@@ -527,11 +495,9 @@
         if (strong) strong.textContent = partPct + '%';
       }
 
-      /* Update bar */
       var fill = card.querySelector('.ec-part-fill');
       if (fill) fill.style.width = partPct + '%';
 
-      /* Refresh candidate rows */
       var preview = card.querySelector('.ec-candidates-preview');
       if (preview) {
         var sorted = election.candidates.slice().sort(function (a, b) {
@@ -552,16 +518,17 @@
   }
 
   /* ───────────────────────────────────────────
-     BROADCAST CHANNEL (cross-tab sync)
+     LIVE POLLING (replaces the old cross-tab-only
+     BroadcastChannel — this reflects real votes
+     from every visitor, not just this browser)
   ─────────────────────────────────────────── */
-  function initBroadcastChannel() {
-    try {
-      bc = new BroadcastChannel('oron_elections_live');
-      bc.onmessage = function (e) {
-        if (!e.data) return;
+  function startLivePolling() {
+    stopLivePolling();
+    pollTimer = setInterval(function () {
+      loadResults().then(function () {
         refreshLiveUI();
         var rm = document.getElementById('results-modal');
-        if (!rm.classList.contains('hidden') && activeElectionId && e.data.electionId === activeElectionId) {
+        if (!rm.classList.contains('hidden') && activeElectionId) {
           renderResultsList(activeElectionId);
           setTimeout(function () {
             document.querySelectorAll('.result-bar-fill[data-target]').forEach(function (el) {
@@ -569,23 +536,18 @@
             });
           }, 60);
         }
-      };
-    } catch (e) { /* BroadcastChannel not supported — silent fallback */ }
+      });
+    }, 15000);
   }
 
-  function broadcastUpdate(data) {
-    if (bc) { try { bc.postMessage(data); } catch (e) { } }
+  function stopLivePolling() {
+    if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
   }
 
   /* ───────────────────────────────────────────
      BOOT
   ─────────────────────────────────────────── */
   document.addEventListener('DOMContentLoaded', function () {
-
-    initVotes(); /* seed if first visit */
-
-    /* auth tabs removed — register is now a separate page (register.html) */
-
     /* ── Password toggle ── */
     var togglePassBtn = document.querySelector('.toggle-pass');
     if (togglePassBtn) {
@@ -601,33 +563,29 @@
       var id  = document.getElementById('login-id').value.trim();
       var pwd = document.getElementById('login-pass').value;
       var err = document.getElementById('login-error');
+      var submitBtn = e.target.querySelector('button[type="submit"]');
+      if (submitBtn) submitBtn.disabled = true;
 
-      var result = findMember(id, pwd);
-      if (!result) {
-        err.textContent = 'Member not found. Check your credentials or apply for membership.';
-        err.classList.remove('hidden');
-        return;
-      }
-      if (result.pending) {
-        err.textContent = 'Your application (' + result.ref + ') is still pending endorsement. You will be notified when approved.';
-        err.style.background = '#fffbeb'; err.style.border = '1px solid #fde68a'; err.style.color = '#92400e';
-        err.classList.remove('hidden');
-        return;
-      }
-      if (result.rejected) {
-        err.textContent = 'Your application was not approved.' + (result.reason ? ' Reason: ' + result.reason : ' Contact info@oronunion.org for assistance.');
-        err.classList.remove('hidden');
-        return;
-      }
-      err.classList.add('hidden');
-      saveSession(result.member);
-      showElections();
+      attemptLogin(id, pwd).then(function (result) {
+        if (submitBtn) submitBtn.disabled = false;
+        if (!result.ok) {
+          err.textContent = result.message;
+          if (result.pending) {
+            err.style.background = '#fffbeb'; err.style.border = '1px solid #fde68a'; err.style.color = '#92400e';
+          } else {
+            err.style.background = ''; err.style.border = ''; err.style.color = '';
+          }
+          err.classList.remove('hidden');
+          return;
+        }
+        err.classList.add('hidden');
+        loadAllData().then(showElections);
+      });
     });
 
     /* ── Logout ── */
     document.getElementById('logout-btn').addEventListener('click', function () {
       clearSession();
-      if (bc) { try { bc.close(); } catch (e) {} }
       showAuthGate();
     });
 
@@ -644,15 +602,6 @@
     document.getElementById('success-view-results').addEventListener('click', function () {
       closeSuccessOverlay();
       if (activeElectionId) openResultsModal(activeElectionId);
-      else {
-        /* Open the first election the member just voted in */
-        var mv = getMyVotes();
-        var key = getMemberVoteKey();
-        if (mv[key]) {
-          var votedId = Object.keys(mv[key])[Object.keys(mv[key]).length - 1];
-          if (votedId) openResultsModal(votedId);
-        }
-      }
     });
 
     /* ── Close modals on backdrop click ── */
@@ -680,12 +629,12 @@
       }, { passive: true });
     }
 
-    /* ── Boot sequence ── */
-    if (loadSession()) {
-      showElections();
-    } else {
-      showAuthGate();
-    }
+    /* ── Boot sequence — resume an existing PHP session if there is one ── */
+    authGet('me').then(function (res) {
+      if (!res.ok || !res.member || res.member.status !== 'approved') { showAuthGate(); return; }
+      currentMember = memberFromResponse(res.member);
+      loadAllData().then(showElections);
+    });
   });
 
 })();

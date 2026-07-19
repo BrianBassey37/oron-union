@@ -156,7 +156,11 @@
           <option value="president-general">President-General</option>
         </optgroup>
         <optgroup label="Branch Presidents">
-          <option value="branch-president">Branch President</option>
+          <option value="bp-Oron">Branch President — Oron LGA</option>
+          <option value="bp-Urueoffong/Oruko">Branch President — Urueoffong/Oruko LGA</option>
+          <option value="bp-Okobo">Branch President — Okobo LGA</option>
+          <option value="bp-Mbo">Branch President — Mbo LGA</option>
+          <option value="bp-Udunguko">Branch President — Udunguko LGA</option>
         </optgroup>
         <optgroup label="Clan Representatives">
           <option value="cr-Afaha Ukwong">Clan Representative — Afaha Ukwong</option>
@@ -177,7 +181,6 @@
     </div>
     <div id="pl-error" class="pl-error">Incorrect role or access code.</div>
     <button class="pl-btn" onclick="portalLogin()">Access Portal &rarr;</button>
-    <p style="margin-top:16px;font-size:0.72rem;color:var(--gray);text-align:center;">Demo code: <strong>oron1925</strong> (all roles)</p>
   </div>
 </div>
 
@@ -206,48 +209,75 @@
 
 <script>
 (function () {
-  var DEMO_CODE = 'oron1925';
   var currentRole = null;
   var currentFilter = 'pending';
+  var cachedApps = [];
 
-  var LGA_CODES = {
-    'Oron': 'ORN', 'Urueoffong/Oruko': 'URO', 'Okobo': 'OKB', 'Mbo': 'MBO', 'Udunguko': 'UDG'
-  };
-
-  function getApps() {
-    try { return JSON.parse(localStorage.getItem('oron_applications') || '[]'); } catch (e) { return []; }
+  function api(path, action, body) {
+    return fetch(path + '?action=' + action, {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body || {})
+    }).then(function (res) { return res.json(); });
   }
-  function saveApps(list) { localStorage.setItem('oron_applications', JSON.stringify(list)); }
+
+  function normalizeApp(r) {
+    return {
+      ref: r.ref, memberId: r.member_id, title: r.title, firstname: r.firstname, lastname: r.lastname,
+      dob: r.dob, gender: r.gender, marital: r.marital, placeofbirth: r.placeofbirth,
+      lga: r.lga, clan: r.clan, compound: r.compound, byBirth: r.by_birth,
+      phone: r.phone, email: r.email, country: r.country, stateRes: r.state_res,
+      occupation: r.occupation, employer: r.employer, qualification: r.qualification,
+      bio: r.bio, photo: r.photo_path, endorserType: r.endorser_type, endorserLga: r.endorser_lga,
+      status: r.status, rejectReason: r.reject_reason, submittedAt: r.submitted_at
+    };
+  }
+
+  function loadApps() {
+    return api('api/applications.php', 'list').then(function (res) {
+      if (!res.ok) return [];
+      return (res.members || []).map(normalizeApp);
+    });
+  }
 
   window.portalLogin = function () {
     var role = document.getElementById('portal-role').value;
     var pin  = document.getElementById('portal-pin').value;
     var err  = document.getElementById('pl-error');
-    if (!role || pin !== DEMO_CODE) { err.style.display = 'block'; return; }
-    err.style.display = 'none';
-    currentRole = role;
-    document.getElementById('portal-gate').style.display = 'none';
-    document.getElementById('portal-main').style.display = 'block';
-    var label, subtitle;
-    if (role === 'president-general') {
-      label    = 'President-General';
-      subtitle = 'Reviewing all applications endorsed to the President-General';
-    } else if (role === 'branch-president') {
-      label    = 'Branch President';
-      subtitle = 'Reviewing all Branch President endorsed membership applications';
-    } else if (role.startsWith('cr-')) {
-      label    = 'Clan Rep — ' + role.slice(3);
-      subtitle = 'Reviewing applications endorsed by the Clan Representative for ' + role.slice(3);
-    } else {
-      label = role; subtitle = 'Reviewing pending applications';
-    }
-    document.getElementById('portal-role-badge').textContent = label;
-    document.getElementById('portal-subtitle').textContent = subtitle;
-    renderApps();
+    if (!role || !pin) { err.style.display = 'block'; return; }
+
+    api('api/auth.php', 'endorser_login', { code: pin }).then(function (res) {
+      if (!res.ok) { err.style.display = 'block'; return; }
+      err.style.display = 'none';
+      currentRole = role;
+      loadApps().then(function (apps) {
+        cachedApps = apps;
+        document.getElementById('portal-gate').style.display = 'none';
+        document.getElementById('portal-main').style.display = 'block';
+        var label, subtitle;
+        if (role === 'president-general') {
+          label    = 'President-General';
+          subtitle = 'Reviewing all applications endorsed to the President-General';
+        } else if (role.startsWith('bp-')) {
+          label    = 'Branch President — ' + role.slice(3);
+          subtitle = 'Reviewing Branch President endorsed applications for ' + role.slice(3) + ' LGA';
+        } else if (role.startsWith('cr-')) {
+          label    = 'Clan Rep — ' + role.slice(3);
+          subtitle = 'Reviewing applications endorsed by the Clan Representative for ' + role.slice(3);
+        } else {
+          label = role; subtitle = 'Reviewing pending applications';
+        }
+        document.getElementById('portal-role-badge').textContent = label;
+        document.getElementById('portal-subtitle').textContent = subtitle;
+        renderApps();
+      });
+    });
   };
 
   window.portalLogout = function () {
     currentRole = null;
+    api('api/auth.php', 'logout');
     document.getElementById('portal-gate').style.display = 'flex';
     document.getElementById('portal-main').style.display = 'none';
   };
@@ -260,15 +290,16 @@
   };
 
   function renderApps() {
-    var all = getApps();
+    var all = cachedApps;
 
     /* Filter by role */
     var mine = all.filter(function (a) {
       if (currentRole === 'president-general') {
         return a.endorserType === 'president-general';
       }
-      if (currentRole === 'branch-president') {
-        return a.endorserType === 'branch-president';
+      if (currentRole.startsWith('bp-')) {
+        var lga = currentRole.slice(3);
+        return a.endorserType === 'branch-president' && a.endorserLga === lga;
       }
       if (currentRole.startsWith('cr-')) {
         var lga = currentRole.slice(3);
@@ -388,53 +419,26 @@
   }
 
   function approveApp(ref) {
-    var apps = getApps();
-    var idx = apps.findIndex(function (a) { return a.ref === ref; });
-    if (idx === -1) return;
-    var app = apps[idx];
-    var memberId = generateMemberId(app.lga);
-    apps[idx].status = 'approved';
-    apps[idx].memberId = memberId;
-    apps[idx].approvedAt = new Date().toISOString();
-    apps[idx].approvedBy = currentRole;
-    try {
-      saveApps(apps);
-    } catch (e) {
-      showToast('Save failed — storage may be full. Try clearing browser data.', 'error');
-      return;
-    }
-    showToast('Application <strong>' + ref + '</strong> approved.<br>Member ID issued: <strong style="font-family:\'Cinzel\',serif;letter-spacing:0.05em;">' + memberId + '</strong>', 'success');
-    /* Switch to Approved tab so the user can see the issued ID */
-    currentFilter = 'approved';
-    document.querySelectorAll('.ftab').forEach(function (t) { t.classList.remove('active'); });
-    document.querySelectorAll('.ftab').forEach(function (t) { if (t.textContent.trim() === 'Approved') t.classList.add('active'); });
-    renderApps();
+    api('api/applications.php', 'review', { ref: ref, decision: 'approved' }).then(function (res) {
+      if (!res.ok) { showToast('Could not approve: ' + res.error, 'error'); return; }
+      var memberId = res.member && res.member.member_id;
+      showToast('Application <strong>' + ref + '</strong> approved.<br>Member ID issued: <strong style="font-family:\'Cinzel\',serif;letter-spacing:0.05em;">' + memberId + '</strong>', 'success');
+      currentFilter = 'approved';
+      document.querySelectorAll('.ftab').forEach(function (t) { t.classList.remove('active'); });
+      document.querySelectorAll('.ftab').forEach(function (t) { if (t.textContent.trim() === 'Approved') t.classList.add('active'); });
+      loadApps().then(function (apps) { cachedApps = apps; renderApps(); });
+    });
   }
 
   function rejectApp(ref, reason) {
-    var apps = getApps();
-    var idx = apps.findIndex(function (a) { return a.ref === ref; });
-    if (idx === -1) return;
-    apps[idx].status = 'rejected';
-    apps[idx].rejectReason = reason || '';
-    apps[idx].rejectedAt = new Date().toISOString();
-    try {
-      saveApps(apps);
-    } catch (e) {
-      showToast('Save failed — storage may be full.', 'error');
-      return;
-    }
-    showToast('Application <strong>' + ref + '</strong> rejected.', 'error');
-    currentFilter = 'rejected';
-    document.querySelectorAll('.ftab').forEach(function (t) { t.classList.remove('active'); });
-    document.querySelectorAll('.ftab').forEach(function (t) { if (t.textContent.trim() === 'Rejected') t.classList.add('active'); });
-    renderApps();
-  }
-
-  function generateMemberId(lga) {
-    var codes = { 'Oron': 'ORN', 'Urueoffong/Oruko': 'URO', 'Okobo': 'OKB', 'Mbo': 'MBO', 'Udunguko': 'UDG' };
-    var code = codes[lga] || 'GEN';
-    return 'OU-' + new Date().getFullYear() + '-' + code + '-' + String(Math.floor(Math.random() * 9000) + 1000);
+    api('api/applications.php', 'review', { ref: ref, decision: 'rejected', reason: reason || null }).then(function (res) {
+      if (!res.ok) { showToast('Could not reject: ' + res.error, 'error'); return; }
+      showToast('Application <strong>' + ref + '</strong> rejected.', 'error');
+      currentFilter = 'rejected';
+      document.querySelectorAll('.ftab').forEach(function (t) { t.classList.remove('active'); });
+      document.querySelectorAll('.ftab').forEach(function (t) { if (t.textContent.trim() === 'Rejected') t.classList.add('active'); });
+      loadApps().then(function (apps) { cachedApps = apps; renderApps(); });
+    });
   }
 })();
 </script>

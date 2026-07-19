@@ -1,0 +1,3 @@
+# These files are only ever require_once'd by api/*.php — never requested
+# directly by a browser.
+Require all denied

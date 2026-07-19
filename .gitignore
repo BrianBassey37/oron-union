@@ -1,0 +1,10 @@
+config.php
+uploads/members/*
+!uploads/members/.htaccess
+!uploads/members/.gitkeep
+uploads/exco/*
+!uploads/exco/.htaccess
+!uploads/exco/.gitkeep
+uploads/media/*
+!uploads/media/.htaccess
+!uploads/media/.gitkeep

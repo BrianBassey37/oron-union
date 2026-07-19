@@ -8,11 +8,10 @@
   if (document.getElementById('preloader')) return;
   var el = document.getElementById('stat-member-count');
   if (!el) return;
-  var base = 0;
-  try {
-    var apps = JSON.parse(localStorage.getItem('oron_applications') || '[]');
-    el.textContent = base + apps.filter(function (a) { return a.status === 'approved'; }).length;
-  } catch (e) { el.textContent = base; }
+  fetch('api/stats.php?action=member_count', { credentials: 'same-origin' })
+    .then(function (res) { return res.json(); })
+    .then(function (res) { el.textContent = res.ok ? res.count : 0; })
+    .catch(function () { el.textContent = 0; });
 })();
 
 // =====================================================================

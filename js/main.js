@@ -254,13 +254,18 @@ document.querySelectorAll(
 // =====================================================================
 // STAT COUNTER — replays every time about section scrolls in/out
 // =====================================================================
-function getLiveMemberCount() {
-  var base = 0;
-  try {
-    var apps = JSON.parse(localStorage.getItem('oron_applications') || '[]');
-    return base + apps.filter(function (a) { return a.status === 'approved'; }).length;
-  } catch (e) { return base; }
-}
+var liveMemberCount = 0;
+fetch('api/stats.php?action=member_count', { credentials: 'same-origin' })
+  .then(function (res) { return res.json(); })
+  .then(function (res) {
+    if (!res.ok) return;
+    liveMemberCount = res.count;
+    var el = document.getElementById('stat-member-count');
+    if (el) el.dataset.original = String(liveMemberCount);
+  })
+  .catch(function () {});
+
+function getLiveMemberCount() { return liveMemberCount; }
 
 var statsObserver = new IntersectionObserver(function (entries) {
   var inView = entries[0].isIntersecting;

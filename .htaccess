@@ -1,0 +1,8 @@
+# Block direct web access to files that should only ever be included by
+# PHP itself, never requested directly by a browser.
+<Files "config.php">
+  Require all denied
+</Files>
+<Files "config.sample.php">
+  Require all denied
+</Files>

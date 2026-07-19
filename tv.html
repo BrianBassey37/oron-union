@@ -73,6 +73,7 @@
           <li><a href="endorser.html">Officials / Endorser Login</a></li>
         </ul>
       </li>
+      <li><a href="hall-of-fame.html" class="nav-hof">Hall of Fame</a></li>
       <li><a href="about.html">About <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4,6 8,10 12,6"/></svg></a>
         <ul class="dropdown">
           <li><a href="about.html#history">History</a></li>
@@ -221,17 +222,30 @@
   <div class="stream-config-box">
     <button class="modal-close" id="stream-config-close">&times;</button>
     <h3>Stream Configuration</h3>
-    <p>Paste a valid HLS stream URL (.m3u8) to broadcast live. To use the built-in demo stream, leave the field blank.</p>
-    <label class="sc-label">HLS Stream URL (.m3u8)</label>
-    <input type="url" class="sc-input" id="stream-url-input" placeholder="https://your-encoder/stream.m3u8" />
+
+    <div id="sc-code-row">
+      <p>Enter the admin code to manage the live stream.</p>
+      <label class="sc-label">Admin Code</label>
+      <input type="password" class="sc-input" id="sc-code-input" placeholder="Admin code" />
+      <div class="sc-actions">
+        <button class="sc-btn sc-go" id="sc-unlock-btn">Unlock</button>
+      </div>
+    </div>
+
+    <div id="sc-controls" class="hidden">
+      <p>Paste a valid HLS stream URL (.m3u8) to broadcast live.</p>
+      <label class="sc-label">HLS Stream URL (.m3u8)</label>
+      <input type="url" class="sc-input" id="stream-url-input" placeholder="https://your-encoder/stream.m3u8" />
+      <div class="sc-actions">
+        <button class="sc-btn sc-go" id="sc-go-btn">&#9679;&nbsp;Go Live</button>
+        <button class="sc-btn sc-offline" id="sc-offline-btn">Take Offline</button>
+      </div>
+      <p class="sc-note">Supported sources: OBS (with RTMP &rarr; HLS relay), YouTube Live (HLS embed), or any .m3u8 feed. This goes live for every visitor on the site.</p>
+    </div>
+
     <div class="stream-status-row">
       <span class="sc-status" id="sc-status"></span>
     </div>
-    <div class="sc-actions">
-      <button class="sc-btn sc-go" id="sc-go-btn">&#9679;&nbsp;Go Live</button>
-      <button class="sc-btn sc-offline" id="sc-offline-btn">Take Offline</button>
-    </div>
-    <p class="sc-note">Supported sources: OBS (with RTMP &rarr; HLS relay), YouTube Live (HLS embed), or any .m3u8 feed.</p>
   </div>
 </div>
 

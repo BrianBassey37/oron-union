@@ -1,17 +1,37 @@
 (function () {
   'use strict';
 
-  /* ── Storage / channel keys ── */
-  var STORE_URL    = 'oron_stream_url';
-  var STORE_LIVE   = 'oron_stream_live';
-  var STORE_CHAT   = 'oron_tv_chat';
+  /* ── Storage keys (local UX preference only — stream/chat state is server-side) ── */
   var STORE_NAME   = 'oron_chat_name';
 
-  /* ── Default demo HLS stream (Big Buck Bunny via Mux test CDN) ── */
-  var DEMO_URL = 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8';
+  /* ── API helpers (api/stream.php) ── */
+  function apiGet(action, qs) {
+    return fetch('api/stream.php?action=' + action + (qs || ''), { credentials: 'same-origin' })
+      .then(function (res) { return res.json(); });
+  }
+  function apiPost(action, body) {
+    return fetch('api/stream.php?action=' + action, {
+      method: 'POST', credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body || {})
+    }).then(function (res) { return res.json(); });
+  }
+  function authPost(action, body) {
+    return fetch('api/auth.php?action=' + action, {
+      method: 'POST', credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body || {})
+    }).then(function (res) { return res.json(); });
+  }
 
-  var streamUrl = localStorage.getItem(STORE_URL) || DEMO_URL;
-  var isLive    = localStorage.getItem(STORE_LIVE) !== 'false';
+  var sessionId = (function () {
+    var k = 'oron_tv_session';
+    var v = sessionStorage.getItem(k);
+    if (!v) { v = 'v_' + Date.now() + '_' + Math.random().toString(36).slice(2); sessionStorage.setItem(k, v); }
+    return v;
+  })();
+
+  var streamUrl = '';
+  var isLive    = false;
+  var lastLoadedUrl = null;
 
   /* ── Player state ── */
   var hls        = null;
@@ -21,9 +41,10 @@
 
   /* ── Viewer / chat state ── */
   var viewerCount   = 0;
-  var chatChannel   = null;
   var myName        = localStorage.getItem(STORE_NAME) || '';
   var chatMessages  = [];
+  var lastChatId    = 0;
+  var isStreamAdmin = false;
 
   /* ── Programme schedule (24h, repeats weekly) ── */
   var SCHEDULE = [
@@ -50,18 +71,6 @@
     { title: 'Youth Development Summit',            date: 'Oct 3, 2025',  duration: '1:28:15', views: '987',   initials: 'YD',  color: '#7B3F00' },
     { title: 'Women\'s Wing Annual Conference',     date: 'Sep 12, 2025', duration: '2:05:30', views: '1,432', initials: 'WW',  color: '#6B2D8B' },
     { title: 'LGA Representatives Summit',          date: 'Aug 20, 2025', duration: '1:55:10', views: '876',   initials: 'LR',  color: '#2C3E50' },
-  ];
-
-  /* ── Simulated chat participants ── */
-  var BOT_POOL = [
-    { name: 'Nkemdirim Okon',   msgs: ['Watching from Abuja! 🎉', 'God bless Oron Union', 'This is wonderful'] },
-    { name: 'Ita Effiong',      msgs: ['Greetings from Lagos', 'Excellent broadcast as always', 'Well done to the team'] },
-    { name: 'Arit Bassey',      msgs: ['Live from Port Harcourt 🙏', 'We are proud of our union', 'Long live Oron!'] },
-    { name: 'Engr. Sunday Eyo', msgs: ['Great initiative by the Executive', 'Technical quality is top notch', 'Kudos to the media team'] },
-    { name: 'Dr. Nkeme Inyang', msgs: ['History being made here', 'Oron Union rising! 💪', 'Watching from London'] },
-    { name: 'Ibiere Udofia',    msgs: ['The Women\'s Wing sends greetings', 'This is progress', 'Wonderful to be part of this'] },
-    { name: 'Chief E. Edet',    msgs: ['Oron kwanu!', 'Our heritage is our strength', 'Watching from Okobo'] },
-    { name: 'Obong Akpan',      msgs: ['First time watching — amazing!', 'Sharing this stream with my people', 'God bless Oron land'] },
   ];
 
   /* ───────────────────────────────────────────
@@ -172,6 +181,7 @@
 
   function loadStream(url) {
     if (!video) return;
+    lastLoadedUrl = url;
     destroyHls();
 
     /* Native HLS (Safari) */
@@ -265,13 +275,36 @@
   function setLiveState(live) {
     var offEl = document.getElementById('tv-offline');
     if (!offEl) return;
-    if (live) {
+    if (live && streamUrl) {
       offEl.classList.add('hidden');
-      loadStream(streamUrl);
+      if (streamUrl !== lastLoadedUrl) loadStream(streamUrl);
     } else {
+      lastLoadedUrl = null;
       destroyHls();
       offEl.classList.remove('hidden');
     }
+  }
+
+  /* ───────────────────────────────────────────
+     SHARED STREAM STATE (polled from api/stream.php)
+  ─────────────────────────────────────────── */
+  function pollStreamStatus() {
+    apiGet('status').then(function (res) {
+      if (!res.ok) return;
+      streamUrl = res.url || '';
+      isLive = !!res.isLive && !!streamUrl;
+      viewerCount = res.viewerCount || 0;
+      updateViewerDisplay();
+      var nowLabel = document.getElementById('tv-now-label');
+      if (nowLabel && res.title) nowLabel.textContent = res.title;
+      setLiveState(isLive);
+    });
+  }
+
+  function sendHeartbeat() {
+    apiPost('heartbeat', { sessionId: sessionId }).then(function (res) {
+      if (res.ok) { viewerCount = res.viewerCount || 0; updateViewerDisplay(); }
+    });
   }
 
   /* ───────────────────────────────────────────
@@ -378,17 +411,11 @@
   }
 
   /* ───────────────────────────────────────────
-     VIEWER COUNT SIMULATION
+     VIEWER COUNT — real heartbeat, not simulated
   ─────────────────────────────────────────── */
   function initViewers() {
-    viewerCount = 148 + Math.floor(Math.random() * 120);
-    updateViewerDisplay();
-
-    setInterval(function () {
-      var delta = Math.floor(Math.random() * 7) - 2;
-      viewerCount = Math.max(50, viewerCount + delta);
-      updateViewerDisplay();
-    }, 8000);
+    sendHeartbeat();
+    setInterval(sendHeartbeat, 20000);
   }
 
   function updateViewerDisplay() {
@@ -399,24 +426,9 @@
   }
 
   /* ───────────────────────────────────────────
-     LIVE CHAT
+     LIVE CHAT — real, shared across all visitors (polled)
   ─────────────────────────────────────────── */
   function initChat() {
-    /* Load history */
-    try { chatMessages = JSON.parse(localStorage.getItem(STORE_CHAT) || '[]'); } catch(e) { chatMessages = []; }
-    if (chatMessages.length > 80) chatMessages = chatMessages.slice(-80);
-
-    /* BroadcastChannel for cross-tab sync */
-    try {
-      chatChannel = new BroadcastChannel('oron_tv_chat');
-      chatChannel.onmessage = function (e) {
-        if (e.data && e.data.type === 'msg') {
-          chatMessages.push(e.data.msg);
-          renderMessages();
-        }
-      };
-    } catch(e) {}
-
     /* Restore name */
     var nameInput = document.getElementById('chat-name-input');
     if (nameInput && myName) nameInput.value = myName;
@@ -435,13 +447,20 @@
       if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
     });
 
-    /* Seed with a welcome message and recent bot activity */
-    if (chatMessages.length === 0) {
-      addSystemMsg('Welcome to Oron Union TV Live Chat! 👋');
-    }
+    pollChat();
+    setInterval(pollChat, 4000);
+  }
 
-    renderMessages();
-    startBotChat();
+  function pollChat() {
+    apiGet('chat_list', lastChatId ? '&afterId=' + lastChatId : '').then(function (res) {
+      if (!res.ok || !res.messages || !res.messages.length) return;
+      res.messages.forEach(function (m) {
+        chatMessages.push(m);
+        if (m.id > lastChatId) lastChatId = m.id;
+      });
+      if (chatMessages.length > 100) chatMessages = chatMessages.slice(-100);
+      renderMessages();
+    });
   }
 
   function sendChat() {
@@ -456,26 +475,10 @@
     myName = name;
     localStorage.setItem(STORE_NAME, myName);
 
-    var msg = { name: name, text: text, time: Date.now(), isMe: true };
-    chatMessages.push(msg);
-    saveChat();
-    renderMessages();
-    if (chatChannel) chatChannel.postMessage({ type: 'msg', msg: msg });
-
     msgInput.value = '';
-  }
-
-  function addBotMsg(name, text) {
-    var msg = { name: name, text: text, time: Date.now(), isBot: true };
-    chatMessages.push(msg);
-    saveChat();
-    renderMessages();
-    if (chatChannel) chatChannel.postMessage({ type: 'msg', msg: msg });
-  }
-
-  function addSystemMsg(text) {
-    chatMessages.push({ system: true, text: text, time: Date.now() });
-    renderMessages();
+    apiPost('chat_send', { name: name, message: text }).then(function (res) {
+      if (res.ok) pollChat();
+    });
   }
 
   function renderMessages() {
@@ -483,25 +486,21 @@
     if (!container) return;
 
     var last60 = chatMessages.slice(-60);
+    var wasAtBottom = container.scrollTop + container.clientHeight >= container.scrollHeight - 40;
+
     container.innerHTML = last60.map(function (m) {
-      if (m.system) return '<div class="chat-msg-system">' + escHtml(m.text) + '</div>';
-      var timeStr = new Date(m.time).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
-      var nameClass = m.isMe ? 'is-me' : m.isBot ? 'is-bot' : '';
-      return '<div class="chat-msg' + (m.isMe ? ' is-me' : '') + '">' +
+      var timeStr = new Date(m.created_at).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+      var isMe = m.name === myName;
+      return '<div class="chat-msg' + (isMe ? ' is-me' : '') + '">' +
         '<div class="chat-msg-header">' +
-          '<span class="chat-msg-name ' + nameClass + '">' + escHtml(m.name) + '</span>' +
+          '<span class="chat-msg-name' + (isMe ? ' is-me' : '') + '">' + escHtml(m.name) + '</span>' +
           '<span class="chat-msg-time">' + timeStr + '</span>' +
         '</div>' +
-        '<div class="chat-msg-text">' + escHtml(m.text) + '</div>' +
+        '<div class="chat-msg-text">' + escHtml(m.message) + '</div>' +
       '</div>';
     }).join('');
 
-    container.scrollTop = container.scrollHeight;
-  }
-
-  function saveChat() {
-    if (chatMessages.length > 100) chatMessages = chatMessages.slice(-100);
-    try { localStorage.setItem(STORE_CHAT, JSON.stringify(chatMessages)); } catch(e) {}
+    if (wasAtBottom) container.scrollTop = container.scrollHeight;
   }
 
   function escHtml(str) {
@@ -510,72 +509,65 @@
       .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
-  function startBotChat() {
-    function drop() {
-      var bot  = BOT_POOL[Math.floor(Math.random() * BOT_POOL.length)];
-      var text = bot.msgs[Math.floor(Math.random() * bot.msgs.length)];
-      addBotMsg(bot.name, text);
-      setTimeout(drop, 12000 + Math.random() * 18000);
-    }
-    /* Initial burst to seed chat */
-    var delays = [1200, 3800, 7500, 11000, 15000];
-    delays.forEach(function (d) {
-      setTimeout(function () {
-        var bot  = BOT_POOL[Math.floor(Math.random() * BOT_POOL.length)];
-        var text = bot.msgs[Math.floor(Math.random() * bot.msgs.length)];
-        addBotMsg(bot.name, text);
-      }, d);
-    });
-    setTimeout(drop, 20000);
-  }
-
   /* ───────────────────────────────────────────
-     STREAM CONFIG MODAL
+     STREAM CONFIG MODAL — admin-gated, writes to the shared backend
   ─────────────────────────────────────────── */
   function initConfigModal() {
-    var adminBtn  = document.getElementById('tv-admin-btn');
-    var modal     = document.getElementById('stream-config-modal');
-    var closeBtn  = document.getElementById('stream-config-close');
-    var urlInput  = document.getElementById('stream-url-input');
-    var goBtn     = document.getElementById('sc-go-btn');
-    var offBtn    = document.getElementById('sc-offline-btn');
-    var status    = document.getElementById('sc-status');
+    var adminBtn   = document.getElementById('tv-admin-btn');
+    var modal      = document.getElementById('stream-config-modal');
+    var closeBtn   = document.getElementById('stream-config-close');
+    var urlInput   = document.getElementById('stream-url-input');
+    var goBtn      = document.getElementById('sc-go-btn');
+    var offBtn     = document.getElementById('sc-offline-btn');
+    var status     = document.getElementById('sc-status');
+    var codeRow    = document.getElementById('sc-code-row');
+    var codeInput  = document.getElementById('sc-code-input');
+    var unlockBtn  = document.getElementById('sc-unlock-btn');
+    var controlsEl = document.getElementById('sc-controls');
 
     if (!adminBtn || !modal) return;
 
     adminBtn.addEventListener('click', function () {
-      if (urlInput) urlInput.value = streamUrl !== DEMO_URL ? streamUrl : '';
+      if (urlInput) urlInput.value = streamUrl || '';
       if (status)  status.textContent = '';
+      if (!isStreamAdmin && codeRow) { codeRow.classList.remove('hidden'); if (controlsEl) controlsEl.classList.add('hidden'); }
       modal.classList.remove('hidden');
     });
     if (closeBtn) closeBtn.addEventListener('click', function () { modal.classList.add('hidden'); });
     modal.addEventListener('click', function (e) { if (e.target === modal) modal.classList.add('hidden'); });
 
+    if (unlockBtn) {
+      unlockBtn.addEventListener('click', function () {
+        var code = (codeInput && codeInput.value) || '';
+        authPost('admin_login', { code: code }).then(function (res) {
+          if (!res.ok) { if (status) { status.textContent = 'Invalid admin code.'; status.className = 'sc-status err'; } return; }
+          isStreamAdmin = true;
+          if (codeRow) codeRow.classList.add('hidden');
+          if (controlsEl) controlsEl.classList.remove('hidden');
+          if (status) status.textContent = '';
+        });
+      });
+    }
+
     if (goBtn) {
       goBtn.addEventListener('click', function () {
-        var url = (urlInput && urlInput.value.trim()) || DEMO_URL;
-        if (url && !url.match(/\.m3u8(\?|$)/i) && url !== DEMO_URL) {
-          if (status) { status.textContent = 'URL should end in .m3u8'; status.className = 'sc-status err'; }
-          return;
-        }
-        streamUrl = url;
-        localStorage.setItem(STORE_URL, url);
-        localStorage.setItem(STORE_LIVE, 'true');
-        isLive = true;
+        var url = (urlInput && urlInput.value.trim()) || '';
+        if (!url) { if (status) { status.textContent = 'Enter a stream URL first.'; status.className = 'sc-status err'; } return; }
         if (status) { status.textContent = 'Going live…'; status.className = 'sc-status ok'; }
-        setTimeout(function () {
+        apiPost('set', { url: url, isLive: true }).then(function (res) {
+          if (!res.ok) { if (status) { status.textContent = res.error || 'Could not go live.'; status.className = 'sc-status err'; } return; }
           modal.classList.add('hidden');
-          setLiveState(true);
-        }, 600);
+          pollStreamStatus();
+        });
       });
     }
 
     if (offBtn) {
       offBtn.addEventListener('click', function () {
-        localStorage.setItem(STORE_LIVE, 'false');
-        isLive = false;
-        modal.classList.add('hidden');
-        setLiveState(false);
+        apiPost('set', { url: streamUrl, isLive: false }).then(function (res) {
+          modal.classList.add('hidden');
+          if (res.ok) pollStreamStatus();
+        });
       });
     }
   }
@@ -595,8 +587,9 @@
     /* Refresh schedule every minute */
     setInterval(renderSchedule, 60000);
 
-    /* Start stream or show offline */
-    setLiveState(isLive);
+    /* Load shared stream state and keep it in sync */
+    pollStreamStatus();
+    setInterval(pollStreamStatus, 12000);
   });
 
 })();

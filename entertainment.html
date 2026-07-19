@@ -139,6 +139,7 @@
           <li><a href="endorser.html">Officials / Endorser Login</a></li>
         </ul>
       </li>
+      <li><a href="hall-of-fame.html" class="nav-hof">Hall of Fame</a></li>
       <li><a href="about.html">About <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4,6 8,10 12,6"/></svg></a>
         <ul class="dropdown">
           <li><a href="about.html#history">History</a></li>
@@ -407,7 +408,6 @@
     </div>
 
     <div class="tv-actions">
-      <button class="btn-tv-config" id="ent-tv-config-btn">&#9881; Set Stream URL</button>
       <a href="tv.html" class="btn-tv-full">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6"/><path d="M10 14L21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
         Open Full Screen TV
@@ -416,19 +416,6 @@
     <p style="text-align:center;font-size:0.8rem;color:var(--gray);margin-top:14px;">Powered by HLS.js. Supports OBS streams, YouTube Live and any .m3u8 feed. <a href="tv.html" style="color:var(--red);">Full TV experience &rarr;</a></p>
   </div>
 </section>
-
-<!-- TV Config Modal -->
-<div class="tv-cfg-modal" id="ent-tv-cfg-modal">
-  <div class="tv-cfg-box">
-    <h3>Set Live Stream URL</h3>
-    <p>Paste a valid HLS stream URL (.m3u8) to broadcast live. Leave blank to clear.</p>
-    <input type="url" id="ent-stream-url-input" placeholder="https://your-encoder/stream.m3u8" />
-    <div class="tv-cfg-btns">
-      <button class="btn-tv-cancel" id="ent-tv-cfg-cancel">Cancel</button>
-      <button class="btn-tv-set" id="ent-tv-cfg-save">Save &amp; Connect</button>
-    </div>
-  </div>
-</div>
 
 
 <!-- ========== ORO INDIGENOUS MUSIC & VIDEOS ========== -->
@@ -506,7 +493,6 @@
 <div id="cursor-ring"></div>
 <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.15/dist/hls.min.js"></script>
 <script src="js/cursor.js"></script>
-<script src="js/media.js"></script>
 <script src="js/inner-nav.js"></script>
 <script>
 (function () {
@@ -515,15 +501,14 @@
   }, { threshold: 0.1 });
   document.querySelectorAll('.reveal,.reveal-scale,.ip-card,.event-card,.ip-card').forEach(function (el) { io.observe(el); });
 
-  /* ── Live TV ── */
-  var TV_URL_KEY = 'oron_tv_stream_url';
+  /* ── Live TV — read-only, mirrors the shared state from api/stream.php.
+     Stream control lives on tv.html and admin.html (both admin-gated). ── */
   var liveVideo = document.getElementById('ent-live-video');
   var offlineScreen = document.getElementById('ent-tv-offline');
   var watchBtn = document.getElementById('ent-watch-btn');
   var liveBadge = document.getElementById('ent-live-badge');
-  var cfgModal = document.getElementById('ent-tv-cfg-modal');
-  var cfgInput = document.getElementById('ent-stream-url-input');
   var hlsInstance = null;
+  var entStreamUrl = null;
 
   function loadTVStream(url) {
     if (!url) return;
@@ -544,43 +529,42 @@
 
   function showOffline() { liveVideo.style.display = 'none'; offlineScreen.style.display = 'flex'; watchBtn.style.display = 'none'; liveBadge.style.display = 'none'; }
 
-  (function initTV() {
-    var url = localStorage.getItem(TV_URL_KEY);
-    if (url) { watchBtn.style.display = 'block'; liveBadge.style.display = 'flex'; }
-  })();
+  function pollTVStatus() {
+    fetch('api/stream.php?action=status', { credentials: 'same-origin' }).then(function (res) { return res.json(); }).then(function (res) {
+      if (!res.ok) return;
+      var live = res.isLive && res.url;
+      if (live) { watchBtn.style.display = 'block'; liveBadge.style.display = 'flex'; }
+      else { watchBtn.style.display = 'none'; liveBadge.style.display = 'none'; if (hlsInstance || liveVideo.src) showOffline(); }
+      entStreamUrl = live ? res.url : null;
+    });
+  }
+  pollTVStatus();
+  setInterval(pollTVStatus, 15000);
 
   if (watchBtn) watchBtn.addEventListener('click', function () {
-    var url = localStorage.getItem(TV_URL_KEY);
-    if (url) loadTVStream(url);
+    if (entStreamUrl) loadTVStream(entStreamUrl);
   });
 
-  document.getElementById('ent-tv-config-btn').addEventListener('click', function () {
-    cfgInput.value = localStorage.getItem(TV_URL_KEY) || '';
-    cfgModal.classList.add('open');
-  });
-  document.getElementById('ent-tv-cfg-cancel').addEventListener('click', function () { cfgModal.classList.remove('open'); });
-  document.getElementById('ent-tv-cfg-save').addEventListener('click', function () {
-    var url = cfgInput.value.trim();
-    if (url) { localStorage.setItem(TV_URL_KEY, url); watchBtn.style.display = 'block'; liveBadge.style.display = 'flex'; }
-    else { localStorage.removeItem(TV_URL_KEY); showOffline(); }
-    cfgModal.classList.remove('open');
-    if (url) loadTVStream(url);
-  });
-
-  /* ── Music & Videos ── */
-  var ADMIN_HASH = 'b3JvbjE5MjU='; /* btoa('oron1925') */
+  /* ── Music & Videos — shared server-side library (api/media.php) ── */
   var isMediaAdmin = false;
-  var currentObjUrl = null;
+  var mediaCache = [];
+
+  function loadMediaGrid() {
+    fetch('api/media.php?action=list', { credentials: 'same-origin' }).then(function (res) { return res.json(); }).then(function (res) {
+      mediaCache = res.ok ? (res.items || []).filter(function (m) { return m.type === 'audio' || m.type === 'video'; }) : [];
+      renderMediaGrid();
+    });
+  }
 
   function renderMediaGrid() {
     var grid = document.getElementById('media-grid');
-    var items = OM.getMeta();
+    var items = mediaCache;
     if (!items.length) {
       grid.innerHTML = '<div class="media-empty"><div class="media-empty-icon">&#127925;</div><p style="font-size:0.95rem;color:var(--gray);">No media uploaded yet. Check back soon.</p></div>';
       return;
     }
     grid.innerHTML = '<div class="media-grid">' + items.map(function (m) {
-      var isAudio = m.mediaType === 'audio';
+      var isAudio = m.type === 'audio';
       var icon = isAudio
         ? '<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>'
         : '<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>';
@@ -598,7 +582,12 @@
       grid.querySelectorAll('.btn-del-m').forEach(function (btn) {
         btn.addEventListener('click', function () {
           if (!confirm('Delete this media item?')) return;
-          OM.removeMedia(btn.dataset.del, function () { renderMediaGrid(); });
+          fetch('api/media.php?action=delete', {
+            method: 'POST', credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: btn.dataset.del })
+          }).then(function (res) { return res.json(); }).then(function (res) {
+            if (res.ok) loadMediaGrid();
+          });
         });
       });
     }
@@ -606,7 +595,9 @@
 
   function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 
-  function getMediaById(id) { return OM.getMeta().filter(function (m) { return m.id === id; })[0] || null; }
+  function getMediaById(id) { return mediaCache.filter(function (m) { return String(m.id) === String(id); })[0] || null; }
+
+  function mediaSrc(m) { return m.storage_type === 'file' ? m.file_path : m.url; }
 
   function playMedia(id) {
     var m = getMediaById(id);
@@ -619,26 +610,14 @@
     playerArea.style.display = 'block';
     audio.style.display = 'none'; audio.pause(); audio.src = '';
     video.style.display = 'none'; video.pause(); video.src = '';
-    if (currentObjUrl) { URL.revokeObjectURL(currentObjUrl); currentObjUrl = null; }
 
-    function setSrc(src) {
-      if (m.mediaType === 'video') {
-        video.src = src; video.style.display = 'block'; video.play();
-      } else {
-        audio.src = src; audio.style.display = 'block'; audio.play();
-      }
-      playerArea.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
-
-    if (m.storageType === 'blob') {
-      OM.getBlob(id, function (err, blob) {
-        if (err || !blob) { alert('Could not load media file.'); return; }
-        currentObjUrl = URL.createObjectURL(blob);
-        setSrc(currentObjUrl);
-      });
+    var src = embedUrl(mediaSrc(m), m.type);
+    if (m.type === 'video') {
+      video.src = src; video.style.display = 'block'; video.play();
     } else {
-      setSrc(embedUrl(m.url, m.mediaType));
+      audio.src = src; audio.style.display = 'block'; audio.play();
     }
+    playerArea.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
   function embedUrl(url, type) {
@@ -651,20 +630,11 @@
   function downloadMedia(id) {
     var m = getMediaById(id);
     if (!m) return;
-    if (m.storageType === 'blob') {
-      OM.getBlob(id, function (err, blob) {
-        if (err || !blob) { alert('Could not load media for download.'); return; }
-        var url = URL.createObjectURL(blob);
-        var a = document.createElement('a');
-        a.href = url; a.download = m.fileName || (m.title || 'media') + (m.mediaType === 'video' ? '.mp4' : '.mp3');
-        document.body.appendChild(a); a.click(); document.body.removeChild(a);
-        setTimeout(function () { URL.revokeObjectURL(url); }, 5000);
-      });
-    } else if (m.url) {
-      var a = document.createElement('a');
-      a.href = m.url; a.download = m.title || 'media'; a.target = '_blank';
-      document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    }
+    var src = mediaSrc(m);
+    if (!src) return;
+    var a = document.createElement('a');
+    a.href = src; a.download = m.title || 'media'; a.target = '_blank';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
   }
 
   document.getElementById('close-player-btn').addEventListener('click', function () {
@@ -683,14 +653,19 @@
 
   document.getElementById('media-admin-unlock').addEventListener('click', function () {
     var code = document.getElementById('media-admin-code').value;
-    if (btoa(code) === ADMIN_HASH) {
-      isMediaAdmin = true;
-      document.getElementById('media-login-row').style.display = 'none';
-      document.getElementById('media-upload-form').style.display = 'block';
-      renderMediaGrid();
-    } else {
-      alert('Invalid admin code.');
-    }
+    fetch('api/auth.php?action=admin_login', {
+      method: 'POST', credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code: code })
+    }).then(function (res) { return res.json(); }).then(function (res) {
+      if (res.ok) {
+        isMediaAdmin = true;
+        document.getElementById('media-login-row').style.display = 'none';
+        document.getElementById('media-upload-form').style.display = 'block';
+        renderMediaGrid();
+      } else {
+        alert(res.error || 'Invalid admin code.');
+      }
+    });
   });
 
   document.getElementById('add-media-btn').addEventListener('click', function () {
@@ -700,35 +675,30 @@
     var type = document.getElementById('new-media-type').value;
     var file = document.getElementById('new-media-file').files[0];
     var url = document.getElementById('new-media-url').value.trim();
-    var statusEl = document.getElementById('media-status');
 
     if (!title) { setStatus('Please enter a title.', true); return; }
     if (!file && !url) { setStatus('Please upload a file or provide a URL.', true); return; }
 
-    var meta = { title: title, artist: artist, description: desc, mediaType: type, url: url };
+    var fd = new FormData();
+    fd.append('title', title);
+    fd.append('type', type);
+    fd.append('artist', artist);
+    fd.append('description', desc);
+    if (file) fd.append('file', file);
+    else fd.append('url', url);
 
-    if (file) {
-      var prog = document.getElementById('upload-progress');
-      var bar = document.getElementById('upload-progress-bar');
-      prog.style.display = 'block'; bar.style.width = '0%';
-      var reader = new FileReader();
-      reader.onprogress = function (e) { if (e.lengthComputable) bar.style.width = (e.loaded / e.total * 100) + '%'; };
-      reader.onload = function () {
-        bar.style.width = '100%';
-        OM.addMedia(meta, file, function (err) {
-          prog.style.display = 'none';
-          if (err) { setStatus('Upload failed: ' + err.message, true); return; }
-          clearForm(); setStatus('Media added successfully!', false); renderMediaGrid();
-        });
-      };
-      reader.onerror = function () { setStatus('Could not read file.', true); prog.style.display = 'none'; };
-      reader.readAsArrayBuffer(file);
-    } else {
-      OM.addMedia(meta, null, function (err) {
-        if (err) { setStatus('Failed to save.', true); return; }
-        clearForm(); setStatus('Media added successfully!', false); renderMediaGrid();
-      });
-    }
+    var prog = document.getElementById('upload-progress');
+    var bar = document.getElementById('upload-progress-bar');
+    if (file) { prog.style.display = 'block'; bar.style.width = '40%'; }
+
+    fetch('api/media.php?action=upload', { method: 'POST', credentials: 'same-origin', body: fd })
+      .then(function (res) { return res.json(); })
+      .then(function (res) {
+        prog.style.display = 'none';
+        if (!res.ok) { setStatus('Upload failed: ' + res.error, true); return; }
+        clearForm(); setStatus('Media added successfully!', false); loadMediaGrid();
+      })
+      .catch(function () { prog.style.display = 'none'; setStatus('Upload failed.', true); });
   });
 
   function setStatus(msg, isErr) {
@@ -746,7 +716,7 @@
   }
 
   /* Init */
-  OM.init(function () { renderMediaGrid(); });
+  loadMediaGrid();
 })();
 </script>
 </body>

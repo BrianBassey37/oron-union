@@ -148,6 +148,7 @@
           <li><a href="endorser.html">Officials / Endorser Login</a></li>
         </ul>
       </li>
+      <li><a href="hall-of-fame.html" class="nav-hof">Hall of Fame</a></li>
       <li><a href="about.html">About <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4,6 8,10 12,6"/></svg></a>
         <ul class="dropdown">
           <li><a href="about.html#history">History</a></li>
@@ -211,7 +212,7 @@
     </div>
     <!-- Exco -->
     <div class="exco-section">
-      <h3>Executive Committee <span id="edit-btn-oron"></span></h3>
+      <h3>Executive Committee</h3>
       <div class="exco-grid" id="exco-oron"></div>
     </div>
     <!-- Members -->
@@ -244,7 +245,7 @@
       </div>
     </div>
     <div class="exco-section">
-      <h3>Executive Committee <span id="edit-btn-urueoffong"></span></h3>
+      <h3>Executive Committee</h3>
       <div class="exco-grid" id="exco-urueoffong"></div>
     </div>
     <div class="members-section">
@@ -276,7 +277,7 @@
       </div>
     </div>
     <div class="exco-section">
-      <h3>Executive Committee <span id="edit-btn-okobo"></span></h3>
+      <h3>Executive Committee</h3>
       <div class="exco-grid" id="exco-okobo"></div>
     </div>
     <div class="members-section">
@@ -308,7 +309,7 @@
       </div>
     </div>
     <div class="exco-section">
-      <h3>Executive Committee <span id="edit-btn-mbo"></span></h3>
+      <h3>Executive Committee</h3>
       <div class="exco-grid" id="exco-mbo"></div>
     </div>
     <div class="members-section">
@@ -340,7 +341,7 @@
       </div>
     </div>
     <div class="exco-section">
-      <h3>Executive Committee <span id="edit-btn-udunguko"></span></h3>
+      <h3>Executive Committee</h3>
       <div class="exco-grid" id="exco-udunguko"></div>
     </div>
     <div class="members-section">
@@ -457,21 +458,6 @@
 </section>
 
 
-<!-- =========================================================
-     ADMIN PANEL
-     ========================================================= -->
-<div class="branch-admin-bar">
-  <div class="branch-admin-inner">
-    <h3>&#9998; Admin — Update Branch &amp; Exco Information</h3>
-    <div id="branch-admin-unlock-row">
-      <input type="password" id="branch-admin-code" placeholder="Admin code" />
-      <button class="btn-branch-unlock" id="branch-admin-btn">Unlock Admin</button>
-    </div>
-    <div id="branch-exco-editor"></div>
-  </div>
-</div>
-
-
 <!-- ========== CTA ========== -->
 <section class="join-cta" style="padding:80px 24px;">
   <h2 class="reveal-scale" style="font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,2.6rem);color:#fff;margin-bottom:14px;">Find Your Branch</h2>
@@ -511,11 +497,7 @@
     tabLinks.forEach(function (a) { a.classList.toggle('active', a.getAttribute('href') === '#' + cur); });
   }, { passive: true });
 
-  /* ── Data ── */
-  var ADMIN_HASH = 'b3JvbjE5MjU=';
-  var isAdmin = false;
-  var EXCO_KEY = 'oron_branch_exco';
-
+  /* ── Data — sourced live from the shared MySQL backend ── */
   var LGA_BRANCHES = [
     { id: 'oron', lgaKey: 'Oron', name: 'Oron LGA Branch' },
     { id: 'urueoffong', lgaKey: 'Urueoffong/Oruko', name: 'Urueoffong/Oruko Branch' },
@@ -524,40 +506,54 @@
     { id: 'udunguko', lgaKey: 'Udunguko', name: 'Udunguko Branch' }
   ];
 
-  var DEFAULT_EXCO = [
-    { role: 'president', title: 'Branch President', name: '' },
-    { role: 'secretary', title: 'Secretary-General', name: '' },
-    { role: 'treasurer', title: 'Treasurer', name: '' },
-    { role: 'pro', title: 'PRO', name: '' }
+  /* Same position set as the admin dashboard's Branch Exco editor —
+     that's the canonical place these records are edited. */
+  var POSITIONS = [
+    { key: 'president',           title: 'Branch President' },
+    { key: 'vice-president',      title: 'Vice President' },
+    { key: 'secretary',           title: 'Secretary' },
+    { key: 'asst-secretary',      title: 'Asst. Secretary' },
+    { key: 'treasurer',           title: 'Treasurer' },
+    { key: 'financial-secretary', title: 'Financial Secretary' },
+    { key: 'pro',                 title: 'Public Relations Officer' }
   ];
 
-  function getApps() {
-    try { return JSON.parse(localStorage.getItem('oron_applications') || '[]'); } catch (e) { return []; }
-  }
+  var excoData = {};       /* { branchId: { positionKey: {name, photo} } } */
+  var branchMembersCache = {}; /* { lgaKey: [members] } */
 
-  function getBranchMembers(lgaKey) {
-    return getApps().filter(function (a) {
-      if (a.status !== 'approved') return false;
-      if (a.endorserLga === lgaKey) return true;
-      /* Clan-rep endorsed members count under their own declared LGA */
-      if (a.endorserType === 'clan-rep' && a.lga === lgaKey) return true;
-      return false;
-    });
+  function loadExcoData() {
+    return fetch('api/branch_exco.php?action=list', { credentials: 'same-origin' })
+      .then(function (res) { return res.json(); })
+      .then(function (res) {
+        var data = {};
+        if (res.ok) {
+          (res.entries || []).forEach(function (e) {
+            if (!data[e.branch_id]) data[e.branch_id] = {};
+            data[e.branch_id][e.position_key] = { name: e.full_name || '', photo: e.photo_path || '' };
+          });
+        }
+        excoData = data;
+      });
   }
 
   function getExco(branchId) {
-    try {
-      var all = JSON.parse(localStorage.getItem(EXCO_KEY) || '{}');
-      return all[branchId] || DEFAULT_EXCO.map(function (e) { return { role: e.role, title: e.title, name: '' }; });
-    } catch (e) { return DEFAULT_EXCO.map(function (x) { return { role: x.role, title: x.title, name: '' }; }); }
+    var bd = excoData[branchId] || {};
+    return POSITIONS.map(function (p) {
+      var e = bd[p.key] || {};
+      return { role: p.key, title: p.title, name: e.name || '', photo: e.photo || '' };
+    });
   }
 
-  function saveExco(branchId, exco) {
-    try {
-      var all = JSON.parse(localStorage.getItem(EXCO_KEY) || '{}');
-      all[branchId] = exco;
-      localStorage.setItem(EXCO_KEY, JSON.stringify(all));
-    } catch (e) { console.warn('Could not save exco data'); }
+  function loadBranchMembers(lgaKey) {
+    return fetch('api/applications.php?action=roster&lga=' + encodeURIComponent(lgaKey), { credentials: 'same-origin' })
+      .then(function (res) { return res.json(); })
+      .then(function (res) {
+        var members = res.ok ? (res.members || []).map(function (m) {
+          return { firstname: m.firstname, lastname: m.lastname, memberId: m.member_id, lga: m.lga, photo: m.photo_path, approvedAt: m.approved_at };
+        }) : [];
+        branchMembersCache[lgaKey] = members;
+        return members;
+      });
   }
 
   function esc(s) {
@@ -585,7 +581,7 @@
   function renderMemberTable(branchId, lgaKey) {
     var container = document.getElementById('members-' + branchId);
     if (!container) return;
-    var members = getBranchMembers(lgaKey);
+    loadBranchMembers(lgaKey).then(function (members) {
     var countEl = document.getElementById('count-' + branchId);
     if (countEl) countEl.textContent = members.length;
     if (!members.length) {
@@ -607,6 +603,7 @@
         '</tr>';
     }).join('');
     container.innerHTML = '<table class="member-table"><thead><tr><th>#</th><th>Photo</th><th>Member ID</th><th>Name</th><th>LGA</th><th>Date Joined</th></tr></thead><tbody>' + rows + '</tbody></table>';
+    });
   }
 
   /* ── Show/hide toggle ── */
@@ -619,7 +616,7 @@
 
   /* ── PDF / Print member list ── */
   window.printMembers = function (lgaKey) {
-    var members = getBranchMembers(lgaKey);
+    var doPrint = function (members) {
     var rows = members.length ? members.map(function (m, i) {
       var dateJoined = m.approvedAt ? new Date(m.approvedAt).toLocaleDateString('en-NG', { year: 'numeric', month: 'short', day: 'numeric' }) : '—';
       return '<tr><td>' + (i + 1) + '</td><td>' + esc(m.memberId || '—') + '</td><td>' + esc((m.firstname || '') + ' ' + (m.lastname || '')) + '</td><td>' + esc(m.lga || '—') + '</td><td>' + dateJoined + '</td></tr>';
@@ -633,69 +630,17 @@
     w.document.close();
     w.focus();
     setTimeout(function () { w.print(); }, 400);
+    };
+
+    if (branchMembersCache[lgaKey]) doPrint(branchMembersCache[lgaKey]);
+    else loadBranchMembers(lgaKey).then(doPrint);
   };
 
-  /* ── Admin unlock ── */
-  document.getElementById('branch-admin-btn').addEventListener('click', function () {
-    var code = document.getElementById('branch-admin-code').value;
-    if (btoa(code) !== ADMIN_HASH) { alert('Invalid admin code.'); return; }
-    isAdmin = true;
-    document.getElementById('branch-admin-unlock-row').style.display = 'none';
-    buildExcoEditor();
-    addAdminEditButtons();
-  });
-
-  function addAdminEditButtons() {
-    LGA_BRANCHES.forEach(function (b) {
-      var span = document.getElementById('edit-btn-' + b.id);
-      if (!span) return;
-      var btn = document.createElement('button');
-      btn.textContent = 'Edit Exco';
-      btn.style.cssText = 'background:none;border:1px solid var(--red);color:var(--red);border-radius:6px;padding:4px 12px;font-size:.72rem;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;';
-      btn.addEventListener('click', function () {
-        var editorId = 'editor-' + b.id;
-        var el = document.getElementById(editorId);
-        if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
-      });
-      span.appendChild(btn);
-    });
-  }
-
-  function buildExcoEditor() {
-    var editor = document.getElementById('branch-exco-editor');
-    editor.style.display = 'block';
-    var html = '<p style="font-size:.85rem;color:var(--gray);margin:0 0 16px;">Update exco member names for each LGA branch below.</p>';
-    LGA_BRANCHES.forEach(function (b) {
-      var exco = getExco(b.id);
-      html += '<div class="exco-editor-branch" id="editor-' + b.id + '" style="display:none;">' +
-        '<h4>' + esc(b.name) + ' — Exco Members</h4>' +
-        exco.map(function (m) {
-          return '<div class="exco-editor-row"><div><label>' + esc(m.title) + ' — Name</label><input type="text" id="exco-' + b.id + '-' + m.role + '" value="' + esc(m.name) + '" placeholder="Full name" /></div><div><label>' + esc(m.title) + ' — Photo URL (optional)</label><input type="url" id="exco-' + b.id + '-' + m.role + '-photo" value="' + esc(m.photo || '') + '" placeholder="https://..." /></div></div>';
-        }).join('') +
-        '<button class="btn-save-exco" data-branch="' + b.id + '">Save Exco</button>' +
-        '<div class="save-exco-status" id="status-' + b.id + '"></div>' +
-        '</div>';
-    });
-    editor.innerHTML = html;
-    document.querySelectorAll('.btn-save-exco').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var branchId = btn.dataset.branch;
-        var exco = getExco(branchId).map(function (m) {
-          var nameEl = document.getElementById('exco-' + branchId + '-' + m.role);
-          var photoEl = document.getElementById('exco-' + branchId + '-' + m.role + '-photo');
-          return { role: m.role, title: m.title, name: nameEl ? nameEl.value.trim() : '', photo: photoEl ? photoEl.value.trim() : '' };
-        });
-        saveExco(branchId, exco);
-        renderExco(branchId);
-        var statusEl = document.getElementById('status-' + branchId);
-        if (statusEl) { statusEl.textContent = 'Saved.'; statusEl.className = 'save-exco-status ok'; setTimeout(function () { statusEl.style.display = 'none'; }, 3000); }
-      });
-    });
-  }
-
   /* ── Init ── */
+  loadExcoData().then(function () {
+    LGA_BRANCHES.forEach(function (b) { renderExco(b.id); });
+  });
   LGA_BRANCHES.forEach(function (b) {
-    renderExco(b.id);
     renderMemberTable(b.id, b.lgaKey);
   });
 

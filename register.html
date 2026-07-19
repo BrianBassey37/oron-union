@@ -72,6 +72,7 @@
           <li><a href="endorser.html">Officials / Endorser Login</a></li>
         </ul>
       </li>
+      <li><a href="hall-of-fame.html" class="nav-hof">Hall of Fame</a></li>
       <li><a href="about.html">About <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4,6 8,10 12,6"/></svg></a>
         <ul class="dropdown">
           <li><a href="about.html#history">History</a></li>
@@ -296,7 +297,16 @@
         </div>
         <div class="field-group">
           <label>Email Address <span class="req">*</span></label>
-          <input type="email" id="f-email" placeholder="your@email.com" />
+          <div style="display:flex;gap:8px;align-items:flex-start">
+            <input type="email" id="f-email" placeholder="your@email.com" style="flex:1" />
+            <button type="button" class="reg-btn-back" id="send-otp-btn" style="white-space:nowrap;padding:10px 16px">Send Code</button>
+          </div>
+          <div id="otp-code-row" class="hidden" style="display:flex;gap:8px;align-items:center;margin-top:10px">
+            <input type="text" id="f-otp-code" maxlength="6" inputmode="numeric" placeholder="6-digit code" style="max-width:160px" />
+            <button type="button" class="reg-btn-back" id="verify-otp-btn" style="white-space:nowrap;padding:10px 16px">Verify</button>
+            <span id="otp-status-note" style="font-size:0.82rem;color:var(--gray,#666)"></span>
+          </div>
+          <p id="otp-verified-note" class="hidden" style="color:#16a34a;font-size:0.85rem;margin-top:6px;">&#10003; Email verified</p>
         </div>
         <div class="field-row-2">
           <div class="field-group">

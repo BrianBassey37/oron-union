@@ -8,7 +8,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <style>
     :root {
       --red: #8B0000;
@@ -323,7 +322,7 @@
       <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>
     </div>
     <h2>Record Submitted</h2>
-    <p>The executive member's details and passport photo have been saved to Google Drive and added to the Oron Union Exco Database spreadsheet.</p>
+    <p>The executive member's details and passport photo have been saved to the Oron Union member directory.</p>
     <button class="success-new-btn" id="new-entry-btn">Add Another Member</button>
   </div>
 
@@ -332,20 +331,14 @@
 
 <script>
 // ═══════════════════════════════════════════════════════
-// CONFIG — replace with your Supabase project credentials
-// ═══════════════════════════════════════════════════════
-var SUPABASE_URL  = 'https://tmidqbxwgkeqtkuppauh.supabase.co';
-var SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtaWRxYnh3Z2tlcXRrdXBwYXVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI1OTUwNzAsImV4cCI6MjA5ODE3MTA3MH0.1Hstj_lypWmbB5LpxpLkBJ4d2_ybSUsKY_KYeTVnnXQ';
-var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
-
-// ═══════════════════════════════════════════════════════
 // ROLE / AFFILIATION DATA
 // ═══════════════════════════════════════════════════════
 var ROLES = {
   'Central Executive Committee': [
-    'President-General','Deputy President-General','General Secretary',
-    'Assistant General Secretary','Financial Secretary','Treasurer',
-    'Public Relations Officer','Auditor General'
+    'President-General','Vice President-General I','Vice President-General II',
+    'Secretary-General','Assistant Secretary-General I','Assistant Secretary-General II',
+    'Publicity Secretary','Treasurer','Financial Secretary','Welfare Officer',
+    'Legal Adviser I','Legal Adviser II'
   ],
   'Youth Wing': [
     'President','Vice President','Secretary','Assistant Secretary',
@@ -560,35 +553,23 @@ form.addEventListener('submit', function (e) {
 
   submitBtn.disabled = true;
   submitBtn.classList.add('loading');
-  submitBtn.querySelector('.btn-text').textContent = 'Uploading photo…';
+  submitBtn.querySelector('.btn-text').textContent = 'Saving record…';
 
-  // Build a safe filename: timestamp + role slug
-  var slug = role.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
-  var filename = Date.now() + '_' + slug + '.jpg';
   var blob = base64ToBlob(compressedB64);
+  var form2 = new FormData();
+  form2.append('action', 'submit');
+  form2.append('grp', group);
+  form2.append('role', role);
+  form2.append('full_name', name);
+  form2.append('phone', phone);
+  form2.append('email', email);
+  form2.append('affiliation', aff);
+  form2.append('photo', blob, 'photo.jpg');
 
-  // 1. Upload photo to Supabase Storage
-  sb.storage.from('exco-photos').upload(filename, blob, { contentType: 'image/jpeg', upsert: false })
-    .then(function (res) {
-      if (res.error) throw res.error;
-
-      var photoUrl = sb.storage.from('exco-photos').getPublicUrl(res.data.path).data.publicUrl;
-
-      submitBtn.querySelector('.btn-text').textContent = 'Saving record…';
-
-      // 2. Insert member record
-      return sb.from('exco_members').insert({
-        grp:         group,
-        role:        role,
-        full_name:   name,
-        phone:       phone,
-        email:       email,
-        affiliation: aff,
-        photo_url:   photoUrl
-      });
-    })
-    .then(function (res) {
-      if (res.error) throw res.error;
+  fetch('api/exco.php?action=submit', { method: 'POST', body: form2, credentials: 'same-origin' })
+    .then(function (res) { return res.json(); })
+    .then(function (json) {
+      if (!json.ok) throw new Error(json.error);
       formCard.style.display = 'none';
       successScr.style.display = 'block';
     })
