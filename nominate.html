@@ -165,7 +165,7 @@
             <input type="email" id="f-email" placeholder="you@example.com" style="flex:1" />
             <button type="button" class="reg-btn-back" id="send-otp-btn" style="white-space:nowrap;padding:10px 16px">Send Code</button>
           </div>
-          <div id="otp-code-row" class="hidden" style="display:flex;gap:8px;align-items:center;margin-top:10px">
+          <div id="otp-code-row" class="hidden" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px">
             <input type="text" id="f-otp-code" maxlength="6" inputmode="numeric" placeholder="6-digit code" style="max-width:160px" />
             <button type="button" class="reg-btn-back" id="verify-otp-btn" style="white-space:nowrap;padding:10px 16px">Verify</button>
             <span id="otp-status-note" style="font-size:0.82rem;color:var(--gray,#666)"></span>
@@ -201,7 +201,9 @@
         </div>
         <div class="field-group">
           <label>Full Name of Person Being Nominated <span class="req">*</span></label>
-          <input type="text" id="f-nominee-name" placeholder="e.g. Chief Emmanuel Okon Atai" />
+          <input type="text" id="f-nominee-name" placeholder="e.g. Chief Emmanuel Okon Atai" list="nominee-suggestions" autocomplete="off" />
+          <datalist id="nominee-suggestions"></datalist>
+          <p id="nominee-suggest-hint" class="hidden" style="font-size:0.78rem;color:var(--gray,#666);margin-top:6px;">Tip: already nominated someone on the list? Pick their name to add your support to theirs.</p>
         </div>
         <div class="field-group">
           <label>Why does this person deserve it? <span class="req">*</span></label>

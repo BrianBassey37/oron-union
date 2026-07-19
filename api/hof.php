@@ -11,6 +11,7 @@
  *   POST ?action=upsert_nominee  {id, categoryId, name, photoUrl, bio, sortOrder, active} (admin session)
  *   POST ?action=delete_nominee  {id}                                  (admin session)
  *   POST ?action=nominate  {categoryId, nomineeName, reason, nominatorName, nominatorEmail, nominatorPhone} (public, requires verified email)
+ *   GET  ?action=nominee_suggestions [categoryId]                      (public)
  *   GET  ?action=list_nominations                                      (admin session)
  *   POST ?action=review_nomination {id, decision}                      (admin session)
  */
@@ -21,7 +22,7 @@ start_secure_session();
 $body = read_json_body();
 $action = require_action($body, [
     'list', 'results', 'vote', 'upsert_category', 'upsert_nominee', 'delete_nominee',
-    'nominate', 'list_nominations', 'review_nomination',
+    'nominate', 'nominee_suggestions', 'list_nominations', 'review_nomination',
 ]);
 
 switch ($action) {
@@ -173,6 +174,22 @@ case 'nominate': {
     db()->prepare('INSERT IGNORE INTO hof_notify_subscribers (email) VALUES (?)')->execute([$nominatorEmail]);
 
     json_ok(['id' => (int) db()->lastInsertId()]);
+}
+
+case 'nominee_suggestions': {
+    // Public — lets the nominate form suggest already-nominated people so
+    // supporters can pile on to a name already gaining traction instead of
+    // only ever creating fresh entries.
+    $categoryId = $_GET['categoryId'] ?? null;
+    $sql = "SELECT nominee_name, category_id, COUNT(*) AS nomination_count
+            FROM hof_nominations
+            WHERE status != 'rejected'" . ($categoryId ? ' AND category_id = ?' : '') . "
+            GROUP BY nominee_name, category_id
+            ORDER BY nomination_count DESC, nominee_name ASC
+            LIMIT 15";
+    $stmt = db()->prepare($sql);
+    $stmt->execute($categoryId ? [$categoryId] : []);
+    json_ok(['nominees' => $stmt->fetchAll()]);
 }
 
 case 'list_nominations': {

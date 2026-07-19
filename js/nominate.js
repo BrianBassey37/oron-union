@@ -125,6 +125,26 @@
       });
   }
 
+  /* ── Nominee suggestions (already-nominated people, so supporters can
+     pile on to a name already gaining traction instead of only ever
+     creating a brand new entry) ── */
+  function loadNomineeSuggestions(categoryId) {
+    var list = document.getElementById('nominee-suggestions');
+    var hint = document.getElementById('nominee-suggest-hint');
+    if (!list) return;
+    var url = 'api/hof.php?action=nominee_suggestions' + (categoryId ? '&categoryId=' + encodeURIComponent(categoryId) : '');
+    fetch(url, { credentials: 'same-origin' })
+      .then(function (res) { return res.json(); })
+      .then(function (res) {
+        var nominees = res.ok ? (res.nominees || []) : [];
+        list.innerHTML = nominees.map(function (n) {
+          return '<option value="' + esc(n.nominee_name) + '"></option>';
+        }).join('');
+        if (hint) hint.classList.toggle('hidden', !nominees.length);
+      })
+      .catch(function () { /* suggestions are a nice-to-have, fail quietly */ });
+  }
+
   function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
   function val(id) { var el = document.getElementById(id); return el ? el.value.trim() : ''; }
 
@@ -335,6 +355,14 @@
     loadCategories();
     updateProgress(1);
     initCountdown();
+    loadNomineeSuggestions(null);
+
+    var categorySel = document.getElementById('f-category');
+    if (categorySel) {
+      categorySel.addEventListener('change', function () {
+        loadNomineeSuggestions(categorySel.value || null);
+      });
+    }
 
     var style = document.createElement('style');
     style.textContent = '@keyframes spin { to { transform: rotate(360deg); } }';
