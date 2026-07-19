@@ -11,6 +11,9 @@
   var otpCooldownUntil = 0;
   var categories = [];
 
+  /* Nomination window: 3 weeks from Monday, 20 July 2026 — closes 10 Aug 2026 */
+  var NOMINATION_DEADLINE = new Date('2026-08-10T23:59:59');
+
   var REQUIRED = {
     1: ['f-name', 'f-email', 'f-phone'],
     2: ['f-category', 'f-nominee-name', 'f-reason']
@@ -284,11 +287,54 @@
       });
   };
 
+  /* ── Nomination window countdown ── */
+  function closeNominations() {
+    var banner = document.getElementById('nom-countdown-banner');
+    var wizard = document.getElementById('nom-wizard-wrap');
+    var closedPanel = document.getElementById('nom-closed-panel');
+    if (banner) banner.style.display = 'none';
+    if (wizard) wizard.style.display = 'none';
+    if (closedPanel) closedPanel.style.display = 'block';
+  }
+
+  function initCountdown() {
+    var daysEl = document.getElementById('nc-days');
+    var hoursEl = document.getElementById('nc-hours');
+    var minsEl = document.getElementById('nc-mins');
+    var secsEl = document.getElementById('nc-secs');
+    if (!daysEl) return;
+
+    function tick() {
+      var diff = NOMINATION_DEADLINE.getTime() - Date.now();
+      if (diff <= 0) {
+        closeNominations();
+        clearInterval(timer);
+        return;
+      }
+      var d = Math.floor(diff / 86400000);
+      var h = Math.floor((diff % 86400000) / 3600000);
+      var m = Math.floor((diff % 3600000) / 60000);
+      var s = Math.floor((diff % 60000) / 1000);
+      daysEl.textContent = d;
+      hoursEl.textContent = ('0' + h).slice(-2);
+      minsEl.textContent = ('0' + m).slice(-2);
+      secsEl.textContent = ('0' + s).slice(-2);
+    }
+
+    tick();
+    var timer = setInterval(tick, 1000);
+  }
+
   /* ── Boot ── */
   document.addEventListener('DOMContentLoaded', function () {
+    if (Date.now() >= NOMINATION_DEADLINE.getTime()) {
+      closeNominations();
+      return;
+    }
     initEmailOtp();
     loadCategories();
     updateProgress(1);
+    initCountdown();
 
     var style = document.createElement('style');
     style.textContent = '@keyframes spin { to { transform: rotate(360deg); } }';

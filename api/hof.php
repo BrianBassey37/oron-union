@@ -140,6 +140,11 @@ case 'delete_nominee': {
 }
 
 case 'nominate': {
+    $nominationDeadline = new DateTime('2026-08-10 23:59:59');
+    if (new DateTime() > $nominationDeadline) {
+        json_error('The nomination window has closed. Voting is now open on the Hall of Fame page.', 403);
+    }
+
     $categoryId = $body['categoryId'] ?? null;
     $nomineeName = trim($body['nomineeName'] ?? '');
     $reason = trim($body['reason'] ?? '');

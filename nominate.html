@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Nominate Someone — Hall of Fame | Oron Union</title>
+  <title>Oron Union Youth Wing Hall of Fame</title>
   <meta name="description" content="Nominate an outstanding Oro son or daughter for the Oron Union Hall of Fame." />
   <link rel="icon" type="image/png" href="logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -101,6 +101,7 @@
     <a href="index.html" class="reg-hero-logo-link"><img src="logo.png" alt="Oron Union" class="reg-hero-logo" /></a>
     <h1>Nominate Someone</h1>
     <p>Know an Oro son or daughter making a real difference? Put their name forward for the Hall of Fame.</p>
+    <p style="margin-top:6px;opacity:0.9;">Winners will be announced live at the Youth Summit.</p>
   </div>
   <div class="reg-hero-wave">
     <svg viewBox="0 0 1440 50" preserveAspectRatio="none"><path d="M0,25 C480,50 960,0 1440,25 L1440,50 L0,50 Z" fill="#EDEAE3"/></svg>
@@ -111,6 +112,28 @@
 <main class="reg-main">
   <div class="reg-container" style="max-width:640px;">
 
+    <!-- Nomination window countdown -->
+    <div id="nom-countdown-banner" style="background:var(--card,#fff);border:1px solid var(--border,#e5e2da);border-radius:14px;padding:16px 20px;margin-bottom:20px;text-align:center;">
+      <p style="margin:0 0 8px;font-size:0.82rem;letter-spacing:0.03em;text-transform:uppercase;color:var(--gray,#666);">Nomination window closes in</p>
+      <div id="nom-countdown-clock" style="display:flex;justify-content:center;gap:14px;font-variant-numeric:tabular-nums;">
+        <div><span id="nc-days" style="font-size:1.5rem;font-weight:700;">--</span><div style="font-size:0.72rem;color:var(--gray,#666);">days</div></div>
+        <div><span id="nc-hours" style="font-size:1.5rem;font-weight:700;">--</span><div style="font-size:0.72rem;color:var(--gray,#666);">hrs</div></div>
+        <div><span id="nc-mins" style="font-size:1.5rem;font-weight:700;">--</span><div style="font-size:0.72rem;color:var(--gray,#666);">min</div></div>
+        <div><span id="nc-secs" style="font-size:1.5rem;font-weight:700;">--</span><div style="font-size:0.72rem;color:var(--gray,#666);">sec</div></div>
+      </div>
+      <p style="margin:10px 0 0;font-size:0.8rem;color:var(--gray,#666);">After that, nominations close and voting opens on the Hall of Fame page.</p>
+    </div>
+
+    <!-- Shown once the nomination window has closed -->
+    <div id="nom-closed-panel" class="reg-panel" style="display:none;text-align:center;padding:48px 24px;">
+      <h2 style="margin-bottom:10px;">Nominations Are Now Closed</h2>
+      <p style="color:var(--gray,#666);max-width:440px;margin:0 auto 8px;">The nomination window has ended. Voting is now open — cast your vote for who deserves a place in the Hall of Fame.</p>
+      <p style="color:var(--gray,#666);max-width:440px;margin:0 auto 20px;">Winners will be announced live at the Youth Summit.</p>
+      <a href="hall-of-fame.html" class="reg-btn-next" style="display:inline-block;text-decoration:none;">Go Vote Now &rarr;</a>
+    </div>
+
+    <!-- Nomination wizard (hidden once the window closes) -->
+    <div id="nom-wizard-wrap">
     <!-- Progress indicator -->
     <div class="reg-progress" id="reg-progress">
       <div class="rp-track"></div>
@@ -236,6 +259,7 @@
         <a href="hall-of-fame.html" class="reg-btn-next" style="display:inline-block;text-decoration:none;text-align:center;margin-top:8px;">Back to Hall of Fame &rarr;</a>
       </div>
     </div>
+    </div><!-- /#nom-wizard-wrap -->
 
   </div><!-- /.reg-container -->
 </main>
