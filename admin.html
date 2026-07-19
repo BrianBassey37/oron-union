@@ -891,6 +891,18 @@
         <span id="hof-count-lbl" style="font-size:0.82rem;color:var(--muted)"></span>
       </div>
       <div id="hof-wrap"></div>
+
+      <div class="section-head" style="margin-top:32px">
+        <h2>Public Nominations</h2>
+        <span id="nom-count-lbl" style="font-size:0.82rem;color:var(--muted)"></span>
+      </div>
+      <div class="ftabs" id="nom-ftabs">
+        <button class="ftab on" onclick="setNomFilter('pending',this)">Pending</button>
+        <button class="ftab" onclick="setNomFilter('approved',this)">Approved</button>
+        <button class="ftab" onclick="setNomFilter('rejected',this)">Rejected</button>
+        <button class="ftab" onclick="setNomFilter('all',this)">All</button>
+      </div>
+      <div id="nom-wrap"></div>
     </div>
 
   </div>
@@ -966,6 +978,7 @@ function boot() {
     renderApps();
   });
   loadHof();
+  loadNominations();
 }
 
 /* ══════════════════════════════════════════
@@ -1504,6 +1517,64 @@ function deleteHofNominee(id) {
     if (!res.ok) { toast('Could not delete: ' + res.error, 'err'); return; }
     toast('Nominee removed.', 'ok');
     loadHof();
+  });
+}
+
+/* ══════════════════════════════════════════
+   HALL OF FAME — PUBLIC NOMINATIONS
+══════════════════════════════════════════ */
+var cachedNominations = [];
+var nomFilter = 'pending';
+
+function loadNominations() {
+  return fetch('api/hof.php?action=list_nominations', { credentials: 'same-origin' }).then(function (res) { return res.json(); }).then(function (res) {
+    cachedNominations = res.ok ? (res.nominations || []) : [];
+    renderNominations();
+  });
+}
+
+function setNomFilter(f, btn) {
+  nomFilter = f;
+  document.querySelectorAll('#nom-ftabs .ftab').forEach(function (t) { t.classList.remove('on'); });
+  btn.classList.add('on');
+  renderNominations();
+}
+
+function renderNominations() {
+  var list = nomFilter === 'all' ? cachedNominations : cachedNominations.filter(function (n) { return n.status === nomFilter; });
+  var lbl = document.getElementById('nom-count-lbl');
+  if (lbl) lbl.textContent = cachedNominations.length + ' total';
+
+  var wrap = document.getElementById('nom-wrap');
+  if (!list.length) {
+    wrap.innerHTML = '<div class="empty" style="padding:24px"><p>No nominations in this view.</p></div>';
+    return;
+  }
+
+  wrap.innerHTML = list.map(function (n) {
+    var acts = n.status === 'pending'
+      ? '<button class="btn btn-ok btn-sm" onclick="reviewNomination(' + n.id + ',\'approved\')">Approve</button> ' +
+        '<button class="btn btn-danger btn-sm" onclick="reviewNomination(' + n.id + ',\'rejected\')">Reject</button>'
+      : '<span class="badge ' + (n.status === 'approved' ? 'badge-ok' : 'badge-err') + '">' + n.status + '</span>';
+
+    return '<div class="card" style="margin-bottom:12px">' +
+      '<div class="card-body" style="padding:16px">' +
+        '<div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:8px">' +
+          '<div><strong>' + esc(n.nominee_name) + '</strong> <span style="color:var(--muted);font-size:0.8rem">— ' + esc(n.category_name) + '</span></div>' +
+          '<div>' + acts + '</div>' +
+        '</div>' +
+        '<p style="font-size:0.85rem;color:var(--text);margin:0 0 8px">' + esc(n.reason) + '</p>' +
+        '<div style="font-size:0.78rem;color:var(--muted)">Submitted by ' + esc(n.nominator_name) + ' (' + esc(n.nominator_email) + (n.nominator_phone ? ', ' + esc(n.nominator_phone) : '') + ') on ' + fdate(n.created_at) + '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function reviewNomination(id, decision) {
+  api('api/hof.php', 'review_nomination', { id: id, decision: decision }).then(function (res) {
+    if (!res.ok) { toast('Could not update: ' + res.error, 'err'); return; }
+    toast('Nomination ' + decision + '.', 'ok');
+    loadNominations();
   });
 }
 

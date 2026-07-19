@@ -231,7 +231,7 @@
   <div class="page-header">
     <div class="page-badge">Official Record Form</div>
     <h1 class="page-title">Executive Member Registration</h1>
-    <p class="page-sub">Use this form to submit the name and passport photograph of each executive member across all wings, the CEC, clan representatives and branch coordinators.</p>
+    <p class="page-sub">Use this form to submit the name and passport photograph of each executive member across all wings, the CEC, clan representatives, branch coordinators, trustees, traditional rulers and clan heads.</p>
   </div>
 
   <!-- ── Main form ── -->
@@ -250,6 +250,9 @@
             <option value="Oro Student Union">Oro Student Union (OSU)</option>
             <option value="Clan Representatives">Clan Representatives</option>
             <option value="Branch Coordinators">Branch Coordinators</option>
+            <option value="Board of Trustees">Board of Trustees</option>
+            <option value="Council of Oro Traditional Rulers">Council of Oro Traditional Rulers (C.O.T.R)</option>
+            <option value="Clan Heads">Clan Heads (C.O.T.R)</option>
           </select>
         </div>
         <div class="form-group">
@@ -365,6 +368,19 @@ var ROLES = {
     'Branch Coordinator — Udunguko LGA','Branch Coordinator — Lagos Chapter',
     'Branch Coordinator — Abuja Chapter','Branch Coordinator — Port Harcourt Chapter',
     'Branch Coordinator — United Kingdom Chapter','Branch Coordinator — United States Chapter'
+  ],
+  'Board of Trustees': [
+    'Trustee — Oron LGA','Trustee — Urueoffong/Oruko LGA','Trustee — Okobo LGA',
+    'Trustee — Mbo LGA','Trustee — Udunguko LGA'
+  ],
+  'Council of Oro Traditional Rulers': [
+    'Traditional Ruler — Oron LGA','Traditional Ruler — Urueoffong/Oruko LGA',
+    'Traditional Ruler — Okobo LGA','Traditional Ruler — Mbo LGA','Traditional Ruler — Udunguko LGA'
+  ],
+  'Clan Heads': [
+    'Clan Head — Afaha Ukwong','Clan Head — Afaha Ibighi','Clan Head — Afaha Oki-uso',
+    'Clan Head — Afaha Idua','Clan Head — Afaha Okpo','Clan Head — Afaha Ubodung',
+    'Clan Head — Ebughu','Clan Head — Effiat','Clan Head — Etta'
   ]
 };
 
@@ -391,7 +407,10 @@ var AFFILIATIONS = {
               'United Kingdom Chapter','North America Chapter']
   },
   'Clan Representatives': null,
-  'Branch Coordinators': null
+  'Branch Coordinators': null,
+  'Board of Trustees': null,
+  'Council of Oro Traditional Rulers': null,
+  'Clan Heads': null
 };
 
 // ═══════════════════════════════════════════════════════

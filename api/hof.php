@@ -10,6 +10,9 @@
  *   POST ?action=upsert_category {id, slug, name, description, sortOrder, active} (admin session)
  *   POST ?action=upsert_nominee  {id, categoryId, name, photoUrl, bio, sortOrder, active} (admin session)
  *   POST ?action=delete_nominee  {id}                                  (admin session)
+ *   POST ?action=nominate  {categoryId, nomineeName, reason, nominatorName, nominatorEmail, nominatorPhone} (public, requires verified email)
+ *   GET  ?action=list_nominations                                      (admin session)
+ *   POST ?action=review_nomination {id, decision}                      (admin session)
  */
 
 require_once __DIR__ . '/../lib/auth.php';
@@ -18,6 +21,7 @@ start_secure_session();
 $body = read_json_body();
 $action = require_action($body, [
     'list', 'results', 'vote', 'upsert_category', 'upsert_nominee', 'delete_nominee',
+    'nominate', 'list_nominations', 'review_nomination',
 ]);
 
 switch ($action) {
@@ -132,6 +136,59 @@ case 'delete_nominee': {
     $stmt = db()->prepare('DELETE FROM hof_nominees WHERE id = ?');
     $stmt->execute([$id]);
     log_activity('admin', 'delete_hof_nominee', (string) $id);
+    json_ok();
+}
+
+case 'nominate': {
+    $categoryId = $body['categoryId'] ?? null;
+    $nomineeName = trim($body['nomineeName'] ?? '');
+    $reason = trim($body['reason'] ?? '');
+    $nominatorName = trim($body['nominatorName'] ?? '');
+    $nominatorEmail = trim($body['nominatorEmail'] ?? '');
+    $nominatorPhone = $body['nominatorPhone'] ?? null;
+
+    if (!$categoryId || !$nomineeName || !$reason || !$nominatorName || !$nominatorEmail) {
+        json_error('Please fill in all required fields.');
+    }
+    if (!filter_var($nominatorEmail, FILTER_VALIDATE_EMAIL)) {
+        json_error('Please enter a valid email address.');
+    }
+    if (empty($_SESSION['email_verified_hof']) || $_SESSION['email_verified_hof'] !== $nominatorEmail) {
+        json_error('Please verify your email address before submitting.', 403, ['needsVerification' => true]);
+    }
+    if (mb_strlen($nomineeName) > 150) $nomineeName = mb_substr($nomineeName, 0, 150);
+    if (mb_strlen($reason) > 800) $reason = mb_substr($reason, 0, 800);
+
+    $stmt = db()->prepare(
+        'INSERT INTO hof_nominations (category_id, nominee_name, reason, nominator_name, nominator_email, nominator_phone)
+         VALUES (?, ?, ?, ?, ?, ?)'
+    );
+    $stmt->execute([$categoryId, $nomineeName, $reason, $nominatorName, $nominatorEmail, $nominatorPhone ?: null]);
+
+    db()->prepare('INSERT IGNORE INTO hof_notify_subscribers (email) VALUES (?)')->execute([$nominatorEmail]);
+
+    json_ok(['id' => (int) db()->lastInsertId()]);
+}
+
+case 'list_nominations': {
+    require_admin();
+    $rows = db()->query(
+        "SELECT n.*, c.name AS category_name FROM hof_nominations n
+         JOIN hof_categories c ON c.id = n.category_id
+         ORDER BY n.created_at DESC"
+    )->fetchAll();
+    json_ok(['nominations' => $rows]);
+}
+
+case 'review_nomination': {
+    require_admin();
+    $id = $body['id'] ?? null;
+    $decision = $body['decision'] ?? '';
+    if (!$id || !in_array($decision, ['approved', 'rejected'], true)) {
+        json_error('Invalid request.');
+    }
+    db()->prepare('UPDATE hof_nominations SET status = ? WHERE id = ?')->execute([$decision, $id]);
+    log_activity('admin', 'review_hof_nomination', $id . ' -> ' . $decision);
     json_ok();
 }
 

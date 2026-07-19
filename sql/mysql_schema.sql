@@ -249,10 +249,33 @@ CREATE TABLE IF NOT EXISTS otp_codes (
   INDEX idx_purpose_email (purpose, email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- ─────────────────────────────────────────────────────────────────────
+-- 9. HALL OF FAME — PUBLIC NOMINATIONS
+-- ─────────────────────────────────────────────────────────────────────
+
+CREATE TABLE IF NOT EXISTS hof_nominations (
+  id              INT AUTO_INCREMENT PRIMARY KEY,
+  category_id     INT NOT NULL,
+  nominee_name    VARCHAR(150) NOT NULL,
+  reason          TEXT NOT NULL,
+  nominator_name  VARCHAR(150) NOT NULL,
+  nominator_email VARCHAR(190) NOT NULL,
+  nominator_phone VARCHAR(30),
+  status          ENUM('pending','approved','rejected') NOT NULL DEFAULT 'pending',
+  created_at      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (category_id) REFERENCES hof_categories(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS hof_notify_subscribers (
+  id         INT AUTO_INCREMENT PRIMARY KEY,
+  email      VARCHAR(190) NOT NULL UNIQUE,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- =====================================================================
 -- Done. Verify in phpMyAdmin: members, login_attempts, activity_log,
 -- elections, election_candidates, election_votes, hof_categories
 -- (7 rows), hof_nominees, hof_votes, exco_members, stream_config
 -- (1 row), stream_viewers, stream_chat, media_items, branch_exco,
--- otp_codes.
+-- otp_codes, hof_nominations, hof_notify_subscribers.
 -- =====================================================================
